@@ -33,7 +33,10 @@ import traceback
 # .data_storer
 
 
-from config import *
+import config
+
+
+
 
 def mkdir(dirname):
     if not os.path.isdir(dirname + "/"):
@@ -67,7 +70,7 @@ class Scraper:
     # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
     # this threading code is mostly from there
     db_lock = threading.RLock()
-    class self.ImgDownloader(threading.Thread):
+    class ImgDownloader(threading.Thread):
         def __init__(self, queue, root_dir, flag_table_object):
             threading.Thread.__init__(self)
             self.queue = queue
@@ -221,7 +224,7 @@ class Scraper:
             if not self.imglib.scraper.is_session_expired_page(html):
                 try:
                     # 2: write html to disk
-                    store_raw_html(current_id, html)
+                    self.store_raw_html(current_id, html)
                 except KeyboardInterrupt:
                     sys.exit(0)
                 except:
