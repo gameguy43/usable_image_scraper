@@ -61,7 +61,7 @@ def mkscraper(image_db_key):
     kwargs['html_dir'] = data_base_dir + config.html_subdir
     print kwargs
 
-    kwargs['db'] = data_base_dir + config.html_subdir
+    kwargs['db'] = config.db
     kwargs['data_table_prefix'] = img_db_config['data_table_prefix']
 
     return Scraper(**kwargs)
@@ -85,12 +85,15 @@ class Scraper:
         thumb_status_table_name = data_table_prefix + "thumb_status"
 
         #TODO: make the table if it isn't already existent
+        imglib.data_schema.Base.metadata.create_all(self.db.engine)
+        #from sqlalchemy import *
+        #imglib.data_schema.Base.metadata.create_all(create_engine('sqlite:///data/metadata.sqlite'))
 
         # then grab it with something like this:
-        self.metadata_table = getattr(db, metadata_table_name)
-        self.hires_status_table = getattr(db, hires_status_table_name)
-        self.lores_status_table = getattr(db, lores_status_table_name)
-        self.thumb_status_table = getattr(db, thumb_status_table_name)
+        self.metadata_table = getattr(self.db, metadata_table_name)
+        self.hires_status_table = getattr(self.db, hires_status_table_name)
+        self.lores_status_table = getattr(self.db, lores_status_table_name)
+        self.thumb_status_table = getattr(self.db, thumb_status_table_name)
 
         self.bootstrap_filestructure()
 
@@ -148,6 +151,19 @@ class Scraper:
                     self.queue.task_done()
                     return None
 
+    def get_set_images_to_dl(self,resolution):
+        if resolution == 'hires'
+            table = self.hires_status_table
+        elif resolution == 'lores'
+            table = self.lores_status_table
+        elif resolution == 'thumb'
+            table = self.thumb_status_table
+        # TODO: actually throw an error here
+        else:
+            print "cmon. give me a valid resolution"
+            return None
+        return table.all()
+
     def get_images(self, root_dir, db_column_name, flag_table, flag_table_object):
         ## takes: a directory global, url_to? from phil table, an image status table
         ## returns: images to folder structure and stores downloaded status table
@@ -175,9 +191,11 @@ class Scraper:
             
 
     def get_all_images(self):
+        '''
         get_images(self.thumb_dir, 'url_to_thumb_img', 'thumb_status', self.imglib.data_storer.thumb_status_table)
         get_images(self.lores_dir, 'url_to_lores_img', 'lores_status', self.imglib.data_storer.lores_status_table)
         get_images(self.hires_dir, 'url_to_hires_img', 'hires_status', self.imglib.data_storer.hires_status_table)
+        '''
 
     def store_raw_html(self,id, html):
         ## stores an html dump from the scraping process, just in case
