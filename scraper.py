@@ -40,7 +40,7 @@ import config
 
 def mkdir(dirname):
     if not os.path.isdir(dirname + "/"):
-        os.mkdir(dirname + "/")
+        os.makedirs(dirname + "/")
 
 def floorify(id):
     ## mod 100 the image id numbers to make smarter folders
@@ -48,20 +48,63 @@ def floorify(id):
     floored = str(floor).zfill(5)[0:3]+"XX"
     return floored
 
+# make a scraper based on the config
+def mkscraper(image_db_key):
+    img_db_config = config.image_databases[image_db_key]
+    data_base_dir = config.data_root_dir + img_db_config['data_subdir']
+
+    kwargs = {}
+    kwargs['imglib'] = getattr(__import__(config.img_libraries_metalib, fromlist=[img_db_config['python_lib']]),img_db_config['python_lib'])
+    kwargs['thumb_dir'] = data_base_dir + config.thumb_subdir
+    kwargs['lores_dir'] = data_base_dir + config.lores_subdir
+    kwargs['hires_dir'] = data_base_dir + config.hires_subdir
+    kwargs['html_dir'] = data_base_dir + config.html_subdir
+    print kwargs
+
+    kwargs['db'] = data_base_dir + config.html_subdir
+    kwargs['data_table_prefix'] = img_db_config['data_table_prefix']
+
+    return Scraper(**kwargs)
+
+
+
+
 class Scraper:
-    def __init__(self,imglib):
-        self.imglib = imglib
+    # imglib is the string name of the 
+    def __init__(self, imglib, thumb_dir, lores_dir, hires_dir, html_dir, db, data_table_prefix):
+        self.imglib = imglib 
+        self.thumb_dir = thumb_dir 
+        self.lores_dir = lores_dir 
+        self.hires_dir = hires_dir 
+        self.html_dir = html_dir 
+
+        self.db = db
+        metadata_table_name = data_table_prefix + "metadata"
+        hires_status_table_name = data_table_prefix + "hires_status"
+        lores_status_table_name = data_table_prefix + "lores_status"
+        thumb_status_table_name = data_table_prefix + "thumb_status"
+
+        #TODO: make the table if it isn't already existent
+
+        # then grab it with something like this:
+        self.metadata_table = getattr(db, metadata_table_name)
+        self.hires_status_table = getattr(db, hires_status_table_name)
+        self.lores_status_table = getattr(db, lores_status_table_name)
+        self.thumb_status_table = getattr(db, thumb_status_table_name)
+
+        self.bootstrap_filestructure()
 
     def bootstrap_filestructure(self):
-        mkdir(THUMB_IMG_DIR)    
-        mkdir(LORES_IMG_DIR)    
-        mkdir(HIRES_IMG_DIR)    
-        mkdir(RAW_HTML_DIR)    
+        mkdir(self.thumb_dir)    
+        mkdir(self.lores_dir)    
+        mkdir(self.hires_dir)    
+        mkdir(self.html_dir)    
 
-    # this is data structure bootstrapping
+    # this is data structure bootstrapping--make the right data subdirs
     def make_directories(self, ids, root_dir):
         ## directories for image downloads
         floors = map(floorify, ids)
+        # this removes duplicates
         floor_dirs = set(floors)
         # convert the floors into strings of format like 015XX
         # also, make the effing directories
@@ -132,9 +175,9 @@ class Scraper:
             
 
     def get_all_images(self):
-        get_images(THUMB_IMG_DIR, 'url_to_thumb_img', 'thumb_status', self.imglib.data_storer.thumb_status_table)
-        get_images(LORES_IMG_DIR, 'url_to_lores_img', 'lores_status', self.imglib.data_storer.lores_status_table)
-        get_images(HIRES_IMG_DIR, 'url_to_hires_img', 'hires_status', self.imglib.data_storer.hires_status_table)
+        get_images(self.thumb_dir, 'url_to_thumb_img', 'thumb_status', self.imglib.data_storer.thumb_status_table)
+        get_images(self.lores_dir, 'url_to_lores_img', 'lores_status', self.imglib.data_storer.lores_status_table)
+        get_images(self.hires_dir, 'url_to_hires_img', 'hires_status', self.imglib.data_storer.hires_status_table)
 
     def store_raw_html(self,id, html):
         ## stores an html dump from the scraping process, just in case
@@ -142,8 +185,8 @@ class Scraper:
         floor = id - (id%100)
         ceiling = str(floor + 100).zfill(5)
         floor = str(floor).zfill(5)
-        mkdir(RAW_HTML_DIR + '/' + floor + '-' + ceiling)
-        fp = open(RAW_HTML_DIR + '/' + floor + '-' + ceiling + '/' + idstr + '.html', 'w')
+        mkdir(self.html_dir + floor + '-' + ceiling)
+        fp = open(self.html_dir + floor + '-' + ceiling + '/' + idstr + '.html', 'w')
         fp.write(html)
         fp.close()
 
@@ -153,9 +196,11 @@ class Scraper:
         floor = id - (id%100)
         ceiling = str(floor + 100).zfill(5)
         floor = str(floor).zfill(5)
-        html = open(RAW_HTML_DIR + '/' + floor + '-' + ceiling + '/' + idstr + '.html', 'r').read()
+        html = open(self.html_dir + '/' + floor + '-' + ceiling + '/' + idstr + '.html', 'r').read()
         return html
 
+    def store_metadata_row(self, metadata_dict):
+        self.metadata_table.insert(**metadata_dict)
 
     def scrape_range_from_hd(self, start, end):
         bootstrap_filestructure()
@@ -195,9 +240,9 @@ class Scraper:
             print "SUCCESS: everything went according to plan for id " + str(current_id)
             current_id+=1
 
-    def scrape_range(self, start, end):
+    def scrape_indeces(self, range):
         ## main glue function
-        current_id = start
+        #TODO: i think i can cut this cookie stuff
         try:
             cookiejar = self.imglib.scraper.get_me_a_cookie()
         except KeyboardInterrupt:
@@ -206,8 +251,9 @@ class Scraper:
             print "ERROR: WE COULDN'T EVEN GET A COOKIE"
             traceback.print_exc()
             return None
+
         failed_indices = []
-        while current_id <= end:
+        for current_id in range:
             print "STARTING: " + str(current_id)
             try:
                 # 1: fetching html of id, for store and parse
@@ -218,7 +264,6 @@ class Scraper:
                 print "ERROR: couldn't scrape out html for id " + str(current_id)
                 failed_indices.append(current_id)
                 traceback.print_exc()
-                current_id+=1
                 continue
             # if we didn't get a session error page:
             if not self.imglib.scraper.is_session_expired_page(html):
@@ -231,7 +276,6 @@ class Scraper:
                     print "ERROR: couldn't store raw html for id " + str(current_id)
                     failed_indices.append(current_id)
                     traceback.print_exc()
-                    current_id+=1
                     continue
                 try:
                     # 3: parse the metadata out of their html
@@ -248,7 +292,6 @@ class Scraper:
                     print "we just recorded in the DB the fact that we couldn't parse this one"
                     failed_indices.append(current_id)
                     traceback.print_exc()
-                    current_id+=1
                     continue
                 try:
                     self.imglib.data_storer.store_datum(metadata)
@@ -258,11 +301,9 @@ class Scraper:
                     print "ERROR: couldn't store metadata for id " + str(current_id)
                     failed_indices.append(current_id)
                     traceback.print_exc()
-                    current_id+=1
                     continue
                 # These lines will only run if everthing went according to plan
                 print "SUCCESS: everything went according to plan for id " + str(current_id)
-                current_id+=1
             # but if we got a session error page
             else:
                 times_to_try_getting_cookie = 3
