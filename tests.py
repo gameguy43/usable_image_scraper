@@ -3,7 +3,7 @@ import scraper
 import config
 import os
 
-class TestFEMAParserFunctions(unittest.TestCase):
+class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         # TODO: instantiate a database?
         # instantiate a scraper 
@@ -18,13 +18,18 @@ class TestFEMAParserFunctions(unittest.TestCase):
         # insert something and then grab it out
     '''
 
+    #TODO: test the scraping from hd functionality
+
     def test_scrape(self):
-        self.myscraper.scrape_indeces(range(10)[1:])
+        known_good_indeces = range(10)[1:8]
+        subdir_to_find_thumbs = config.data_root_dir + config.image_databases[self.test_lib]['data_subdir'] + config.thumb_subdir + '000XX'
+        self.myscraper.scrape_indeces(known_good_indeces)
         # check that we have all 10 thumb and lores image files
-        self.assertEqual(len(os.listdir(config.data_root_dir + config.image_databases[self.test_lib]['data_subdir'] + config.thumb_subdir)),10)
-        # check that we have 10 rows in the database
+        self.assertEqual(len(os.listdir(subdir_to_find_thumbs)),len(known_good_indeces))
+        # check that we have the right number of rows in the database
         # TODO. trash the below.
-        db = myscraper.get_or_create_db()
+        rows = self.myscraper.metadata_table.all()
+        self.assertEqual(len(known_good_indeces), len(rows))
         
         # manually check that a specific one of the rows has all the right content? maybe
         #TODO
