@@ -77,27 +77,25 @@ class Scraper:
         self.lores_dir = lores_dir 
         self.hires_dir = hires_dir 
         self.html_dir = html_dir 
-
+        self.max_daemons = max_daemons
         self.db = db
+
         metadata_table_name = data_table_prefix + "metadata"
         hires_status_table_name = data_table_prefix + "hires_status"
         lores_status_table_name = data_table_prefix + "lores_status"
         thumb_status_table_name = data_table_prefix + "thumb_status"
 
-        # make the table if it isn't already existent
+        # make the tables if they don't already exist
         imglib.data_schema.Base.metadata.create_all(self.db.engine)
-        #from sqlalchemy import *
-        #imglib.data_schema.Base.metadata.create_all(create_engine('sqlite:///data/metadata.sqlite'))
-
-        # then grab it with something like this:
+        # some nice shortcuts for grabbing various tables later
         self.metadata_table = getattr(self.db, metadata_table_name)
         self.hires_status_table = getattr(self.db, hires_status_table_name)
         self.lores_status_table = getattr(self.db, lores_status_table_name)
         self.thumb_status_table = getattr(self.db, thumb_status_table_name)
 
+        # make sure we have all the right directories set up for storing html and images
         self.bootstrap_filestructure()
 
-        self.max_daemons = max_daemons
         #TODO: i think that maybe i can remove this. but not sure. probs need for sqlite.
         self.db_lock = threading.RLock()
 
@@ -177,27 +175,30 @@ class Scraper:
     def bootstrap_status_table(self, resolution):
         ids = map(lambda row: row.id, self.metadata_table.all())
         status_table = self.resolution_to_status_table(resolution)
-        #TODO: dbug: import pdb ; pdb.set_trace()
         for id in ids:
             if not status_table.get(id):
                 data = {'id': id, 'status': 0}
                 self.insert_or_update_table_row(status_table, data)
 
     def get_set_images_to_dl(self,resolution):
-        # returns tuples of (id, url)
+        ## input: resolution, as a string (hires, lores, thumb)
+        ## returns: list of tuples in form: (id, url)
         statuses = self.resolution_to_status_table(resolution).all()
         rows_to_dl = filter(lambda row: row.status != 1, statuses)
         ids_to_dl = map(lambda row: row.id, rows_to_dl)
         metadata_url_column_name = self.imglib.data_schema.get_metadata_url_column_name(resolution)
         tuples = map(lambda id: (id, getattr(self.metadata_table.get(id), metadata_url_column_name)), ids_to_dl)
+        # throw away tuples that have a null value in either position
+        # TODO: maybe we should throw an exception here?
         tuples = filter(lambda tuple: tuple[0] and tuple[1], tuples)
         return tuples
 
     def get_images(self, root_dir, resolution):
+        ## takes: a directory global, an image status table
+        ## returns: nothing
+        ## side-effects: downloads images to folder structure and stores result in downloaded status table
         # grab the status flag table
         status_table = self.resolution_to_status_table(resolution)
-        ## takes: a directory global, url_to? from phil table, an image status table
-        ## returns: images to folder structure and stores downloaded status table
         queue = Queue.Queue()
         # MAKE OUR THREADZZZ
         # note: they wont do anything until we put stuff in the queue
@@ -246,7 +247,6 @@ class Scraper:
 
     def store_metadata_row(self, metadata_dict):
         self.insert_or_update_table_row(self.metadata_table, metadata_dict)
-            
 
     #NOTE: this only works if the primary key is 'id'
     def insert_or_update_table_row(self, table, data_dict):
