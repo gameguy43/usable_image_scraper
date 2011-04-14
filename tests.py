@@ -7,8 +7,9 @@ class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         # TODO: instantiate a database?
         # instantiate a scraper 
-        self.test_lib = 'cdc_phil'
-        self.myscraper = scraper.mkscraper(self.test_lib)
+        self.imglib_name = 'cdc_phil'
+        self.myscraper = scraper.mkscraper(self.imglib_name)
+        self.imglib = self.myscraper.imglib
 
     '''
     def test_db_creation(self):
@@ -21,15 +22,49 @@ class TestScraperFunctions(unittest.TestCase):
     #TODO: test the scraping from hd functionality
 
     def test_scrape(self):
-        known_good_indeces = range(10)[1:8]
-        subdir_to_find_thumbs = config.data_root_dir + config.image_databases[self.test_lib]['data_subdir'] + config.thumb_subdir + '000XX'
-        self.myscraper.scrape_indeces(known_good_indeces)
-        # check that we have all 10 thumb and lores image files
-        self.assertEqual(len(os.listdir(subdir_to_find_thumbs)),len(known_good_indeces))
+        # grab known good indeces
+        known_good_indeces = self.imglib.tests.known_good_indeces
+
+        # do a scrape on them
+        self.myscraper.scrape_indeces(known_good_indeces, from_hd=True)
+        #self.myscraper.scrape_indeces(known_good_indeces, False)
+
         # check that we have the right number of rows in the database
-        # TODO. trash the below.
         rows = self.myscraper.metadata_table.all()
         self.assertEqual(len(known_good_indeces), len(rows))
+
+        # check that the ids in the rows are right
+        all_rows = self.myscraper.metadata_table.all()
+        ids = map(lambda row: row.id, all_rows)
+        self.assertEqual(ids, known_good_indeces)
+
+        # TODO: check that at least one of the rows actually has the right data
+
+        # make sure that we have the HTML and image files for each of them
+        for id in known_good_indeces:
+            subdir_for_id = scraper.get_subdir_for_id(id)
+            filename_base_for_id = scraper.get_filename_base_for_id(id) 
+
+            html_file = self.myscraper.html_dir + subdir_for_id + filename_base_for_id + ".html"
+            print "making sure we have " + html_file
+            self.assertTrue(os.access(html_file,os.F_OK))
+
+            for resolution in self.myscraper.imglib.data_schema.resolutions:
+                extension = scraper.get_extension_from_path(self.myscraper.get_image_url(id, resolution))
+                #TODO: this is a bandaid solution. we should not hard-code resolution names
+                if resolution == 'thumb':
+                    file = self.myscraper.thumb_dir + subdir_for_id + filename_base_for_id + extension
+                elif resolution == 'lores':
+                    file = self.myscraper.lores_dir + subdir_for_id + filename_base_for_id + extension
+                elif resolution == 'hires':
+                    file = self.myscraper.hires_dir + subdir_for_id + filename_base_for_id + extension
+                print "making sure we have " + file
+                self.assertTrue(os.access(file,os.F_OK))
+
+            #TODO: test that all the images are there too
+            # (not sure how to handle)
+
+        
         
         # manually check that a specific one of the rows has all the right content? maybe
         #TODO

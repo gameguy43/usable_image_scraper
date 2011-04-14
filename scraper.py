@@ -26,6 +26,7 @@ import Queue
 import sys
 import threading
 import traceback
+from sqlalchemy.ext.sqlsoup import SqlSoup
 
 #import libs.cdc_phil_lib as imglib
 # .scraper
@@ -48,6 +49,22 @@ def floorify(id):
     floored = str(floor).zfill(5)[0:3]+"XX"
     return floored
 
+def ceilingify(id):
+    ## mod 100 the image id numbers to make smarter folders
+    ceiling = id - id % 100 + 100
+    ceilinged = str(ceiling).zfill(5)[0:3]+"XX"
+    return ceilinged 
+
+def get_subdir_for_id(id):
+    return floorify(id) + '-' + ceilingify(id) + '/'
+
+def get_filename_base_for_id(id):
+    return str(id).zfill(5)
+
+def get_extension_from_path(path):
+    basename, extension = os.path.splitext(path)
+    return extension
+
 # make a scraper based on the config
 def mkscraper(image_db_key):
     img_db_config = config.image_databases[image_db_key]
@@ -61,7 +78,7 @@ def mkscraper(image_db_key):
     kwargs['html_dir'] = data_base_dir + config.html_subdir
     print kwargs
 
-    kwargs['db'] = config.db
+    kwargs['db_url'] = config.db_url
     kwargs['data_table_prefix'] = img_db_config['data_table_prefix']
 
     return Scraper(**kwargs)
@@ -71,19 +88,25 @@ def mkscraper(image_db_key):
 
 class Scraper:
     # imglib is the string name of the 
-    def __init__(self, imglib, thumb_dir, lores_dir, hires_dir, html_dir, db, data_table_prefix, max_daemons=config.max_daemons):
+    def __init__(self, imglib, thumb_dir, lores_dir, hires_dir, html_dir, db_url, data_table_prefix, max_daemons=config.max_daemons):
         self.imglib = imglib 
         self.thumb_dir = thumb_dir 
         self.lores_dir = lores_dir 
         self.hires_dir = hires_dir 
         self.html_dir = html_dir 
         self.max_daemons = max_daemons
-        self.db = db
+
+        # make sure we have all the right directories set up for storing html and images
+        self.bootstrap_filestructure()
 
         metadata_table_name = data_table_prefix + "metadata"
         hires_status_table_name = data_table_prefix + "hires_status"
         lores_status_table_name = data_table_prefix + "lores_status"
         thumb_status_table_name = data_table_prefix + "thumb_status"
+
+        self.db = SqlSoup(db_url)
+        #from sqlalchemy.orm import scoped_session, sessionmaker
+        #db = SqlSoup(sql_url, session=scoped_session(sessionmaker(autoflush=False, expire_on_commit=False, autocommit=True)))
 
         # make the tables if they don't already exist
         imglib.data_schema.Base.metadata.create_all(self.db.engine)
@@ -93,8 +116,7 @@ class Scraper:
         self.lores_status_table = getattr(self.db, lores_status_table_name)
         self.thumb_status_table = getattr(self.db, thumb_status_table_name)
 
-        # make sure we have all the right directories set up for storing html and images
-        self.bootstrap_filestructure()
+
 
         #TODO: i think that maybe i can remove this. but not sure. probs need for sqlite.
         self.db_lock = threading.RLock()
@@ -108,12 +130,12 @@ class Scraper:
     # this is data structure bootstrapping--make the right data subdirs
     def make_directories(self, ids, root_dir):
         ## directories for image downloads
-        floors = map(floorify, ids)
+        subdirs = map(get_subdir_for_id, ids)
         # this removes duplicates
-        floor_dirs = set(floors)
+        subdirs = set(subdirs)
         # convert the floors into strings of format like 015XX
         # also, make the effing directories
-        map((lambda dirname: mkdir(root_dir + '/' + dirname)), floor_dirs)
+        map((lambda dirname: mkdir(root_dir + dirname)), subdirs)
 
     # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
     # this threading code is mostly from there
@@ -133,7 +155,9 @@ class Scraper:
                     print id_url_tuple
                     id = id_url_tuple[0]
                     url = id_url_tuple[1]
-                    path = self.root_dir + '/' + floorify(id) + '/' + str(id).zfill(5) + url[-4:]
+                    #TODO: NOTE: this breaks if the extension is something other than 3 chars long
+                    extension = get_extension_from_path(url) #url[-4:]
+                    path = self.root_dir + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
                     urllib.urlretrieve(url, path)
                     print "finished downloading " + url
                     id_status_dict = {'id': id, 'status': 1}
@@ -180,6 +204,13 @@ class Scraper:
                 data = {'id': id, 'status': 0}
                 self.insert_or_update_table_row(status_table, data)
 
+    def get_image_url(self, id, resolution):
+        metadata_url_column_name = self.imglib.data_schema.get_metadata_url_column_name(resolution)
+        url = getattr(self.metadata_table.get(id), metadata_url_column_name)
+        return url
+        
+
+    #TODO: the below can be rewritten to use the above
     def get_set_images_to_dl(self,resolution):
         ## input: resolution, as a string (hires, lores, thumb)
         ## returns: list of tuples in form: (id, url)
@@ -226,23 +257,18 @@ class Scraper:
 
     def store_raw_html(self,id, html):
         ## stores an html dump from the scraping process, just in case
-        idstr = str(id).zfill(5)
-        floor = id - (id%100)
-        ceiling = str(floor + 100).zfill(5)
-        floor = str(floor).zfill(5)
-        mkdir(self.html_dir + floor + '-' + ceiling)
-        fp = open(self.html_dir + floor + '-' + ceiling + '/' + idstr + '.html', 'w')
+        filename_base = get_filename_base_for_id(id)
+        subdir = get_subdir_for_id(id)
+        mkdir(self.html_dir + subdir)
+        fp = open(self.html_dir + subdir + filename_base + '.html', 'w')
         fp.write(html)
         fp.close()
 
     def get_local_raw_html(self, id):
-        # TODO: this function should use floorify
         # except we also need the ceiling
-        idstr = str(id).zfill(5)
-        floor = id - (id%100)
-        ceiling = str(floor + 100).zfill(5)
-        floor = str(floor).zfill(5)
-        html = open(self.html_dir + '/' + floor + '-' + ceiling + '/' + idstr + '.html', 'r').read()
+        filename_base = get_filename_base_for_id(id)
+        subdir = get_subdir_for_id(id)
+        html = open(self.html_dir + subdir + filename_base + '.html', 'r').read()
         return html
 
     def store_metadata_row(self, metadata_dict):
@@ -259,7 +285,7 @@ class Scraper:
         
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
         ## main glue function
-        from_hd = True #TODO:DEBUG
+        #from_hd = True #TODO:DEBUG
         
         failed_indices = []
         if not from_hd:
