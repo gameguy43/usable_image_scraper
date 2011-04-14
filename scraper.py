@@ -257,45 +257,6 @@ class Scraper:
         table.insert(**data_dict)
         self.db.commit()
         
-    #TODO: this fxn is mostly merged with the below. cut it out
-    def scrape_range_from_hd(self, start, end):
-        bootstrap_filestructure()
-        current_id = start
-        failed_indices = []
-        while current_id <= end:
-            try:
-                # 3: parse the metadata out of their html
-                html = get_local_raw_html(current_id)
-                metadata = parse_img(html)
-            except KeyboardInterrupt:
-                sys.exit(0)
-            except:
-                print "ERROR: couldn't parse raw html for id " + str(current_id)
-                metadata = {
-                        'id': current_id,
-                        'we_couldnt_parse_it': True,
-                        }
-                self.store_metadata_row(metadata)
-                print "we just recorded in the DB the fact that we couldn't parse this one"
-                failed_indices.append(current_id)
-                traceback.print_exc()
-                current_id+=1
-                continue
-            try:
-                self.store_metadata_row(metadata)
-                #print metadata
-            except KeyboardInterrupt:
-                sys.exit(0)
-            except:
-                print "ERROR: couldn't store metadata for id " + str(current_id)
-                failed_indices.append(current_id)
-                traceback.print_exc()
-                current_id+=1
-                continue
-            # These lines will only run if everthing went according to plan
-            print "SUCCESS: everything went according to plan for id " + str(current_id)
-            current_id+=1
-
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
         ## main glue function
         from_hd = True #TODO:DEBUG
