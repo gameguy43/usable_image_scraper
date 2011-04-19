@@ -36,8 +36,9 @@ from sqlalchemy.ext.sqlsoup import SqlSoup
 
 import config
 
-
-
+def load_module(name):
+    fp, pathname, description = imp.find_module(name)
+    return imp.load_module(name, fp, pathname, description)
 
 def mkdir(dirname):
     if not os.path.isdir(dirname + "/"):
@@ -71,7 +72,7 @@ def mkscraper(image_db_key):
     data_base_dir = config.data_root_dir + img_db_config['data_subdir']
 
     kwargs = {}
-    kwargs['imglib'] = getattr(__import__(config.img_libraries_metalib, fromlist=[img_db_config['python_lib']]),img_db_config['python_lib'])
+    kwargs['imglib'] = getattr(config.img_libraries_metalib, img_db_config['python_lib'])
     kwargs['thumb_dir'] = data_base_dir + config.thumb_subdir
     kwargs['lores_dir'] = data_base_dir + config.lores_subdir
     kwargs['hires_dir'] = data_base_dir + config.hires_subdir
@@ -110,6 +111,7 @@ class Scraper:
 
         # make the tables if they don't already exist
         imglib.data_schema.Base.metadata.create_all(self.db.engine)
+
         # some nice shortcuts for grabbing various tables later
         self.metadata_table = getattr(self.db, metadata_table_name)
         self.hires_status_table = getattr(self.db, hires_status_table_name)
@@ -203,6 +205,9 @@ class Scraper:
             if not status_table.get(id):
                 data = {'id': id, 'status': 0}
                 self.insert_or_update_table_row(status_table, data)
+
+    def get_image_metadata(self, id):
+        return self.metadata_table.get(id)
 
     def get_image_url(self, id, resolution):
         metadata_url_column_name = self.imglib.data_schema.get_metadata_url_column_name(resolution)
@@ -395,43 +400,16 @@ class Scraper:
 
 
 def main():
-    #TODO: this doesn't work now that the scraper is objectified
-    # NOTE: if you don't set these the right way, you'll never even touch their servers
-    WORK_LOCALLY = False
-    GET_IMAGES = True
-    #end_with = get_highest_index_at_phil()
-    #end_with = 500
+    myscraper = mkscraper('cdc_phil')
+    import ipdb; ipdb.set_trace()
 
-    # NOTE: hard-coded
-    start_from = 1
-    end_with = 10
-    #cdc_phil_scrape_range_from_hd(start_from, end_with)
-    #return
-    # NOTE: end hard-coded
+    # grab known good indeces
+    known_good_indeces = self.imglib.tests.known_good_indeces
 
+    scrape_these = known_good_indeces
 
-    # note that we re-do our most recent thing.  just in case we died halfway through it or something
-    # note also that we don't download any images until we run get_all_images()
-    if self.imglib.data_storer.database_is_empty():
-        print "looks like the database is empty"
-        start_from = 1
-    else:
-        start_from = self.imglib.data_storer.get_highest_index_in_our_db() + 1
-    if start_from >= end_with:
-        print "looks like our database is already up to date. i wont scrape anything, but i might grab some images if we need them"
-    else:
-        print "looks like the highest index in their db is %s, so i'll end with that" % end_with
-        print "i'm about to scrape out raw dumps and grab metadata for %s - %s" % (start_from, end_with)
-        if WORK_LOCALLY:
-            cdc_phil_scrape_range_from_hd(start_from, end_with)
-        else:
-            bootstrap_filestructure()
-            cdc_phil_scrape_range(start_from, end_with)
-    # don't worry--this only downloads images that we don't already have marked as downloaded in our database
-    if GET_IMAGES:
-        get_all_images()
-
-
+    # do a scrape on them
+    self.myscraper.scrape_indeces(scrape_these, from_hd=True)
 
 if __name__ == '__main__':
     main()
