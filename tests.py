@@ -26,7 +26,7 @@ class TestScraperFunctions(unittest.TestCase):
         known_good_indeces = self.imglib.tests.known_good_indeces
 
         # do a scrape on them
-        self.myscraper.scrape_indeces(known_good_indeces, from_hd=True)
+        self.myscraper.scrape_indeces(known_good_indeces, from_hd=False)
         #self.myscraper.scrape_indeces(known_good_indeces, False)
 
         # check that we have the right number of rows in the database
@@ -49,15 +49,10 @@ class TestScraperFunctions(unittest.TestCase):
             print "making sure we have " + html_file
             self.assertTrue(os.access(html_file,os.F_OK))
 
-            for resolution in self.myscraper.imglib.data_schema.resolutions:
-                extension = scraper.get_extension_from_path(self.myscraper.get_image_url(id, resolution))
-                #TODO: this is a bandaid solution. we should not hard-code resolution names
-                if resolution == 'thumb':
-                    file = self.myscraper.thumb_dir + subdir_for_id + filename_base_for_id + extension
-                elif resolution == 'lores':
-                    file = self.myscraper.lores_dir + subdir_for_id + filename_base_for_id + extension
-                elif resolution == 'hires':
-                    file = self.myscraper.hires_dir + subdir_for_id + filename_base_for_id + extension
+            for resolution in self.myscraper.resolutions:
+                extension = scraper.get_extension_from_path(self.myscraper.get_resolution_image_url(id, resolution))
+                remote_url = self.myscraper.get_resolution_image_url(id, resolution)
+                file = self.myscraper.get_resolution_local_image_location(resolution, id, remote_url)
                 print "making sure we have " + file
                 self.assertTrue(os.access(file,os.F_OK))
 
