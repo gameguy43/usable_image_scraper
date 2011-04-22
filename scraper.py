@@ -92,6 +92,7 @@ class Scraper:
         self.imglib = imglib 
         self.resolutions = imglib.data_schema.resolutions
         self.max_daemons = max_daemons
+        print self.max_daemons
 
         self.data_dir = data_dir
         self.html_dir = data_dir + html_subdir 
@@ -395,7 +396,8 @@ class Scraper:
                 html = self.get_local_raw_html(current_id)
             try:
                 # 3: parse the metadata out of their html
-                metadata = self.imglib.parser.parse_img(html)
+                metadata = self.imglib.parser.parse_img_html_page(html)
+                metadata = self.imglib.parser.post_processing(metadata)
             except KeyboardInterrupt:
                 sys.exit(0)
             except:

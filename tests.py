@@ -5,7 +5,7 @@ import os
 
 class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
-        # TODO: instantiate a database?
+        self.maxDiff = None
         # instantiate a scraper 
         self.imglib_name = 'cdc_phil'
         self.myscraper = scraper.mkscraper(self.imglib_name)
@@ -32,7 +32,6 @@ class TestScraperFunctions(unittest.TestCase):
         #self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
 
         # do a scrape on them
-        #self.myscraper.scrape_indeces(known_good_indeces, from_hd=False)
         self.myscraper.scrape_indeces(known_good_indeces, from_hd=True) #DEBUG TODO
         #self.myscraper.scrape_indeces(known_good_indeces, False)
 
@@ -47,9 +46,11 @@ class TestScraperFunctions(unittest.TestCase):
 
         # check that at least one of the rows actually has the right data
         known_metadata_mappings = self.imglib.tests.known_metadata_mappings
-        for id, known_metadata_mapping in known_metadata_mappings:
-            in_db_data = self.scraper.get_image_metadata_dict(id)
-            self.assertEqual(known_metadata_mapping)
+        for id, known_metadata_mapping in known_metadata_mappings.items():
+            in_db_data = self.myscraper.get_image_metadata_dict(id)
+            for key, known_data in known_metadata_mapping.items():
+                print key
+                self.assertEqual(known_data, in_db_data[key])
 
         # check that all the images are marked as downloaded
         # first, do it by hand
@@ -59,15 +60,13 @@ class TestScraperFunctions(unittest.TestCase):
         # then do it the modular way
         for id in known_good_indeces:
             metadata = self.myscraper.get_image_metadata_dict(check_this_id)
-            for resolution in self.myscraper.resolutions:
-                self.assertTrue(metadata[resolution['status_column_name']])
+            for resolution, resolution_info in self.myscraper.resolutions.items():
+                self.assertTrue(metadata[resolution_info['status_column_name']])
 
         # make sure that we have the HTML and image files for each of the known good indeces
         for id in known_good_indeces:
-            subdir_for_id = self.myscraper.get_subdir_for_id(id)
-            filename_base_for_id = self.myscraper.get_filename_base_for_id(id) 
+            html_file = self.myscraper.get_local_html_file_location(id)
 
-            html_file = self.myscraper.html_dir + subdir_for_id + filename_base_for_id + ".html"
             print "making sure we have " + html_file
             self.assertTrue(os.access(html_file,os.F_OK))
 
