@@ -22,14 +22,14 @@ class TestScraperFunctions(unittest.TestCase):
     #TODO: test the scraping from hd functionality
 
     def test_scrape(self):
-        #TODO: this is kind of just a patch for now. but maybe it's cool to leave
-        # really we shouldhave separate test coverage for this
         # grab known good indeces
         known_good_indeces = self.imglib.tests.known_good_indeces
         known_good_indeces.sort()
         max_known_good_index = known_good_indeces.pop()
 
-        self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
+        #TODO: this is kind of just a patch for now. but maybe it's cool to leave
+        # really we shouldhave separate test coverage for this
+        #self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
 
         # do a scrape on them
         #self.myscraper.scrape_indeces(known_good_indeces, from_hd=False)

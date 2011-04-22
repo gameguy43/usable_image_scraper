@@ -147,9 +147,12 @@ class Scraper:
         map((lambda dirname: mkdir(root_dir + dirname)), subdirs)
 
     def get_resolution_local_image_location(self, resolution, id, remote_url=None):
-        if not remote_url:
+        try:
             remote_url = self.get_resolution_url(resolution, id)
-        return self.get_resolution_download_dir(resolution) + get_subdir_for_id(id) + get_filename_base_for_id(id) + get_extension_from_path(remote_url)
+            extension = get_extension_from_path(remote_url)
+        except:
+            extension = self.resolutions[resolution]['extension']
+        return self.get_resolution_download_dir(resolution) + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
 
     # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
     # this threading code is mostly from there
@@ -208,7 +211,6 @@ class Scraper:
         
     def get_resolution_status_column(self, resolution):
         the_status_column_name = self.get_resolution_status_column_name(resolution)
-        print the_status_column_name
         the_status_column = getattr(self.metadata_table, the_status_column_name)
         return the_status_column
 
@@ -222,15 +224,17 @@ class Scraper:
 
     def mark_img_as_not_downloaded(self, id, resolution):
         status_column_name = self.get_resolution_status_column_name(resolution)
-        row = self.metadata_table.get(id)
-        setattr(row, status_column_name, False)
-        self.db.commit()
+        data = {}
+        data['id'] = id
+        data[status_column_name] = False
+        self.insert_or_update_table_row(self.metadata_table, data)
 
     def mark_img_as_downloaded(self, id, resolution):
         status_column_name = self.get_resolution_status_column_name(resolution)
-        row = self.metadata_table.get(id)
-        setattr(row, status_column_name, True)
-        self.db.commit()
+        data = {}
+        data['id'] = id
+        data[status_column_name] = True
+        self.insert_or_update_table_row(self.metadata_table, data)
 
 
     # TODO: make sure that we're actually defaulting the downloaded status to false, as we'd hope
@@ -238,7 +242,7 @@ class Scraper:
     def get_image_metadata(self, id):
         return self.metadata_table.get(id)
 
-    def get_image_metadata(self, id):
+    def get_image_metadata_dict(self, id):
         return self.metadata_table.get(id).__dict__
 
     #TODO: the below can be rewritten to use the above
@@ -281,7 +285,6 @@ class Scraper:
 
     def get_all_images(self):
         for resolution, resolution_data in self.resolutions.items():
-            print resolution # TODO: DEBUG
             self.get_images(resolution)
 
 
@@ -313,14 +316,17 @@ class Scraper:
     def insert_or_update_table_row(self, table, new_data_dict):
         # merge the new and the old into a fresh dict
         existing_row = table.get(new_data_dict['id'])
-        existing_row_data_dict = existing_row.__dict__
-        final_row_data_dict = existing_row_data_dict
-        for key, value in new_data_dict.items():
-            final_row_data_dict[key] = value
+        if existing_row:
+            existing_row_data_dict = existing_row.__dict__
+            final_row_data_dict = existing_row_data_dict
+            for key, value in new_data_dict.items():
+                final_row_data_dict[key] = value
 
-        #write over the current row contents with it
-        self.db.delete(existing_row)
-        self.db.commit()
+            #write over the current row contents with it
+            self.db.delete(existing_row)
+            self.db.commit()
+        else: 
+            final_row_data_dict = new_data_dict
         table.insert(**final_row_data_dict)
         self.db.commit()
         
@@ -427,11 +433,12 @@ class Scraper:
 
 
 
-    # TODO: this is untested.
+    # NOTE: this will add rows even for ids that we don't have rows for yet
     def update_resolution_download_status_based_on_fs(self, resolution, ceiling_id=50000):
-        ## mark things that we have as downloaded
+        ## go through ids and check if we have them
+        # TODO: this doesn't work currently because we don't know the extension of 
         root_dir = self.get_resolution_download_dir(resolution)
-        ids = range(ceiling_id)
+        ids = range(1, ceiling_id+1)
         for id in ids:
             local_file_location = self.get_resolution_local_image_location(resolution, id)
             we_have_it = os.access(local_file_location,os.F_OK)
@@ -442,7 +449,7 @@ class Scraper:
 
     def update_download_statuses_based_on_fs(self, ceiling_id=50000):
         for resolution, res_data in self.resolutions.items():
-            self.update_resolution_download_status_based_on_fs(resolution)
+            self.update_resolution_download_status_based_on_fs(resolution, ceiling_id)
         
 
     # run this if you update the parser in a way that should affect the whole dataset
