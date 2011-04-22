@@ -146,7 +146,9 @@ class Scraper:
         # also, make the effing directories
         map((lambda dirname: mkdir(root_dir + dirname)), subdirs)
 
-    def get_resolution_local_image_location(self, resolution, id, remote_url):
+    def get_resolution_local_image_location(self, resolution, id, remote_url=None):
+        if not remote_url:
+            remote_url = self.get_resolution_url(resolution, id)
         return self.get_resolution_download_dir(resolution) + get_subdir_for_id(id) + get_filename_base_for_id(id) + get_extension_from_path(remote_url)
 
     # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
@@ -189,6 +191,10 @@ class Scraper:
 
 
 
+    def get_resolution_url(self, resolution, id):
+        row = self.metadata_table.get(id)
+        url_column_name = self.get_resolution_url_column_name(resolution)
+        return getattr(row, url_column_name)
 
     def get_resolution_url_column_name(self, resolution):
         return self.resolutions[resolution]['url_column_name']
@@ -214,6 +220,12 @@ class Scraper:
     def get_resolution_download_dir(self, resolution):
         return self.data_dir + self.resolutions[resolution]['subdir']
 
+    def mark_img_as_not_downloaded(self, id, resolution):
+        status_column_name = self.get_resolution_status_column_name(resolution)
+        row = self.metadata_table.get(id)
+        setattr(row, status_column_name, False)
+        self.db.commit()
+
     def mark_img_as_downloaded(self, id, resolution):
         status_column_name = self.get_resolution_status_column_name(resolution)
         row = self.metadata_table.get(id)
@@ -223,11 +235,11 @@ class Scraper:
 
     # TODO: make sure that we're actually defaulting the downloaded status to false, as we'd hope
 
-
     def get_image_metadata(self, id):
         return self.metadata_table.get(id)
 
-        
+    def get_image_metadata(self, id):
+        return self.metadata_table.get(id).__dict__
 
     #TODO: the below can be rewritten to use the above
     def get_set_images_to_dl(self,resolution):
@@ -298,15 +310,18 @@ class Scraper:
         self.insert_or_update_table_row(self.metadata_table, metadata_dict)
 
     #NOTE: this only works if the primary key is 'id'
-    def insert_or_update_table_row(self, table, data_dict):
-        #TODO:
-        print "AHHHHHHHH WE MIGHT BE CLOBBERING DATA HERE"
-        existing_row = table.get(data_dict['id'])
-        if existing_row:
-            self.db.delete(existing_row)
-            self.db.commit()
-            self.db.commit()
-        table.insert(**data_dict)
+    def insert_or_update_table_row(self, table, new_data_dict):
+        # merge the new and the old into a fresh dict
+        existing_row = table.get(new_data_dict['id'])
+        existing_row_data_dict = existing_row.__dict__
+        final_row_data_dict = existing_row_data_dict
+        for key, value in new_data_dict.items():
+            final_row_data_dict[key] = value
+
+        #write over the current row contents with it
+        self.db.delete(existing_row)
+        self.db.commit()
+        table.insert(**final_row_data_dict)
         self.db.commit()
         
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
@@ -317,8 +332,8 @@ class Scraper:
         if not from_hd:
             try:
                 #TODO: i think i can cut this cookie stuff
-                cookiejar = self.imglib.scraper.get_me_a_cookie()
-                pass
+                #cookiejar = self.imglib.scraper.get_me_a_cookie()
+                cookiejar = None
             except KeyboardInterrupt:
                 sys.exit(0)
             except:
@@ -410,6 +425,25 @@ class Scraper:
             print "k, trying to get the images now"
             self.get_all_images()
 
+
+
+    # TODO: this is untested.
+    def update_resolution_download_status_based_on_fs(self, resolution, ceiling_id=50000):
+        ## mark things that we have as downloaded
+        root_dir = self.get_resolution_download_dir(resolution)
+        ids = range(ceiling_id)
+        for id in ids:
+            local_file_location = self.get_resolution_local_image_location(resolution, id)
+            we_have_it = os.access(local_file_location,os.F_OK)
+            if we_have_it:
+                self.mark_img_as_downloaded(id, resolution)
+            else:
+                self.mark_img_as_not_downloaded(id, resolution)
+
+    def update_download_statuses_based_on_fs(self, ceiling_id=50000):
+        for resolution, res_data in self.resolutions.items():
+            self.update_resolution_download_status_based_on_fs(resolution)
+        
 
     # run this if you update the parser in a way that should affect the whole dataset
     # this will use the local copies of the html, not the live ones on the cdc site
