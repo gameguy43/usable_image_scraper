@@ -26,14 +26,16 @@ class TestScraperFunctions(unittest.TestCase):
         known_good_indeces = self.imglib.tests.known_good_indeces
         known_good_indeces.sort()
         max_known_good_index = known_good_indeces.pop()
+        # woops--now we're missing the last one. better put that back.
+        known_good_indeces.append(max_known_good_index)
 
         #TODO: this is kind of just a patch for now. but maybe it's cool to leave
         # really we shouldhave separate test coverage for this
         #self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
 
         # do a scrape on them
-        self.myscraper.scrape_indeces(known_good_indeces, from_hd=True) #DEBUG TODO
-        #self.myscraper.scrape_indeces(known_good_indeces, False)
+        #self.myscraper.scrape_indeces(known_good_indeces, from_hd=True) #DEBUG TODO
+        self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
 
         # check that we have the right number of rows in the database
         rows = self.myscraper.metadata_table.all()

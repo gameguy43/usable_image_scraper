@@ -246,6 +246,16 @@ class Scraper:
     def get_image_metadata_dict(self, id):
         return self.metadata_table.get(id).__dict__
 
+    def get_image_html_repr(self, id):
+        kwargs = {
+            'image_as_dict' : self.get_image_metadata_dict(id),
+            'image_resolution_to_local_file_location_fxn' : 
+                lambda resolution: self.get_resolution_local_image_location(resolution, id),
+            }
+        html = self.imglib.data_schema.repr_as_html(**kwargs)
+        return html
+
+
     #TODO: the below can be rewritten to use the above
     def get_set_images_to_dl(self,resolution):
         ## input: resolution, as a string (hires, lores, thumb)
