@@ -74,6 +74,8 @@ def mkscraper(image_db_key):
 
     kwargs = {}
     kwargs['imglib'] = getattr(config.img_libraries_metalib, img_db_config['python_lib'])
+    # we keep this around so that we can construct a different data path for the web
+    kwargs['data_library_subdir'] = img_db_config['data_subdir']
     kwargs['data_dir'] = data_base_dir
     kwargs['html_subdir'] = config.html_subdir
 
@@ -88,7 +90,7 @@ def mkscraper(image_db_key):
 
 class Scraper:
     # imglib is the string name of the 
-    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, max_daemons=10):
+    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10):
         self.imglib = imglib 
         self.resolutions = imglib.data_schema.resolutions
         self.max_daemons = max_daemons
@@ -96,6 +98,8 @@ class Scraper:
 
         self.data_dir = data_dir
         self.html_dir = data_dir + html_subdir 
+        # we keep this around so that we can construct a different data path for the web
+        self.data_library_subdir = data_library_subdir
 
         # make sure we have all the right directories set up for storing html and images
         self.bootstrap_filestructure()
@@ -246,14 +250,6 @@ class Scraper:
     def get_image_metadata_dict(self, id):
         return self.metadata_table.get(id).__dict__
 
-    def get_image_html_repr(self, id):
-        kwargs = {
-            'image_as_dict' : self.get_image_metadata_dict(id),
-            'image_resolution_to_local_file_location_fxn' : 
-                lambda resolution: self.get_resolution_local_image_location(resolution, id),
-            }
-        html = self.imglib.data_schema.repr_as_html(**kwargs)
-        return html
 
 
     #TODO: the below can be rewritten to use the above
@@ -473,6 +469,29 @@ class Scraper:
         cdc_phil_scrape_range_from_hd(start_from, end_with)
 
 
+
+    #### WEB STUFF
+
+    def set_web_vars(self, web_data_base_dir):
+        self.web_data_base_dir = web_data_base_dir + self.data_library_subdir
+
+    def get_web_resolution_local_image_location(self, resolution, id, remote_url=None):
+        try:
+            remote_url = self.get_resolution_url(resolution, id)
+            extension = get_extension_from_path(remote_url)
+        except:
+            extension = self.resolutions[resolution]['extension']
+        return self.web_data_base_dir + self.resolutions[resolution]['subdir'] + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
+
+
+    def get_image_html_repr(self, id):
+        kwargs = {
+            'image_as_dict' : self.get_image_metadata_dict(id),
+            'image_resolution_to_local_file_location_fxn' : 
+                lambda resolution: self.get_web_resolution_local_image_location(resolution, id),
+            }
+        html = self.imglib.data_schema.repr_as_html(**kwargs)
+        return html
 
 def main():
     myscraper = mkscraper('cdc_phil')
