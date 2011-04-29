@@ -7,7 +7,7 @@ class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         # instantiate a scraper 
-        self.imglib_name = 'cdc_phil'
+        self.imglib_name = 'fema'
         self.myscraper = scraper.mkscraper(self.imglib_name)
         self.imglib = self.myscraper.imglib
 
@@ -49,6 +49,10 @@ class TestScraperFunctions(unittest.TestCase):
         # check that at least one of the rows actually has the right data
         known_metadata_mappings = self.imglib.tests.known_metadata_mappings
         for id, known_metadata_mapping in known_metadata_mappings.items():
+            # this is kind of hackey, but makes sense--
+            # if we didn't put the known good data through the same encoding and decoding process, we might get problems where we have a list of tuples instead of a dict, etc
+            known_metadata_mapping = self.imglib.data_schema.re_objectify_data(
+                self.imglib.data_schema.prep_data_for_insertion(known_metadata_mapping))
             in_db_data = self.myscraper.get_image_metadata_dict(id)
             for key, known_data in known_metadata_mapping.items():
                 print key
@@ -57,6 +61,7 @@ class TestScraperFunctions(unittest.TestCase):
         # check that all the images are marked as downloaded
         # first, do it by hand
         check_this_id = known_good_indeces[0]
+        check_this_id = str(check_this_id)
         self.assertTrue(self.myscraper.get_image_metadata_dict(check_this_id)['hires_status'])
 
         # then do it the modular way

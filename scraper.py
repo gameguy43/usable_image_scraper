@@ -105,11 +105,6 @@ class Scraper:
         self.bootstrap_filestructure()
 
         metadata_table_name = data_table_prefix + "metadata"
-        '''
-        hires_status_table_name = data_table_prefix + "hires_status"
-        lores_status_table_name = data_table_prefix + "lores_status"
-        thumb_status_table_name = data_table_prefix + "thumb_status"
-        '''
 
         self.db = SqlSoup(db_url)
         #from sqlalchemy.orm import scoped_session, sessionmaker
@@ -117,16 +112,13 @@ class Scraper:
 
         # make the tables if they don't already exist
         imglib.data_schema.Base.metadata.create_all(self.db.engine)
+        self.db.commit()
 
         # some nice shortcuts for grabbing various tables later
         self.metadata_table = getattr(self.db, metadata_table_name)
-        '''
-        self.hires_status_table = getattr(self.db, hires_status_table_name)
-        self.lores_status_table = getattr(self.db, lores_status_table_name)
-        self.thumb_status_table = getattr(self.db, thumb_status_table_name)
-        '''
-
-
+        if not self.metadata_table:
+            print "crap, something has gone really wrong. couldn't grab the metadata table"
+            
 
         #TODO: i think that maybe i can remove this. but not sure. probs need for sqlite.
         self.db_lock = threading.RLock()
@@ -232,25 +224,27 @@ class Scraper:
         data = {}
         data['id'] = id
         data[status_column_name] = False
-        self.insert_or_update_table_row(self.metadata_table, data)
+        self.store_metadata_row(data)
 
     def mark_img_as_downloaded(self, id, resolution):
         status_column_name = self.get_resolution_status_column_name(resolution)
         data = {}
         data['id'] = id
         data[status_column_name] = True
-        self.insert_or_update_table_row(self.metadata_table, data)
+        self.store_metadata_row(data)
 
 
     # TODO: make sure that we're actually defaulting the downloaded status to false, as we'd hope
 
+    #TODO: we probably shouldn't ever use this, since it doesn't "uncompress" the data after pulling it from the db
     def get_image_metadata(self, id):
         return self.metadata_table.get(id)
 
     def get_image_metadata_dict(self, id):
-        return self.metadata_table.get(id).__dict__
-
-
+        # we run this through dict() so that we're manipulating a copy, not the actual object, which it turns out is cached or something
+        row_dict = dict(self.metadata_table.get(id).__dict__)
+        objectified_dict = self.imglib.data_schema.re_objectify_data(row_dict)
+        return objectified_dict
 
     #TODO: the below can be rewritten to use the above
     def get_set_images_to_dl(self,resolution):
@@ -317,10 +311,14 @@ class Scraper:
         return html
 
     def store_metadata_row(self, metadata_dict):
+        metadata_dict = self.imglib.data_schema.prep_data_for_insertion(metadata_dict)
         self.insert_or_update_table_row(self.metadata_table, metadata_dict)
 
     #NOTE: this only works if the primary key is 'id'
     def insert_or_update_table_row(self, table, new_data_dict):
+        if not new_data_dict:
+            print "you're trying to insert a blank dict. that's pretty lame."
+            return False
         # merge the new and the old into a fresh dict
         existing_row = table.get(new_data_dict['id'])
         if existing_row:
@@ -408,6 +406,17 @@ class Scraper:
                 sys.exit(0)
             except:
                 print "ERROR: couldn't parse raw html for id " + str(current_id)
+                metadata = {
+                        'id': current_id,
+                        'we_couldnt_parse_it': True,
+                        }
+                self.store_metadata_row(metadata)
+                print "we just recorded in the DB the fact that we couldn't parse this one"
+                failed_indices.append(current_id)
+                traceback.print_exc()
+                continue
+            if not metadata or metadata == {}:
+                print "ERROR: we thought we parsed raw html for id " + str(current_id) + ", but we got a blank dict back"
                 metadata = {
                         'id': current_id,
                         'we_couldnt_parse_it': True,
