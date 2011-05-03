@@ -20,7 +20,7 @@
 ################################################################################
 ################################################################################
 
-import urllib
+import urllib2
 import os.path
 import Queue
 import sys
@@ -82,6 +82,7 @@ def mkscraper(image_db_key):
     kwargs['db_url'] = config.db_url
     kwargs['data_table_prefix'] = img_db_config['data_table_prefix']
     kwargs['max_daemons'] = config.max_daemons
+    kwargs['max_filesize'] = config.max_filesize
 
     return Scraper(**kwargs)
 
@@ -90,10 +91,11 @@ def mkscraper(image_db_key):
 
 class Scraper:
     # imglib is the string name of the 
-    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10):
+    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10, max_filesize=None):
         self.imglib = imglib 
         self.resolutions = imglib.data_schema.resolutions
         self.max_daemons = max_daemons
+        self.max_filesize = max_filesize
         print self.max_daemons
 
         self.data_dir = data_dir
@@ -154,11 +156,10 @@ class Scraper:
     # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
     # this threading code is mostly from there
     class ImgDownloader(threading.Thread):
-        def __init__(self, queue, resolution, db_lock, scraper):
+        def __init__(self, queue, resolution, scraper):
             threading.Thread.__init__(self)
             self.queue = queue
             self.resolution = resolution
-            self.db_lock = db_lock
             self.scraper = scraper
         def run(self):
             while True:
@@ -168,15 +169,27 @@ class Scraper:
                     print id_url_tuple #TODO: make this output more useful
                     id = id_url_tuple[0]
                     url = id_url_tuple[1]
-                    #TODO: NOTE: this breaks if the extension is something other than 3 chars long
                     local_filename = self.scraper.get_resolution_local_image_location(self.resolution, id, url)
-                    urllib.urlretrieve(url, local_filename)
-                    print "finished downloading " + url
-                    id_status_dict = {'id': id, 'status': 1}
-                    # signal to db that we're done downloading
-                    with self.db_lock:
-                        self.scraper.mark_img_as_downloaded(id, self.resolution)
-                        print "finished marking as downloaded" + url
+                    remote = urllib2.urlopen(url)
+                    filesize = int(remote.info().getheaders("Content-Length")[0])
+                    # if the file is too big
+                    if self.scraper.max_filesize and filesize > self.scraper.max_filesize:
+                        print filesize 
+                        print self.scraper.max_filesize
+                        print "this file is too big so i won't download it: " + local_filename
+                    # if the file isn't too big
+                    else:
+                        #download it!
+                        local = open(local_filename, 'w')
+                        local.write(remote.read())
+                        local.close()
+                        print "finished downloading " + url
+                            
+                        id_status_dict = {'id': id, 'status': 1}
+                        # signal to db that we're done downloading
+                        with self.scraper.db_lock:
+                            self.scraper.mark_img_as_downloaded(id, self.resolution)
+                            print "finished marking as downloaded" + url
 
                     # signals to queue job is done
                     self.queue.task_done()
@@ -267,7 +280,7 @@ class Scraper:
         # MAKE OUR THREADZZZ
         # note: they wont do anything until we put stuff in the queue
         for i in range(self.max_daemons):
-            t = self.ImgDownloader(queue, resolution, self.db_lock, self)
+            t = self.ImgDownloader(queue, resolution, self)
             t.setDaemon(True)
             t.start()
 

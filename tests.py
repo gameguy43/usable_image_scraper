@@ -7,7 +7,7 @@ class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         # instantiate a scraper 
-        self.imglib_name = 'cdc_phil'
+        self.imglib_name = 'fema'
         self.myscraper = scraper.mkscraper(self.imglib_name)
         self.imglib = self.myscraper.imglib
 
@@ -34,8 +34,8 @@ class TestScraperFunctions(unittest.TestCase):
         #self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
 
         # do a scrape on them
-        #self.myscraper.scrape_indeces(known_good_indeces, from_hd=True) #DEBUG TODO
-        self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
+        self.myscraper.scrape_indeces(known_good_indeces, from_hd=True) #DEBUG TODO
+        #self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
 
         # check that we have the right number of rows in the database
         rows = self.myscraper.metadata_table.all()

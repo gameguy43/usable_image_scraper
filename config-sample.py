@@ -24,6 +24,7 @@ lores_subdir = 'lores/'
 hires_subdir = 'hires/'
 html_subdir = 'html/'
 max_daemons = 50
+max_filesize = 100000 # in bytes
 #max_daemons = 1
 import sites
 img_libraries_metalib = sites
