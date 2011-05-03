@@ -7,7 +7,7 @@ class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         # instantiate a scraper 
-        self.imglib_name = 'fema'
+        self.imglib_name = 'cdc_phil'
         self.myscraper = scraper.mkscraper(self.imglib_name)
         self.imglib = self.myscraper.imglib
 

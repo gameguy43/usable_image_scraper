@@ -244,6 +244,7 @@ class Scraper:
         # we run this through dict() so that we're manipulating a copy, not the actual object, which it turns out is cached or something
         row_dict = dict(self.metadata_table.get(id).__dict__)
         objectified_dict = self.imglib.data_schema.re_objectify_data(row_dict)
+        del objectified_dict['_sa_instance_state'] # sqlalchemy throws this sucker in. dont want it.
         return objectified_dict
 
     #TODO: the below can be rewritten to use the above
