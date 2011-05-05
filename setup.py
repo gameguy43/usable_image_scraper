@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+import setuptools
 
 setup(name='usable_image_scraper',
     version='1.0',
@@ -9,11 +10,12 @@ setup(name='usable_image_scraper',
     author_email='parker@madebyparker.com',
     url='http://releaseourdata.com',
     packages=[
-        'usable_image_scraper.sites.cdc_phil_lib',
-        'usable_image_scraper.sites.fema_lib',
+        'sites.cdc_phil_lib',
+        'sites.fema_lib',
         ],
     install_requires=[
-        'SQLAlchemy<=0.6.8',
+        'SQLAlchemy>=0.6.7',
         'unittest2',
+        'BeautifulSoup',
         ],
     )
