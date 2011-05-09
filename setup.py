@@ -3,7 +3,8 @@
 from distutils.core import setup
 import setuptools
 
-setup(name='usable_image_scraper',
+setup(
+    name='usable_image_scraper',
     version='1.0',
     description='package for scraping out images and metadata from public domain image libraries',
     author='Parker Phinney',
