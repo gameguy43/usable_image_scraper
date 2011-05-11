@@ -55,66 +55,87 @@ resolutions = {
 
 their_fields = {
     'title' : {
+        'full_name' : 'Title',
         'column' : Column(String),
         },
     'contact' : {
+        'full_name' : 'Contact',
         'column' : Column(String),
         },
     'creator' : {
+        'full_name' : 'Creator',
         'column' : Column(String),
         },
     'desc' : {
+        'full_name' : 'Description',
         'column' : Column(String),
         },
     'subject' : {
+        'full_name' : 'Subject',
         'column' : Column(String),
         },
     'location' : {
+        'full_name' : 'Location',
         'column' : Column(String),
         },
     'publisher' : {
+        'full_name' : 'Publisher',
         'column' : Column(String),
         },
     'date_of_original' : {
+        'full_name' : 'Date of Original',
         'column' : Column(String),
         },
     'type' : {
+        'full_name' : 'Type',
         'column' : Column(String),
         },
     'format' : {
+        'full_name' : 'Format',
         'column' : Column(String),
         },
     'item_id' : {
+        'full_name' : 'Item ID',
         'column' : Column(String),
         },
     'source' : {
+        'full_name' : 'Source',
         'column' : Column(String),
         },
     'language' : {
+        'full_name' : 'Language',
         'column' : Column(String),
         },
     'rights' : {
+        'full_name' : 'Rights',
         'column' : Column(String),
         },
     'file_size' : {
+        'full_name' : 'File Size',
         'column' : Column(String),
         },
     'height' : {
+        'full_name' : 'Height',
         'column' : Column(String),
         },
     'width' : {
+        'full_name' : 'Width',
         'column' : Column(String),
         },
-    'color space' : {
+    'color_space' : {
+        'full_name' : 'Color Space',
         'column' : Column(String),
         },
     'audience' : {
+        'full_name' : 'Audience',
         'column' : Column(String),
         },
     'date_created' : {
+        'full_name' : 'Date created',
         'column' : Column(String),
         },
     'date_modified' : {
+        'full_name' : 'Date modified',
         'column' : Column(String),
         },
     }
@@ -236,3 +257,11 @@ all_fields = dict(their_fields.items() + our_fields.items())
 
 for fieldname, fieldinfo in all_fields.items():
     setattr(OurMetadata, fieldname, fieldinfo['column'])
+
+def get_field_key_by_full_name(full_name):
+    for key, data in their_fields.items():
+        if not data['full_name']:
+            continue
+        if data['full_name'] == full_name:
+            return key
+    return None

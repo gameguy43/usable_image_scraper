@@ -30,6 +30,7 @@ import yaml
 import types
 import string
 import scraper
+import data_schema
 
 def init_dict():
     metadict = {
@@ -86,6 +87,10 @@ def find_by_tag_and_contents(soup, tag, contents):
             return obj
     return None
 
+def get_text_within(html_blob):
+    return ''.join(html_blob.findAll(text=True))
+    
+
 def parse_img_html_page(html):
     if not html or html == '':
         print "wait, the page appears blank. abort mission!"
@@ -116,17 +121,34 @@ def parse_img_html_page(html):
     '''
 
     # html table with the rest of the data
+    
+    favorite_link_href = soup.find("a", {"title": u"Add to My Favorites"})['href']
+    the_split = favorite_link_href.split("'")
+    the_split.pop()
+    metadict['id'] = int(the_split.pop())
 
-    #metadict['id'] = soup.find("form", {"name": "mainimage"}).find("input", {"name": "CISOPTR"})['value']
 
     data_table = soup.find("table", {"style": "border-top: 1px solid #cccccc"}).find("tbody")
+    parsed_tuples = []
     for data_label_cell in data_table.findAll("td", {"width": "150"}):
         try:
-            label = data_label_cell.span.b.contents[0]
+            label = get_text_within(data_label_cell)
             print label
         except:
             continue
+        data_cell = data_label_cell.findNextSibling("td")
+        if label == 'Subject':
+            data = data_cell.findAll(text=True)
+        else:
+            data = get_text_within(data_cell).strip()
+        parsed_tuples.append((label, data))
+    # now we have a list of tuples of the parsed metadata
 
+    print parsed_tuples
+    for label, data in parsed_tuples:
+        field_key = data_schema.get_field_key_by_full_name(label)
+        metadict[field_key] = data
+        
     '''
     metadict['url_to_lores_img'] = soup.find("",{"class": "tophoto"}).find("img")["src"]
     metadict['url_to_hires_img'] = find_by_tag_and_contents(data_table, "a", u"\u00BB Download original photo")['href']
