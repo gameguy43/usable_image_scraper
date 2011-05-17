@@ -10,6 +10,12 @@ setup(
     author='Parker Phinney',
     author_email='parker@madebyparker.com',
     url='http://releaseourdata.com',
+    py_modules = [
+        'scraper',
+        'config',
+        'imginfo',
+        'tests',
+        ],
     packages=[
         'sites.cdc_phil_lib',
         'sites.fema_lib',

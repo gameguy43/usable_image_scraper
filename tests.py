@@ -62,7 +62,7 @@ class TestScraperFunctions(unittest.TestCase):
         # first, do it by hand
         check_this_id = known_good_indeces[0]
         check_this_id = str(check_this_id)
-        self.assertTrue(self.myscraper.get_image_metadata_dict(check_this_id)['hires_status'])
+        self.assertTrue(self.myscraper.get_image_metadata_dict(check_this_id)['lores_status'])
 
         # then do it the modular way
         for id in known_good_indeces:
