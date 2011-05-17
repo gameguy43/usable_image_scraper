@@ -15,6 +15,14 @@ image_databases = {
         'homepage' : "http://www.fema.gov/photolibrary/",
         'code_url' : "https://github.com/gameguy43/usable_image_scraper/tree/master/sites/fema_lib",
         },
+    "fws": {
+        'python_lib': 'fws_lib',
+        'data_subdir': 'fws/', #trailing slash
+        'data_table_prefix': 'fws_',
+        'long_name' : "The U.S. Fish & Wildlife Service National Digital Library",
+        'homepage' : "http://digitalmedia.fws.gov",
+        'code_url' : "https://github.com/gameguy43/usable_image_scraper/tree/master/sites/fws_lib",
+        },
     }
 
 ## Set these as needed locally
@@ -25,7 +33,6 @@ hires_subdir = 'hires/'
 html_subdir = 'html/'
 max_daemons = 50
 max_filesize = 100000 # in bytes
-#max_daemons = 1
 import sites
 img_libraries_metalib = sites
 
@@ -35,5 +42,3 @@ data_db_user = ''
 data_db_pass = ''
 
 db_url = 'sqlite:///' + data_db_db
-
-
