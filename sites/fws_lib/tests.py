@@ -8,8 +8,9 @@ known_good_indeces = [1, 2, 3, 11874, 1234]
 
 known_metadata_mappings = {
     1234 : {
-        'url_to_lores_img': u'http://digitalmedia.fws.gov/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=%20walrus&REC=1&DMTHUMB=1&DMROTATE=0',
-        'url_to_hires_img': u'',
+        'url_to_lores_img': u'http://digitalmedia.fws.gov/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0',
+        'url_to_hires_img': u'http://digitalmedia.fws.gov/FullRes/natdiglib/EBFC0C8E-E413-4F02-B1E5A1F1E1E039C6.jpg',
+        'url_to_thumb_img': u'http://digitalmedia.fws.gov/cgi-bin/thumbnail.exe?CISOROOT=/natdiglib&CISOPTR=1234',
         'id' : 1234,
         'title' : u"Shoreline Vegetation",
         'creator' : u"U.S. Fish and Wildlife Service",

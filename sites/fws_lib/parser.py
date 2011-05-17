@@ -102,31 +102,18 @@ def parse_img_html_page(html):
     if not soup:
         print "wait, we couldn't make a soup. i don't know WHY..."
         return None
-    # the lores image url
-    # the description/caption
-    '''
-        metadict['id']: 0,
-        metadict['title'] : u"",
-        metadict['creator'] : u"",
-        metadict['publisher'] : u"",
-        metadict['type'] : u"",
-        metadict['format'] : u"",
-        metadict['source'] : u"",
-        metadict['language'] : u"",
-        metadict['rights'] : u"",
-        metadict['audience'] : u"",
-        metadict['date_created'] : u"",
-        metadict['date_modified'] : u"",
-        metadict['subject'] : None,
-    '''
-
-    # html table with the rest of the data
     
     favorite_link_href = soup.find("a", {"title": u"Add to My Favorites"})['href']
     the_split = favorite_link_href.split("'")
     the_split.pop()
     metadict['id'] = int(the_split.pop())
 
+    #TODO: this is kinda hackey but probably fine
+    metadict['url_to_thumb_img'] = u'http://digitalmedia.fws.gov/cgi-bin/thumbnail.exe?CISOROOT=/natdiglib&CISOPTR=' + str(metadict['id'])
+
+    hires_link = soup.find(text=lambda str: str.strip() == u'(Full Resolution Image Link)', recursive=True).parent.find('a')
+    metadict['url_to_hires_img'] = hires_link['href']
+    metadict['url_to_lores_img'] = u'http://digitalmedia.fws.gov' + soup.find("input", {"type" : "image"})['src']
 
     data_table = soup.find("table", {"style": "border-top: 1px solid #cccccc"}).find("tbody")
     parsed_tuples = []
@@ -149,45 +136,6 @@ def parse_img_html_page(html):
         field_key = data_schema.get_field_key_by_full_name(label)
         metadict[field_key] = data
         
-    '''
-    metadict['url_to_lores_img'] = soup.find("",{"class": "tophoto"}).find("img")["src"]
-    metadict['url_to_hires_img'] = find_by_tag_and_contents(data_table, "a", u"\u00BB Download original photo")['href']
-    # TODO: for now, we just assume that the thumb image url follows a pattern
-    # maybe we should really do a search for this image's id and scrape the thumb url off of the page. meh.
-    metadict['url_to_thumb_img'] = string.replace(metadict['url_to_hires_img'], "original", "thumbnail")
-    
-    for data_label_cell in data_table.findAll("th"):
-        try:
-            label = data_label_cell.contents[0]
-        except:
-            continue
-        if label == u"Location:":
-            metadict['location'] = data_label_cell.findNextSibling("td").contents[0].strip()
-        elif label == u'Photographer:':
-            metadict['photographer'] = data_label_cell.findNextSibling("td").contents[0].strip()
-        elif label == u'Photo Date:':
-            metadict['photo_date'] = data_label_cell.findNextSibling("td").contents[0].strip()
-        elif label == u'ID:':
-            metadict['id'] = int(data_label_cell.findNextSibling("td").contents[0].strip())
-        elif label == u'Original filename:':
-            metadict['original_filename'] = data_label_cell.findNextSibling("td").contents[0].strip()
-        elif label == u'Size:':
-            metadict['size'] = data_label_cell.findNextSibling("td").contents[0].strip()
-        elif label == u'Dimensions:':
-            metadict['dimensions'] = data_label_cell.findNextSibling("td").contents[0].strip()
-        elif label == u'Categories:':
-            categories_td = data_label_cell.findNextSibling("td")
-            categories_list = filter(lambda x: isinstance(x,unicode), categories_td.contents)
-            categories_list = map(lambda x: x.strip(), categories_list)
-            categories_list = filter(lambda x: len(x) > 0, categories_list)
-            metadict['categories'] = categories_list
-        elif label == u'Disasters:':
-            disasters_td = data_label_cell.findNextSibling("td")
-            disaster_links = disasters_td.findAll("a")
-            disaster_tuples = map(lambda link: (link.contents[0],link['href']), disaster_links)
-            metadict['disasters'] = disaster_tuples
-    '''
-
     return metadict
     
 def test_parse():
