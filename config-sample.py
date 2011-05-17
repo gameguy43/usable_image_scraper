@@ -5,7 +5,7 @@ image_databases = {
         'data_table_prefix': 'cdc_phil_',
         'long_name' : "The Center for Disease Control's Public Health Image Library",
         'homepage' : "http://phil.cdc.gov/",
-        'code_url' : "https://github.com/gameguy43/cdc_phil_lib",
+        'code_url' : "https://github.com/gameguy43/usable_image_scraper/tree/master/sites/cdc_phil_lib",
         },
     "fema": {
         'python_lib': 'fema_lib',
@@ -13,7 +13,7 @@ image_databases = {
         'data_table_prefix': 'fema_',
         'long_name' : "The Fema Photo library",
         'homepage' : "http://www.fema.gov/photolibrary/",
-        'code_url' : "https://github.com/gameguy43/fema_lib",
+        'code_url' : "https://github.com/gameguy43/usable_image_scraper/tree/master/sites/fema_lib",
         },
     }
 
