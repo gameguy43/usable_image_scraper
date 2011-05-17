@@ -351,6 +351,12 @@ class Scraper:
             final_row_data_dict = new_data_dict
         table.insert(**final_row_data_dict)
         self.db.commit()
+
+    def scraper_all(self, dl_images=True, from_hd=False):
+        highest_index = self.imglib.scraper.get_highest_id()
+        indeces = range(1, highest_index+1)
+        self.scrape_indeces(indeces, dl_images, from_hd):
+
         
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
         ## main glue function
