@@ -38,6 +38,12 @@ class TestFEMAParserFunctions(unittest.TestCase):
         self.maxDiff = None
         self.use_live_page = True
 
+    def test_highest_id_parser(self):
+        highest_id = parser.get_highest_id()
+
+    def test_id_to_page_permalink(self):
+       self.assertTrue(isinstance(parser.id_to_page_permalink(id), str))
+
     def test_parser_correctness(self):
         for id, known_metadata in known_metadata_mappings.items():
             url_to_live_page = "http://www.fema.gov/photolibrary/photo_details.do?id=" + str(id)

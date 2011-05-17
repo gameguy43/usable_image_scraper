@@ -4,15 +4,15 @@ known_good_indeces = [1,2,3,4,5,6,7]
 
 known_metadata_mappings = {
     1 : {
-        u'id' : 1,
-        u'desc' : u'<b>Data tape storage room</b><p>Data tape storage room, NCHS.</p>',
-        u'provider' :  u'CDC',
-        u'creation' : '',
-        u'credit' : u'',
-        u'links' : u'',
+        'id' : 1,
+        'desc' : u'<b>Data tape storage room</b><p>Data tape storage room, NCHS.</p>',
+        'provider' :  u'CDC',
+        'creation' : u'',
+        'credit' : u'',
+        'links' : u'',
 #        u'categories' : u'',
-        u'page_permalink' : u'http://phil.cdc.gov/phil/details.asp?pid=1',
-        u'copyright' : u'<b>None</b> - This image is in the public domain and thus free of any copyright restrictions. As a matter of courtesy we request that the content provider be credited and notified in any public or private usage of this image.',
+        'page_permalink' : u'http://phil.cdc.gov/phil/details.asp?pid=1',
+        'copyright' : u'<b>None</b> - This image is in the public domain and thus free of any copyright restrictions. As a matter of courtesy we request that the content provider be credited and notified in any public or private usage of this image.',
     },
 }
 

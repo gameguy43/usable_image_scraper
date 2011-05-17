@@ -3,6 +3,7 @@ import scraper
 import config
 import os
 
+
 class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
@@ -18,6 +19,7 @@ class TestScraperFunctions(unittest.TestCase):
         # has the right tables
         # insert something and then grab it out
     '''
+        
 
     #TODO: test the scraping from hd functionality
 
@@ -99,4 +101,4 @@ class TestScraperFunctions(unittest.TestCase):
 # maybe. or just make this a test that lives in the individual image libraries
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=2)

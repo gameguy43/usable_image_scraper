@@ -74,11 +74,7 @@ def get_me_a_cookie():
 	return cj
 '''
 
-# this is basically the same process as the cookie-getting, except we do just a bit of parsing of the resultant search page
-# we search for the space character. this /seems to/ give us every single image, ordered by index descending.
-# so the highest index is the first one displayed in the search results!
-'''
-def get_highest_index():
+def get_highest_id():
     quicksearch_page_post_values = {
         'formaction':	'SEARCH',
         'illustrations':	'on',
@@ -117,7 +113,6 @@ def get_highest_index():
     search_results_html = handle.read()
 
     return parser.get_first_result_index_from_quick_search_results(search_results_html)
-'''
 
 
 #def scrape_out_img_page(id, cj=get_me_a_cookie()):

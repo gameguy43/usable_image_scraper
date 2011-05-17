@@ -32,18 +32,18 @@ import scraper
 
 def init_dict():
     metadict = {
-        'id': '',
-        'desc': '',
-        'categories': '',
-        'credit': '',
-        'links': '',
-        'provider': '',
-        'source': '',
-        'url_to_hires_img':  '',
-        'url_to_lores_img':  '',
-        'url_to_thumb_img':  '',
-        'copyright': '',
-        'creation': '',
+        'id': u'',
+        'desc': u'',
+        'categories': u'',
+        'credit': u'',
+        'links': u'',
+        'provider': u'',
+        'source': u'',
+        'url_to_hires_img':  u'',
+        'url_to_lores_img':  u'',
+        'url_to_thumb_img':  u'',
+        'copyright': u'',
+        'creation': u'',
         'access_time': datetime.today()
     }
     return metadict
