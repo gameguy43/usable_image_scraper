@@ -516,16 +516,14 @@ class Scraper:
         html = self.imglib.data_schema.repr_as_html(**kwargs)
         return html
 
-def main():
-    myscraper = mkscraper('cdc_phil')
+def nightly():
+    scrape_all()
 
-    # grab known good indeces
-    known_good_indeces = self.imglib.tests.known_good_indeces
-
-    scrape_these = known_good_indeces
-
-    # do a scrape on them
-    self.myscraper.scrape_indeces(scrape_these, from_hd=True)
+def scrape_all():
+    image_databases = config.image_databases
+    for name, data in image_databases.items():
+        myscraper = mkscraper(name)
+        myscraper.scrape_indeces(scrape_these, from_hd=False)
 
 if __name__ == '__main__':
-    main()
+    nightly()
