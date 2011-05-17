@@ -255,7 +255,10 @@ class Scraper:
 
     def get_image_metadata_dict(self, id):
         # we run this through dict() so that we're manipulating a copy, not the actual object, which it turns out is cached or something
-        row_dict = dict(self.metadata_table.get(id).__dict__)
+        row = self.get_image_metadata(id)
+        if not row:
+            return None
+        row_dict = dict(row.__dict__)
         objectified_dict = self.imglib.data_schema.re_objectify_data(row_dict)
         del objectified_dict['_sa_instance_state'] # sqlalchemy throws this sucker in. dont want it.
         return objectified_dict
