@@ -328,6 +328,8 @@ class Scraper:
         return html
 
     def store_metadata_row(self, metadata_dict):
+        if not metadata_dict.has_key('we_couldnt_parse_it'):
+            metadata_dict['we_couldnt_parse_it'] = 0
         metadata_dict = self.imglib.data_schema.prep_data_for_insertion(metadata_dict)
         self.insert_or_update_table_row(self.metadata_table, metadata_dict)
 
@@ -536,6 +538,11 @@ class Scraper:
         html = self.imglib.data_schema.repr_as_html(**kwargs)
         return html
 
+    def get_num_images(self):
+        # yeah, the below where statement really sucks
+        # i can't just filter by != True. it returns 0 results. i don't know why.
+        mywhere = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
+        return self.metadata_table.filter(mywhere).count()
 
 
 
@@ -551,3 +558,6 @@ def scrape_all_sites():
 
 if __name__ == '__main__':
     nightly()
+    #name = 'fema_lib'
+    #myscraper = mkscraper(name)
+    #myscraper.get_num_images()

@@ -29,7 +29,7 @@ import json
 import os.path
 from django.template import Template, Context
 
-table_name = 'fema_metadata'
+table_name = 'fws_metadata'
 
 
 resolutions = {
