@@ -200,7 +200,7 @@ class Scraper:
                     print "ERROR: trouble dling image apparently... " + str(id)
                     traceback.print_exc()
                     self.queue.task_done()
-                    return None
+                    continue
 
 
 
