@@ -345,12 +345,14 @@ class Scraper:
                 final_row_data_dict[key] = value
 
             #write over the current row contents with it
-            self.db.delete(existing_row)
-            self.db.commit()
+            with self.db_lock:
+                self.db.delete(existing_row)
+                self.db.commit()
         else: 
             final_row_data_dict = new_data_dict
-        table.insert(**final_row_data_dict)
-        self.db.commit()
+        with self.db_lock:
+            table.insert(**final_row_data_dict)
+            self.db.commit()
 
 
         
