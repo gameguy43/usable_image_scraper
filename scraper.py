@@ -352,10 +352,6 @@ class Scraper:
         table.insert(**final_row_data_dict)
         self.db.commit()
 
-    def scrape_all(self, dl_images=True, from_hd=False):
-        highest_index = self.imglib.scraper.get_highest_id()
-        indeces = range(1, highest_index+1)
-        self.scrape_indeces(indeces, dl_images, from_hd)
 
         
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
@@ -500,6 +496,10 @@ class Scraper:
         start_from = 1
         cdc_phil_scrape_range_from_hd(start_from, end_with)
 
+    def scrape_all(self, dl_images=True, from_hd=False):
+        highest_index = self.imglib.scraper.get_highest_id()
+        indeces = range(1, highest_index+1)
+        self.scrape_indeces(indeces, dl_images, from_hd)
 
 
     #### WEB STUFF
@@ -525,14 +525,18 @@ class Scraper:
         html = self.imglib.data_schema.repr_as_html(**kwargs)
         return html
 
-def nightly():
-    scrape_all()
 
-def scrape_all():
+
+
+
+def nightly():
+    scrape_all_sites()
+
+def scrape_all_sites():
     image_databases = config.image_databases
     for name, data in image_databases.items():
         myscraper = mkscraper(name)
-        myscraper.scrape_indeces(scrape_these, from_hd=False)
+        myscraper.scrape_all(dl_images=True, from_hd=False)
 
 if __name__ == '__main__':
     nightly()
