@@ -200,7 +200,7 @@ class Scraper:
                     print "ERROR: trouble dling image apparently... " + str(id)
                     traceback.print_exc()
                     self.queue.task_done()
-                    return None
+                    continue
 
 
 
@@ -498,9 +498,18 @@ class Scraper:
         start_from = 1
         cdc_phil_scrape_range_from_hd(start_from, end_with)
 
+    def get_highest_id_in_our_db(self):
+        try:
+            id = int(self.metadata_table.order_by(sqlalchemy.desc(self.metadata_table.id)).first().id)
+        except:
+            id = 0
+        return id
+        
+
     def scrape_all(self, dl_images=True, from_hd=False):
-        highest_index = self.imglib.scraper.get_highest_id()
-        indeces = range(1, highest_index+1)
+        floor = self.get_highest_id_in_our_db()
+        ceiling = self.imglib.scraper.get_highest_id()
+        indeces = range(floor, ceiling+1)
         self.scrape_indeces(indeces, dl_images, from_hd)
 
 
