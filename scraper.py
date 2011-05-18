@@ -545,8 +545,6 @@ class Scraper:
         return self.metadata_table.filter(mywhere).count()
 
 
-
-
 def nightly():
     scrape_all_sites()
 
