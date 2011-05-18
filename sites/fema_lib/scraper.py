@@ -75,14 +75,19 @@ def get_me_a_cookie():
 '''
 
 def get_highest_id():
-    quicksearch_page_post_values = {
-        'formaction':	'SEARCH',
-        'illustrations':	'on',
-        'keywords':	' ',
-        'keywordstext':	' ',
-        'photos':	'on',
-        'searchtype':	'photo|illustration|video',
-        'video':	'on',
+    search_url = 'http://www.fema.gov/photolibrary/photo_search.do'
+    post_payload = {
+        'pageStart' : '1',
+        'SKeywords' : '',
+        'SLocation' : '',
+        'SDisasterNumber' : '',
+        'SPhotographer' : '',
+        'SCategoryComboId' : '',
+        'SStartDate' : '',
+        'SEndDate' : '',
+        'sortBy' : 'date',
+        'pageSize' : '15',
+        'action' : 'Search',
     }
     urlopen = urllib2.urlopen
     Request = urllib2.Request
@@ -103,11 +108,11 @@ def get_highest_id():
     # we have to step through the landing page and the search results pages 
     # otherwise the site gives us session errors
     # so we go ahead and do that, picking up the necessary cookies along the way
-    req = Request('http://phil.cdc.gov/phil/home.asp', None, txheaders)
-    #cj.save(COOKIEFILE)                     # save the cookies 
-    handle = urlopen(req)
-    req = Request('http://phil.cdc.gov/phil/quicksearch.asp', urllib.urlencode(quicksearch_page_post_values), txheaders)
-    #cj.save(COOKIEFILE)                     # save the cookies again
+
+    #req = Request('http://phil.cdc.gov/phil/home.asp', None, txheaders)
+    #handle = urlopen(req)
+
+    req = Request(search_url, urllib.urlencode(post_payload), txheaders)
     handle = urlopen(req)
 
     search_results_html = handle.read()

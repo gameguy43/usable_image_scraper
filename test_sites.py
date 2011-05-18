@@ -10,8 +10,9 @@ def generate_TestSiteClass_for_site(site):
             self.maxDiff = None
             # instantiate a scraper 
             self.myscraper = scraper.mkscraper(site)
-            self.use_live_page = True
             self.imglib = self.myscraper.imglib
+
+            self.use_live_page = False
 
         def test_id_to_page_permalink(self):
             id = 1
@@ -21,7 +22,7 @@ def generate_TestSiteClass_for_site(site):
         def test_parser_correctness(self):
             for id, known_metadata in self.imglib.tests.known_metadata_mappings.items():
                 url_to_live_page = self.imglib.scraper.id_to_page_permalink(id) 
-                path_to_local_copy = "samples/" + str(id) + ".html"
+                path_to_local_copy = 'sites/' + config.image_databases[site]['python_lib'] + "/samples/" + str(id) + ".html"
                 expected_output = known_metadata
                         
                 if self.use_live_page:
@@ -40,7 +41,7 @@ def generate_TestSiteClass_for_site(site):
                     self.assertEqual(actual_output[key],self.expected_output[key])
                 '''
         def test_highest_id_parser(self):
-            highest_id = self.imglib.parser.get_highest_id()
+            highest_id = self.imglib.scraper.get_highest_id()
             self.assertTrue(isinstance(highest_id, int))
 
     return TestSite

@@ -74,19 +74,36 @@ def get_me_a_cookie():
 	return cj
 '''
 
-# this is basically the same process as the cookie-getting, except we do just a bit of parsing of the resultant search page
-# we search for the space character. this /seems to/ give us every single image, ordered by index descending.
-# so the highest index is the first one displayed in the search results!
-'''
-def get_highest_index():
-    quicksearch_page_post_values = {
-        'formaction':	'SEARCH',
-        'illustrations':	'on',
-        'keywords':	' ',
-        'keywordstext':	' ',
-        'photos':	'on',
-        'searchtype':	'photo|illustration|video',
-        'video':	'on',
+def get_highest_id(floor=0):
+    #TODO: this is a terrible band-aid solution.
+    # fws image search doesnt order by id by default--it seems to order alphabetically.
+    # a real solution would be to take a floor parameter and take a guess above it (+10,000, say)
+    # and then use binary search to see if we get a hit between the guess and the floor
+    # that's kind of expensive, though. and it's not fool proof (what if there are just huge gaps?)
+    return 12500
+    search_url = 'http://www.fema.gov/photolibrary/photo_search.do'
+    post_payload = {
+        'CISOBOX2': '',
+        'ddlMediaFormat': 'JPG',
+        'CISOROOT': 'all',
+        'CISORESTMP': '/cdm4/results.php',
+        'CISOVIEWTMP':'/cdm4/item_viewer.php',
+        'CISOMODE':'grid',
+        'CISOGRID' : 'thumbnail,A,1;title,A,1;subjec,A,0;descri,200,0;none,A,0;20;title;',
+        'CISOBIB' : 'title,A,1,N;subjec,A,0,N;descri,200,0,N;date,A,0,N;20',
+        'CISOTHUMB' : '20 (4x5);relevancy,none,none,none,none',
+        'CISOFIELD2' : 'CISOSEARCHALL',
+        'CISOOP2' : 'all',
+        'CISOFIELD1' : 'format',
+        'CISOOP1' : 'any',
+        'CISOBOX1' : 'JPG ',
+        'CISOFIELD3' : 'subjec',
+        'CISOOP3' : 'none',
+        'CISOBOX3' : '',
+        'CISOFIELD4' : 'subjec',
+        'CISOOP4': 'none',
+        'CISOBOX4' : '',
+        'History' : 'on',
     }
     urlopen = urllib2.urlopen
     Request = urllib2.Request
@@ -107,20 +124,15 @@ def get_highest_index():
     # we have to step through the landing page and the search results pages 
     # otherwise the site gives us session errors
     # so we go ahead and do that, picking up the necessary cookies along the way
-    req = Request('http://phil.cdc.gov/phil/home.asp', None, txheaders)
-    #cj.save(COOKIEFILE)                     # save the cookies 
-    handle = urlopen(req)
-    req = Request('http://phil.cdc.gov/phil/quicksearch.asp', urllib.urlencode(quicksearch_page_post_values), txheaders)
-    #cj.save(COOKIEFILE)                     # save the cookies again
+    #req = Request('http://phil.cdc.gov/phil/home.asp', None, txheaders)
+    #handle = urlopen(req)
+
+    req = Request(search_url, urllib.urlencode(post_payload), txheaders)
     handle = urlopen(req)
 
     search_results_html = handle.read()
 
     return parser.get_first_result_index_from_quick_search_results(search_results_html)
-'''
-
-
-#def scrape_out_img_page(id, cj=get_me_a_cookie()):
 
 
 def scrape_out_img_page(id, cj=None):
