@@ -496,6 +496,10 @@ class Scraper:
         start_from = 1
         cdc_phil_scrape_range_from_hd(start_from, end_with)
 
+    def get_highest_id_in_our_db(self):
+        return int(self.metadata_table.order_by(sqlalchemy.desc(self.metadata_table.id)).first().id)
+        
+
     def scrape_all(self, dl_images=True, from_hd=False):
         highest_index = self.imglib.scraper.get_highest_id()
         indeces = range(1, highest_index+1)
