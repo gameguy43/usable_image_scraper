@@ -175,28 +175,16 @@ our_fields = {
     }
 
 def prep_data_for_insertion(data_dict):
-    if 'disasters' in data_dict:
-        data_dict['disasters'] = json.dumps(data_dict['disasters'])
-    if 'categories' in data_dict:
-        data_dict['categories'] = json.dumps(data_dict['categories'])
+    if 'subject' in data_dict:
+        data_dict['subject'] = json.dumps(data_dict['subject'])
     return data_dict
 
 def re_objectify_data(data_dict):
-    if 'disasters' in data_dict:
-        data_dict['disasters'] = json.loads(data_dict['disasters'])
-    if 'categories' in data_dict:
-        data_dict['categories'] = json.loads(data_dict['categories'])
+    if 'subject' in data_dict:
+        data_dict['subject'] = json.loads(data_dict['subject'])
     return data_dict
 
-
-def disasters_to_html(list):
-    retval = "<ul>"
-    for string, url in list:
-        retval += '<li><a href="' + url + '">' + string + "</a></li>\n";
-    retval += "</ul>"
-    return retval
-
-def categories_to_html(list):
+def subject_to_html(list):
     retval = "<ul>"
     for category in list:
         retval += '<li>' + category + '</li>\n'
@@ -222,10 +210,8 @@ def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
     #image_as_dict['copyright'] = image_as_dict['copyright'].strip("'").replace('None', '<a href="http://creativecommons.org/licenses/publicdomain/" rel="license">None</a>')
 
     
-    if image_as_dict['disasters']:
-        image_as_dict['disasters'] = disasters_to_html(image_as_dict['disasters'])
-    if image_as_dict['categories']:
-        image_as_dict['categories'] = categories_to_html(image_as_dict['categories'])
+    if image_as_dict['subject']:
+        image_as_dict['subject'] = categories_to_html(image_as_dict['subject'])
 
     image_as_dict['next_id'] = int(image_as_dict['id']) + 1
     image_as_dict['prev_id'] = int(image_as_dict['id']) - 1
@@ -264,4 +250,4 @@ def get_field_key_by_full_name(full_name):
             continue
         if data['full_name'] == full_name:
             return key
-    return None
+    return False

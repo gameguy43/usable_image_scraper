@@ -134,6 +134,8 @@ def parse_img_html_page(html):
     print parsed_tuples
     for label, data in parsed_tuples:
         field_key = data_schema.get_field_key_by_full_name(label)
+        if not field_key:
+            continue
         metadict[field_key] = data
         
     return metadict

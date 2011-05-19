@@ -331,6 +331,8 @@ class Scraper:
         if not metadata_dict.has_key('we_couldnt_parse_it'):
             metadata_dict['we_couldnt_parse_it'] = 0
         metadata_dict = self.imglib.data_schema.prep_data_for_insertion(metadata_dict)
+        import pprint
+        pprint.pprint(metadata_dict)
         self.insert_or_update_table_row(self.metadata_table, metadata_dict)
 
     #NOTE: this only works if the primary key is 'id'
