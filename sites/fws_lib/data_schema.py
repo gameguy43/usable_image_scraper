@@ -28,10 +28,16 @@ from sqlalchemy import *
 import json
 import os.path
 from django.template import Template, Context
-import usable_image_scraper
+import usable_image_scraper.scraper
 
 table_name = 'fws_metadata'
 
+def subject_to_html(list):
+    retval = "<ul>"
+    for category in list:
+        retval += '<li>' + category + '</li>\n'
+    retval += "</ul>"
+    return retval
 
 resolutions = {
     'hires' : {
@@ -177,29 +183,12 @@ our_fields = {
 #   'is_color = Column(Boolean)
     }
 
-def prep_data_for_insertion(data_dict):
-    for key, data in data_dict:
-        if 'serialize' in data:
-            data_dict[key] = json.dumps(data_dict[key])
-    return data_dict
 
-def re_objectify_data(data_dict):
-    for key, data in data_dict:
-        if 'serialize' in data:
-            data_dict[key] = json.loads(data_dict[key])
-    return data_dict
-
-def subject_to_html(list):
-    retval = "<ul>"
-    for category in list:
-        retval += '<li>' + category + '</li>\n'
-    retval += "</ul>"
-    return retval
 
 template_file = 'django_template.html'
 
 def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
-    floorified = usable_image_scraper.floorify(image_as_dict['id'])
+    floorified = usable_image_scraper.scraper.floorify(image_as_dict['id'])
     id_zfilled = str(image_as_dict['id']).zfill(5)
     image_urls = {}
     for resolution in resolutions:
@@ -209,11 +198,22 @@ def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
     #image_as_dict['copyright'] = image_as_dict['copyright'].strip("'").replace('None', '<a href="http://creativecommons.org/licenses/publicdomain/" rel="license">None</a>')
 
     
-    if image_as_dict['subject']:
-        image_as_dict['subject'] = categories_to_html(image_as_dict['subject'])
-
     image_as_dict['next_id'] = int(image_as_dict['id']) + 1
     image_as_dict['prev_id'] = int(image_as_dict['id']) - 1
+
+    
+    image_as_dict['their_data'] = ''
+    for key, data in their_fields.items():
+        html_block = ''
+        # if there's a pre-perscribed way to represent this field:
+        if 'repr_as_html' in data:
+            html_block = data['repr_as_html'](image_as_dict[key])
+        # if not:
+        else:
+            html_block = '<span class="' + key + '">' + str(image_as_dict[key]) + '</span>'
+        image_as_dict['their_data'] = ''.join([image_as_dict['their_data'], html_block])
+        
+
     template_str = get_template_str()
     template = Template(template_str)
     context = Context({'image': image_as_dict, 'image_urls': image_urls})
@@ -223,6 +223,22 @@ def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
 
 
 # the stuff below here should stand on its own
+
+def prep_data_for_insertion(data_dict):
+    if not data_dict:
+        return data_dict
+    for key, data in data_dict.items():
+        if key in all_fields and 'serialize' in all_fields[key] and all_fields[key]['serialize']:
+            data_dict[key] = json.dumps(data_dict[key])
+    return data_dict
+
+def re_objectify_data(data_dict):
+    if not data_dict:
+        return data_dict
+    for key, data in data_dict.items():
+        if key in all_fields and 'serialize' in all_fields[key] and all_fields[key]['serialize']:
+            data_dict[key] = json.loads(data_dict[key])
+    return data_dict
 
 def get_template_str():
     path = os.path.dirname(__file__)

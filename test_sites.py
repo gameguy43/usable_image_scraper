@@ -25,9 +25,11 @@ def generate_TestSiteClass_for_site(site):
             self.assertTrue(isinstance(highest_id, int))
 
         def test_repr_as_html(self):
+            from django.conf import settings
+            settings.configure(DEBUG=True, TEMPLATE_DEBUG=True)
             for id, x in self.imglib.tests.known_metadata_mappings.items():
                 html = self.myscraper.get_image_html_repr(id)
-                self.assertTrue(isinstance(html, str))
+                self.assertTrue(isinstance(html, unicode) or isinstance(html, str))
         #### END INTERFACE STUFF
 
         def test_parser_correctness(self):
@@ -65,7 +67,7 @@ def test_these_sites(sites):
 
 if __name__ == '__main__':
     # either we want to test one site:
-    sites = ['fema']
+    sites = ['fws']
     # or we want to test all of them
     #sites = config.image_databases.keys()
 
