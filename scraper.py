@@ -249,6 +249,19 @@ class Scraper:
         data[status_column_name] = True
         self.store_metadata_row(data)
 
+    def get_next_successful_image_id(self, id):
+        where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
+        where2 = self.metadata_table.id > id
+        retval = int(self.metadata_table.filter(where2).first().id)
+        print retval
+        return retval
+
+    def get_prev_successful_image_id(self, id):
+        where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
+        where2 = self.metadata_table.id < id
+        retval = int(self.metadata_table.filter(where2).first().id)
+        print retval
+        return retval
 
     # TODO: make sure that we're actually defaulting the downloaded status to false, as we'd hope
 
@@ -476,8 +489,6 @@ class Scraper:
             print "k, trying to get the images now"
             self.get_all_images()
 
-
-
     # NOTE: this will add rows even for ids that we don't have rows for yet
     def update_resolution_download_status_based_on_fs(self, resolution, ceiling_id=50000):
         ## go through ids and check if we have them
@@ -496,14 +507,6 @@ class Scraper:
         for resolution, res_data in self.resolutions.items():
             self.update_resolution_download_status_based_on_fs(resolution, ceiling_id)
         
-
-    # run this if you update the parser in a way that should affect the whole dataset
-    # this will use the local copies of the html, not the live ones on the cdc site
-    # TODO: untested so far
-    def re_parse_all_metadata(self):
-        #TODO: truncate the current db... also, maybe back it up first?
-        start_from = 1
-        cdc_phil_scrape_range_from_hd(start_from, end_with)
 
     def get_highest_id_in_our_db(self):
         try:

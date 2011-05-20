@@ -95,6 +95,10 @@ class TestScraperFunctions(unittest.TestCase):
 
         # TODO: check that the function update_resolution_download_status_based_on_fs(self, resolution, ceiling_id=50000) works
         
+    def test_next_id(self):
+        known_good_indeces = self.imglib.tests.known_good_indeces
+        for id in known_good_indeces:
+            self.assertTrue(isinstance(self.myscraper.get_next_successful_image_id(id), int))
 
 
 #TODO: case: * grab the highest index in the database
