@@ -42,3 +42,7 @@ data_db_user = ''
 data_db_pass = ''
 
 db_url = 'sqlite:///' + data_db_db
+
+# web things
+# NOTE: currently, the below is overridden by the django app calling myscraper.set_web_vars
+web_data_base_dir = '/static/data/'
