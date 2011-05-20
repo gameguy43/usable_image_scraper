@@ -14,10 +14,21 @@ def generate_TestSiteClass_for_site(site):
 
             self.use_live_page = False
 
+        ##### INTERFACE STUFF--just make sure we have the right functions
         def test_id_to_page_permalink(self):
             id = 1
             url = self.imglib.scraper.id_to_page_permalink(id) 
             self.assertTrue(isinstance(url, str))
+
+        def test_highest_id_parser(self):
+            highest_id = self.imglib.scraper.get_highest_id()
+            self.assertTrue(isinstance(highest_id, int))
+
+        def test_repr_as_html(self):
+            for id, x in self.imglib.tests.known_metadata_mappings.items():
+                html = self.myscraper.get_image_html_repr(id)
+                self.assertTrue(isinstance(html, str))
+        #### END INTERFACE STUFF
 
         def test_parser_correctness(self):
             for id, known_metadata in self.imglib.tests.known_metadata_mappings.items():
@@ -40,9 +51,7 @@ def generate_TestSiteClass_for_site(site):
                     print key
                     self.assertEqual(actual_output[key],self.expected_output[key])
                 '''
-        def test_highest_id_parser(self):
-            highest_id = self.imglib.scraper.get_highest_id()
-            self.assertTrue(isinstance(highest_id, int))
+            
 
     return TestSite
 

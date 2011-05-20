@@ -83,6 +83,7 @@ def mkscraper(image_db_key):
     kwargs['data_table_prefix'] = img_db_config['data_table_prefix']
     kwargs['max_daemons'] = config.max_daemons
     kwargs['max_filesize'] = config.max_filesize
+    kwargs['web_data_base_dir'] = config.web_data_base_dir
 
     return Scraper(**kwargs)
 
@@ -91,7 +92,7 @@ def mkscraper(image_db_key):
 
 class Scraper:
     # imglib is the string name of the 
-    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10, max_filesize=None):
+    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10, max_filesize=None, web_data_base_dir=None):
         self.imglib = imglib 
         self.resolutions = imglib.data_schema.resolutions
         self.max_daemons = max_daemons
@@ -102,6 +103,8 @@ class Scraper:
         self.html_dir = data_dir + html_subdir 
         # we keep this around so that we can construct a different data path for the web
         self.data_library_subdir = data_library_subdir
+        if web_data_base_dir:
+            self.web_data_base_dir = web_data_base_dir + self.data_library_subdir
 
         # make sure we have all the right directories set up for storing html and images
         self.bootstrap_filestructure()
