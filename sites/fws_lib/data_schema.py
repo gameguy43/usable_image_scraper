@@ -28,6 +28,7 @@ from sqlalchemy import *
 import json
 import os.path
 from django.template import Template, Context
+import usable_image_scraper
 
 table_name = 'fws_metadata'
 
@@ -73,6 +74,8 @@ their_fields = {
     'subject' : {
         'full_name' : 'Subject',
         'column' : Column(String),
+        'repr_as_html' : subject_to_html,
+        'serialize' : True,
         },
     'location' : {
         'full_name' : 'Location',
@@ -175,13 +178,15 @@ our_fields = {
     }
 
 def prep_data_for_insertion(data_dict):
-    if 'subject' in data_dict:
-        data_dict['subject'] = json.dumps(data_dict['subject'])
+    for key, data in data_dict:
+        if 'serialize' in data:
+            data_dict[key] = json.dumps(data_dict[key])
     return data_dict
 
 def re_objectify_data(data_dict):
-    if 'subject' in data_dict:
-        data_dict['subject'] = json.loads(data_dict['subject'])
+    for key, data in data_dict:
+        if 'serialize' in data:
+            data_dict[key] = json.loads(data_dict[key])
     return data_dict
 
 def subject_to_html(list):
@@ -193,14 +198,8 @@ def subject_to_html(list):
 
 template_file = 'django_template.html'
 
-def floorify(id):
-    ## mod 100 the image id numbers to make smarter folders
-    floor = id - id % 100
-    floored = str(floor).zfill(5)[0:3]+"XX"
-    return floored
-
 def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
-    floorified = floorify(image_as_dict['id'])
+    floorified = usable_image_scraper.floorify(image_as_dict['id'])
     id_zfilled = str(image_as_dict['id']).zfill(5)
     image_urls = {}
     for resolution in resolutions:
