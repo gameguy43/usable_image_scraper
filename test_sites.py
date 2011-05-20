@@ -29,6 +29,7 @@ def generate_TestSiteClass_for_site(site):
             settings.configure(DEBUG=True, TEMPLATE_DEBUG=True)
             for id, x in self.imglib.tests.known_metadata_mappings.items():
                 html = self.myscraper.get_image_html_repr(id)
+                #TODO: test that the html actually contains all of the data
                 self.assertTrue(isinstance(html, unicode) or isinstance(html, str))
         #### END INTERFACE STUFF
 

@@ -204,13 +204,17 @@ def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
     
     image_as_dict['their_data'] = ''
     for key, data in their_fields.items():
-        html_block = ''
+        if not key in image_as_dict or not image_as_dict[key]:
+            continue
+        html_block = '<p class="datapoint">'
         # if there's a pre-perscribed way to represent this field:
+        html_block = html_block + '<strong class="label">' + their_fields[key]['full_name'] + ':</strong>'
         if 'repr_as_html' in data:
-            html_block = data['repr_as_html'](image_as_dict[key])
+            html_block = html_block + data['repr_as_html'](image_as_dict[key])
         # if not:
         else:
-            html_block = '<span class="' + key + '">' + str(image_as_dict[key]) + '</span>'
+            html_block = html_block + '<span class="' + key + '">' + str(image_as_dict[key]) + '</span>'
+        html_block = ''.join([html_block, '</p>'])
         image_as_dict['their_data'] = ''.join([image_as_dict['their_data'], html_block])
         
 
