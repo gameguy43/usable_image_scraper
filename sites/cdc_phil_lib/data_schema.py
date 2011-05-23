@@ -34,18 +34,21 @@ from django.template import Template, Context
 resolutions = {
     'hires' : {
         'status_column_name' : 'hires_status',
+        'too_big_column_name' : 'hires_too_big',
         'url_column_name'    : 'url_to_hires_img',
         'subdir'             : 'hires/',
         'extension'          : '.tif',
         },
     'lores' : {
         'status_column_name' : 'lores_status',
+        'too_big_column_name' : 'lores_too_big',
         'url_column_name'    : 'url_to_lores_img',
         'subdir'             : 'lores/',
         'extension'          : '.jpg',
         },
     'thumb' : {
         'status_column_name' : 'thumb_status',
+        'too_big_column_name' : 'thumb_too_big',
         'url_column_name'    : 'url_to_thumb_img',
         'subdir'             : 'thumb/',
         'extension'          : '.jpg',
@@ -81,39 +84,6 @@ their_fields = {
         },
 }
 
-our_fields = {
-    'url_to_hires_img' : {
-        'column': Column(String),
-        },
-    'url_to_lores_img' : {
-        'column': Column(String),
-        },
-    'url_to_thumb_img' : {
-        'column': Column(String),
-        },
-    'page_permalink' : {
-        'column': Column(String),
-        },
-    'access_time' : {
-        'column': Column(Integer),
-        },
-    'doesnt_exist' : {
-        'column': Column(Boolean),
-        },
-    'we_couldnt_parse_it' : {
-        'column': Column(Boolean),
-        },
-    'hires_status' : {
-        'column': Column(Boolean, default=False),
-        },
-    'lores_status' : {
-        'column': Column(Boolean, default=False),
-        },
-    'thumb_status' : {
-        'column': Column(Boolean, default=False),
-        },
-#   'is_color = Column(Boolean)
-    }
 
 def prep_data_for_insertion(data_dict):
     if 'links' in data_dict:
@@ -129,6 +99,28 @@ def re_objectify_data(data_dict):
         data_dict['categories'] = json.loads(data_dict['categories'])
     return data_dict
 
+our_fields = {
+    'page_permalink' : {
+        'column': Column(String),
+        },
+    'access_time' : {
+        'column': Column(Integer),
+        },
+    'doesnt_exist' : {
+        'column': Column(Boolean),
+        },
+    'we_couldnt_parse_it' : {
+        'column': Column(Boolean),
+        },
+#   'is_color = Column(Boolean)
+    }
+
+resolutions_columns = []
+for resolution, data in resolutions.items():
+    resolutions_columns.append((data['status_column_name'], {'column' : Column(Boolean, default=False)}))
+    resolutions_columns.append((data['url_column_name'], {'column' : Column(String)}))
+    resolutions_columns.append((data['too_big_column_name'], {'column' : Column(Boolean, default=False)}))
+our_fields.update(dict(resolutions_columns))
 
 '''
 

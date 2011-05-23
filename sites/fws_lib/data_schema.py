@@ -42,18 +42,21 @@ def subject_to_html(list):
 resolutions = {
     'hires' : {
         'status_column_name' : 'hires_status',
+        'too_big_column_name': 'hires_too_big',
         'url_column_name'    : 'url_to_hires_img',
         'subdir'             : 'hires/',
         'extension'          : '.tif',
         },
     'lores' : {
         'status_column_name' : 'lores_status',
+        'too_big_column_name': 'lores_too_big',
         'url_column_name'    : 'url_to_lores_img',
         'subdir'             : 'lores/',
         'extension'          : '.jpg',
         },
     'thumb' : {
         'status_column_name' : 'thumb_status',
+        'too_big_column_name': 'thumb_too_big',
         'url_column_name'    : 'url_to_thumb_img',
         'subdir'             : 'thumb/',
         'extension'          : '.jpg',
@@ -149,25 +152,14 @@ their_fields = {
         },
     }
 
+
+
+
+template_file = 'django_template.html'
+
+# the stuff below here should stand on its own
+
 our_fields = {
-    'url_to_lores_img': {
-        'column' : Column(String),
-        },
-    'url_to_hires_img': {
-        'column' : Column(String),
-        },
-    'url_to_thumb_img': {
-        'column' : Column(String),
-        },
-    'hires_status' : {
-        'column': Column(Boolean, default=False),
-        },
-    'lores_status' : {
-        'column': Column(Boolean, default=False),
-        },
-    'thumb_status' : {
-        'column': Column(Boolean, default=False),
-        },
     'page_permalink' : {
         'column': Column(String),
         },
@@ -183,9 +175,12 @@ our_fields = {
 #   'is_color = Column(Boolean)
     }
 
-
-
-template_file = 'django_template.html'
+resolutions_columns = []
+for resolution, data in resolutions.items():
+    resolutions_columns.append((data['status_column_name'], {'column' : Column(Boolean, default=False)}))
+    resolutions_columns.append((data['url_column_name'], {'column' : Column(String)}))
+    resolutions_columns.append((data['too_big_column_name'], {'column' : Column(Boolean, default=False)}))
+our_fields.update(dict(resolutions_columns))
 
 def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
     floorified = usable_image_scraper.scraper.floorify(image_as_dict['id'])
@@ -224,10 +219,6 @@ def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
     html = template.render(context)
     return html
 
-
-
-# the stuff below here should stand on its own
-
 def prep_data_for_insertion(data_dict):
     if not data_dict:
         return data_dict
@@ -241,7 +232,8 @@ def re_objectify_data(data_dict):
         return data_dict
     for key, data in data_dict.items():
         if key in all_fields and 'serialize' in all_fields[key] and all_fields[key]['serialize']:
-            data_dict[key] = json.loads(data_dict[key])
+            if data_dict[key]:
+                data_dict[key] = json.loads(data_dict[key])
     return data_dict
 
 def get_template_str():

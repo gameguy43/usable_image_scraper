@@ -97,7 +97,6 @@ class Scraper:
         self.resolutions = imglib.data_schema.resolutions
         self.max_daemons = max_daemons
         self.max_filesize = max_filesize
-        print self.max_daemons
 
         self.data_dir = data_dir
         self.html_dir = data_dir + html_subdir 
@@ -176,10 +175,14 @@ class Scraper:
                     remote = urllib2.urlopen(url)
                     filesize = int(remote.info().getheaders("Content-Length")[0])
                     # if the file is too big
-                    if self.scraper.max_filesize and filesize > self.scraper.max_filesize:
-                        print filesize 
-                        print self.scraper.max_filesize
+                    if (self.scraper.get_is_marked_as_too_big(id, self.resolution)) or (self.scraper.max_filesize and filesize > self.scraper.max_filesize):
                         print "this file is too big so i won't download it: " + local_filename
+
+
+                        # signal to db that we're done downloading
+                        with self.scraper.db_lock:
+                            self.scraper.mark_img_as_too_big(id, self.resolution)
+                            print "finished marking as downloaded" + url
                     # if the file isn't too big
                     else:
                         #download it!
@@ -188,7 +191,6 @@ class Scraper:
                         local.close()
                         print "finished downloading " + url
                             
-                        id_status_dict = {'id': id, 'status': 1}
                         # signal to db that we're done downloading
                         with self.scraper.db_lock:
                             self.scraper.mark_img_as_downloaded(id, self.resolution)
@@ -221,6 +223,14 @@ class Scraper:
         
     def get_resolution_status_column_name(self, resolution):
         return self.resolutions[resolution]['status_column_name']
+
+    def get_resolution_too_big_column_name(self, resolution):
+        return self.resolutions[resolution]['too_big_column_name']
+
+    def get_resolution_too_big_column(self, resolution):
+        column_name = self.get_resolution_too_big_column_name(resolution)
+        column = getattr(self.metadata_table, column_name)
+        return column
         
     def get_resolution_status_column(self, resolution):
         the_status_column_name = self.get_resolution_status_column_name(resolution)
@@ -242,6 +252,13 @@ class Scraper:
         data[status_column_name] = False
         self.store_metadata_row(data)
 
+    def mark_img_as_too_big(self, id, resolution):
+        status_column_name = self.get_resolution_too_big_column_name(resolution)
+        data = {}
+        data['id'] = id
+        data[status_column_name] = True
+        self.store_metadata_row(data)
+
     def mark_img_as_downloaded(self, id, resolution):
         status_column_name = self.get_resolution_status_column_name(resolution)
         data = {}
@@ -252,14 +269,20 @@ class Scraper:
     def get_next_successful_image_id(self, id):
         where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
         where2 = self.metadata_table.id > id
-        retval = int(self.metadata_table.filter(where2).first().id)
+        higher_id = retval = self.metadata_table.filter(where2).first()
+        if not higher_id:
+            return id
+        retval = int(higher_id.id)
         print retval
         return retval
 
     def get_prev_successful_image_id(self, id):
         where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
         where2 = self.metadata_table.id < id
-        retval = int(self.metadata_table.filter(where2).first().id)
+        lower_id = retval = self.metadata_table.filter(where2).first()
+        if not lower_id:
+            return id
+        retval = int(lower_id.id)
         print retval
         return retval
 
@@ -268,6 +291,7 @@ class Scraper:
     #TODO: we probably shouldn't ever use this, since it doesn't "uncompress" the data after pulling it from the db
     def get_image_metadata(self, id):
         return self.metadata_table.get(id)
+
 
     def get_image_metadata_dict(self, id):
         # we run this through dict() so that we're manipulating a copy, not the actual object, which it turns out is cached or something
@@ -278,6 +302,14 @@ class Scraper:
         objectified_dict = self.imglib.data_schema.re_objectify_data(row_dict)
         del objectified_dict['_sa_instance_state'] # sqlalchemy throws this sucker in. dont want it.
         return objectified_dict
+
+    def get_is_marked_as_too_big(self, id, resolution):
+        dict = self.get_image_metadata_dict(id)
+        too_big_column_name = self.get_resolution_too_big_column_name(resolution)
+        if dict[too_big_column_name]:
+            return True
+        return False
+        
 
     #TODO: the below can be rewritten to use the above
     def get_set_images_to_dl(self,resolution):

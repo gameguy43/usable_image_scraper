@@ -36,7 +36,7 @@ class TestScraperFunctions(unittest.TestCase):
         #self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
 
         # do a scrape on them
-        #self.myscraper.scrape_indeces(known_good_indeces, from_hd=True) #DEBUG TODO
+        #self.myscraper.scrape_indeces(known_good_indeces, dl_images=False, from_hd=True) #DEBUG TODO
         self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
 
         # check that we have the right number of rows in the database
@@ -64,13 +64,19 @@ class TestScraperFunctions(unittest.TestCase):
         # first, do it by hand
         check_this_id = known_good_indeces[0]
         check_this_id = str(check_this_id)
-        self.assertTrue(self.myscraper.get_image_metadata_dict(check_this_id)['lores_status'])
+        self.assertTrue(self.myscraper.get_image_metadata_dict(check_this_id)['thumb_status'])
 
         # then do it the modular way
+        num_statuses_checked = 0
         for id in known_good_indeces:
             metadata = self.myscraper.get_image_metadata_dict(check_this_id)
             for resolution, resolution_info in self.myscraper.resolutions.items():
-                self.assertTrue(metadata[resolution_info['status_column_name']])
+                if not self.myscraper.get_is_marked_as_too_big(id, resolution):
+                    num_statuses_checked+=1
+                    self.assertTrue(metadata[resolution_info['status_column_name']])
+
+        # make sure that we're at least checking a reasonable number of statuses
+        self.assertGreater(num_statuses_checked, 3)
 
         # make sure that we have the HTML and image files for each of the known good indeces
         for id in known_good_indeces:
@@ -80,11 +86,12 @@ class TestScraperFunctions(unittest.TestCase):
             self.assertTrue(os.access(html_file,os.F_OK))
 
             for resolution in self.myscraper.resolutions:
-                extension = scraper.get_extension_from_path(self.myscraper.get_resolution_image_url(id, resolution))
-                remote_url = self.myscraper.get_resolution_image_url(id, resolution)
-                file = self.myscraper.get_resolution_local_image_location(resolution, id, remote_url)
-                print "making sure we have " + file
-                self.assertTrue(os.access(file,os.F_OK))
+                if not self.myscraper.get_is_marked_as_too_big(id, resolution):
+                    extension = scraper.get_extension_from_path(self.myscraper.get_resolution_image_url(id, resolution))
+                    remote_url = self.myscraper.get_resolution_image_url(id, resolution)
+                    file = self.myscraper.get_resolution_local_image_location(resolution, id, remote_url)
+                    print "making sure we have " + file
+                    self.assertTrue(os.access(file,os.F_OK))
 
             #TODO: test that all the images are there too
             # (not sure how to handle)
@@ -98,7 +105,9 @@ class TestScraperFunctions(unittest.TestCase):
     def test_next_id(self):
         known_good_indeces = self.imglib.tests.known_good_indeces
         for id in known_good_indeces:
+            print id
             self.assertTrue(isinstance(self.myscraper.get_next_successful_image_id(id), int))
+            self.assertTrue(isinstance(self.myscraper.get_prev_successful_image_id(id), int))
 
 
 #TODO: case: * grab the highest index in the database

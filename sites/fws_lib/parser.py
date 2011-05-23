@@ -113,7 +113,7 @@ def parse_img_html_page(html):
 
     hires_link = soup.find(text=lambda str: str.strip() == u'(Full Resolution Image Link)', recursive=True).parent.find('a')
     metadict['url_to_hires_img'] = hires_link['href']
-    metadict['url_to_lores_img'] = u'http://digitalmedia.fws.gov' + soup.find("input", {"type" : "image"})['src']
+    metadict['url_to_lores_img'] = u'http://digitalmedia.fws.gov' + soup.find("img", {"id" : "imagexy"})['src']
 
     data_table = soup.find("table", {"style": "border-top: 1px solid #cccccc"}).find("tbody")
     parsed_tuples = []
