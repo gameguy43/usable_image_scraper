@@ -279,7 +279,7 @@ class Scraper:
     def get_prev_successful_image_id(self, id):
         where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
         where2 = self.metadata_table.id < id
-        lower_id = retval = self.metadata_table.filter(where2).first()
+        lower_id = retval = self.metadata_table.filter(where2).order_by(sqlalchemy.desc(self.metadata_table.id)).first()
         if not lower_id:
             return id
         retval = int(lower_id.id)
