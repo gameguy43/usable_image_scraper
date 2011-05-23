@@ -6,6 +6,7 @@ import os
 
 class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
+        print "SETTING UP"
         self.maxDiff = None
         # instantiate a scraper 
         self.imglib_name = 'fws'
@@ -24,6 +25,7 @@ class TestScraperFunctions(unittest.TestCase):
     #TODO: test the scraping from hd functionality
 
     def test_scrape(self):
+        print "here"
         # grab known good indeces
         known_good_indeces = self.imglib.tests.known_good_indeces
         known_good_indeces.sort()
@@ -40,11 +42,13 @@ class TestScraperFunctions(unittest.TestCase):
         self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
 
         # check that we have the right number of rows in the database
-        rows = self.myscraper.metadata_table.all()
+        rows = self.myscraper.db.metadata_table.all()
+        import pprint; pprint.pprint(rows)
+        import pprint; pprint.pprint(known_good_indeces)
         self.assertEqual(len(known_good_indeces), len(rows))
 
         # check that the ids in the rows are right
-        all_rows = self.myscraper.metadata_table.all()
+        all_rows = self.myscraper.db.metadata_table.all()
         ids = map(lambda row: row.id, all_rows)
         self.assertEqual(ids, known_good_indeces)
 
@@ -53,9 +57,9 @@ class TestScraperFunctions(unittest.TestCase):
         for id, known_metadata_mapping in known_metadata_mappings.items():
             # this is kind of hackey, but makes sense--
             # if we didn't put the known good data through the same encoding and decoding process, we might get problems where we have a list of tuples instead of a dict, etc
-            known_metadata_mapping = self.imglib.data_schema.re_objectify_data(
-                self.imglib.data_schema.prep_data_for_insertion(known_metadata_mapping))
-            in_db_data = self.myscraper.get_image_metadata_dict(id)
+            known_metadata_mapping = self.myscraper.db.re_objectify_data(
+                self.myscraper.db.prep_data_for_insertion(known_metadata_mapping))
+            in_db_data = self.myscraper.db.get_image_metadata_dict(id)
             for key, known_data in known_metadata_mapping.items():
                 print key
                 self.assertEqual(known_data, in_db_data[key])
@@ -64,14 +68,14 @@ class TestScraperFunctions(unittest.TestCase):
         # first, do it by hand
         check_this_id = known_good_indeces[0]
         check_this_id = str(check_this_id)
-        self.assertTrue(self.myscraper.get_image_metadata_dict(check_this_id)['thumb_status'])
+        self.assertTrue(self.myscraper.db.get_image_metadata_dict(check_this_id)['thumb_status'])
 
         # then do it the modular way
         num_statuses_checked = 0
         for id in known_good_indeces:
-            metadata = self.myscraper.get_image_metadata_dict(check_this_id)
+            metadata = self.myscraper.db.get_image_metadata_dict(check_this_id)
             for resolution, resolution_info in self.myscraper.resolutions.items():
-                if not self.myscraper.get_is_marked_as_too_big(id, resolution):
+                if not self.myscraper.db.get_is_marked_as_too_big(id, resolution):
                     num_statuses_checked+=1
                     self.assertTrue(metadata[resolution_info['status_column_name']])
 
@@ -86,9 +90,9 @@ class TestScraperFunctions(unittest.TestCase):
             self.assertTrue(os.access(html_file,os.F_OK))
 
             for resolution in self.myscraper.resolutions:
-                if not self.myscraper.get_is_marked_as_too_big(id, resolution):
-                    extension = scraper.get_extension_from_path(self.myscraper.get_resolution_image_url(id, resolution))
-                    remote_url = self.myscraper.get_resolution_image_url(id, resolution)
+                if not self.myscraper.db.get_is_marked_as_too_big(id, resolution):
+                    extension = scraper.get_extension_from_path(self.myscraper.db.get_resolution_image_url(id, resolution))
+                    remote_url = self.myscraper.db.get_resolution_image_url(id, resolution)
                     file = self.myscraper.get_resolution_local_image_location(resolution, id, remote_url)
                     print "making sure we have " + file
                     self.assertTrue(os.access(file,os.F_OK))
@@ -102,12 +106,14 @@ class TestScraperFunctions(unittest.TestCase):
 
         # TODO: check that the function update_resolution_download_status_based_on_fs(self, resolution, ceiling_id=50000) works
         
+    '''
     def test_next_id(self):
         known_good_indeces = self.imglib.tests.known_good_indeces
         for id in known_good_indeces:
             print id
-            self.assertTrue(isinstance(self.myscraper.get_next_successful_image_id(id), int))
-            self.assertTrue(isinstance(self.myscraper.get_prev_successful_image_id(id), int))
+            self.assertTrue(isinstance(self.myscraper.db.get_next_successful_image_id(id), int))
+            self.assertTrue(isinstance(self.myscraper.db.get_prev_successful_image_id(id), int))
+    '''
 
 
 #TODO: case: * grab the highest index in the database

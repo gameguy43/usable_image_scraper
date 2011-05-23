@@ -31,6 +31,7 @@ from django.template import Template, Context
 import usable_image_scraper.scraper
 
 table_name = 'fws_metadata'
+template_file = 'django_template.html'
 
 def subject_to_html(list):
     retval = "<ul>"
@@ -151,109 +152,6 @@ their_fields = {
         'column' : Column(String),
         },
     }
-
-
-
-
-template_file = 'django_template.html'
-
-# the stuff below here should stand on its own
-
-our_fields = {
-    'page_permalink' : {
-        'column': Column(String),
-        },
-    'access_time' : {
-        'column': Column(Integer),
-        },
-    'doesnt_exist' : {
-        'column': Column(Boolean),
-        },
-    'we_couldnt_parse_it' : {
-        'column': Column(Boolean),
-        },
-#   'is_color = Column(Boolean)
-    }
-
-resolutions_columns = []
-for resolution, data in resolutions.items():
-    resolutions_columns.append((data['status_column_name'], {'column' : Column(Boolean, default=False)}))
-    resolutions_columns.append((data['url_column_name'], {'column' : Column(String)}))
-    resolutions_columns.append((data['too_big_column_name'], {'column' : Column(Boolean, default=False)}))
-our_fields.update(dict(resolutions_columns))
-
-def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
-    floorified = usable_image_scraper.scraper.floorify(image_as_dict['id'])
-    id_zfilled = str(image_as_dict['id']).zfill(5)
-    image_urls = {}
-    for resolution in resolutions:
-        image_urls[resolution] = image_resolution_to_local_file_location_fxn(resolution)
-
-    # add link rel=license
-    #image_as_dict['copyright'] = image_as_dict['copyright'].strip("'").replace('None', '<a href="http://creativecommons.org/licenses/publicdomain/" rel="license">None</a>')
-
-    
-    image_as_dict['next_id'] = int(image_as_dict['id']) + 1
-    image_as_dict['prev_id'] = int(image_as_dict['id']) - 1
-
-    
-    image_as_dict['their_data'] = ''
-    for key, data in their_fields.items():
-        if not key in image_as_dict or not image_as_dict[key]:
-            continue
-        html_block = '<p class="datapoint">'
-        # if there's a pre-perscribed way to represent this field:
-        html_block = html_block + '<strong class="label">' + their_fields[key]['full_name'] + ':</strong>'
-        if 'repr_as_html' in data:
-            html_block = html_block + data['repr_as_html'](image_as_dict[key])
-        # if not:
-        else:
-            html_block = html_block + '<span class="' + key + '">' + str(image_as_dict[key]) + '</span>'
-        html_block = ''.join([html_block, '</p>'])
-        image_as_dict['their_data'] = ''.join([image_as_dict['their_data'], html_block])
-        
-
-    template_str = get_template_str()
-    template = Template(template_str)
-    context = Context({'image': image_as_dict, 'image_urls': image_urls})
-    html = template.render(context)
-    return html
-
-def prep_data_for_insertion(data_dict):
-    if not data_dict:
-        return data_dict
-    for key, data in data_dict.items():
-        if key in all_fields and 'serialize' in all_fields[key] and all_fields[key]['serialize']:
-            data_dict[key] = json.dumps(data_dict[key])
-    return data_dict
-
-def re_objectify_data(data_dict):
-    if not data_dict:
-        return data_dict
-    for key, data in data_dict.items():
-        if key in all_fields and 'serialize' in all_fields[key] and all_fields[key]['serialize']:
-            if data_dict[key]:
-                data_dict[key] = json.loads(data_dict[key])
-    return data_dict
-
-def get_template_str():
-    path = os.path.dirname(__file__)
-    relpath = os.path.relpath(path)
-    template_relpath = relpath + '/' + template_file
-    fp = open(template_relpath, 'r')
-    template_as_str = fp.read()
-    return template_as_str
-
-Base = declarative_base()
-
-class OurMetadata(Base):
-    __tablename__ = table_name
-    id = Column(Integer, primary_key=True)
-
-all_fields = dict(their_fields.items() + our_fields.items())
-
-for fieldname, fieldinfo in all_fields.items():
-    setattr(OurMetadata, fieldname, fieldinfo['column'])
 
 def get_field_key_by_full_name(full_name):
     for key, data in their_fields.items():

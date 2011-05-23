@@ -26,8 +26,9 @@ import Queue
 import sys
 import threading
 import traceback
-from sqlalchemy.ext.sqlsoup import SqlSoup
-import sqlalchemy
+print "importing..."
+import db
+print "imported"
 
 #import libs.cdc_phil_lib as imglib
 # .scraper
@@ -73,7 +74,8 @@ def mkscraper(image_db_key):
     data_base_dir = config.data_root_dir + img_db_config['data_subdir']
 
     kwargs = {}
-    kwargs['imglib'] = getattr(config.img_libraries_metalib, img_db_config['python_lib'])
+    img_libraries_metalib = __import__(config.img_libraries_metalib_name)
+    kwargs['imglib'] = getattr(img_libraries_metalib, img_db_config['python_lib'])
     # we keep this around so that we can construct a different data path for the web
     kwargs['data_library_subdir'] = img_db_config['data_subdir']
     kwargs['data_dir'] = data_base_dir
@@ -110,22 +112,16 @@ class Scraper:
 
         metadata_table_name = data_table_prefix + "metadata"
 
-        self.db = SqlSoup(db_url)
-        #from sqlalchemy.orm import scoped_session, sessionmaker
-        #db = SqlSoup(sql_url, session=scoped_session(sessionmaker(autoflush=False, expire_on_commit=False, autocommit=True)))
+        db_kwargs = {
+            'data_schema' : self.imglib.data_schema,
+            'db_url' : db_url,
+            'metadata_table_name' : metadata_table_name,
+            'scraper' : self,
+        }
 
-        # make the tables if they don't already exist
-        imglib.data_schema.Base.metadata.create_all(self.db.engine)
-        self.db.commit()
-
-        # some nice shortcuts for grabbing various tables later
-        self.metadata_table = getattr(self.db, metadata_table_name)
-        if not self.metadata_table:
-            print "crap, something has gone really wrong. couldn't grab the metadata table"
-            
-
-        #TODO: i think that maybe i can remove this. but not sure. probs need for sqlite.
-        self.db_lock = threading.RLock()
+        print "initializing....."
+        self.db = db.DB(**db_kwargs)
+        print "done initializing"
 
     #TODO: can we delete this?
     def bootstrap_filestructure(self):
@@ -175,14 +171,13 @@ class Scraper:
                     remote = urllib2.urlopen(url)
                     filesize = int(remote.info().getheaders("Content-Length")[0])
                     # if the file is too big
-                    if (self.scraper.get_is_marked_as_too_big(id, self.resolution)) or (self.scraper.max_filesize and filesize > self.scraper.max_filesize):
+                    if (self.scraper.db.get_is_marked_as_too_big(id, self.resolution)) or (self.scraper.max_filesize and filesize > self.scraper.max_filesize):
                         print "this file is too big so i won't download it: " + local_filename
 
 
                         # signal to db that we're done downloading
-                        with self.scraper.db_lock:
-                            self.scraper.mark_img_as_too_big(id, self.resolution)
-                            print "finished marking as downloaded" + url
+                        self.scraper.db.mark_img_as_too_big(id, self.resolution)
+                        print "finished marking as downloaded" + url
                     # if the file isn't too big
                     else:
                         #download it!
@@ -192,9 +187,8 @@ class Scraper:
                         print "finished downloading " + url
                             
                         # signal to db that we're done downloading
-                        with self.scraper.db_lock:
-                            self.scraper.mark_img_as_downloaded(id, self.resolution)
-                            print "finished marking as downloaded" + url
+                        self.scraper.db.mark_img_as_downloaded(id, self.resolution)
+                        print "finished marking as downloaded" + url
 
                     # signals to queue job is done
                     self.queue.task_done()
@@ -208,123 +202,15 @@ class Scraper:
                     continue
 
 
-
-    def get_resolution_url(self, resolution, id):
-        row = self.metadata_table.get(id)
-        url_column_name = self.get_resolution_url_column_name(resolution)
-        return getattr(row, url_column_name)
-
-    def get_resolution_url_column_name(self, resolution):
-        return self.resolutions[resolution]['url_column_name']
-        
-    def get_resolution_url_column(self, resolution):
-        column_name = self.get_resolution_url_column_name(resolution)
-        return getattr(self.db, column_name)
-        
-    def get_resolution_status_column_name(self, resolution):
-        return self.resolutions[resolution]['status_column_name']
-
-    def get_resolution_too_big_column_name(self, resolution):
-        return self.resolutions[resolution]['too_big_column_name']
-
-    def get_resolution_too_big_column(self, resolution):
-        column_name = self.get_resolution_too_big_column_name(resolution)
-        column = getattr(self.metadata_table, column_name)
-        return column
-        
-    def get_resolution_status_column(self, resolution):
-        the_status_column_name = self.get_resolution_status_column_name(resolution)
-        the_status_column = getattr(self.metadata_table, the_status_column_name)
-        return the_status_column
-
-    def get_resolution_image_url(self, id, resolution):
-        metadata_url_column_name = self.resolutions[resolution]['url_column_name']
-        url = getattr(self.metadata_table.get(id), metadata_url_column_name)
-        return url
-
     def get_resolution_download_dir(self, resolution):
         return self.data_dir + self.resolutions[resolution]['subdir']
 
-    def mark_img_as_not_downloaded(self, id, resolution):
-        status_column_name = self.get_resolution_status_column_name(resolution)
-        data = {}
-        data['id'] = id
-        data[status_column_name] = False
-        self.store_metadata_row(data)
-
-    def mark_img_as_too_big(self, id, resolution):
-        status_column_name = self.get_resolution_too_big_column_name(resolution)
-        data = {}
-        data['id'] = id
-        data[status_column_name] = True
-        self.store_metadata_row(data)
-
-    def mark_img_as_downloaded(self, id, resolution):
-        status_column_name = self.get_resolution_status_column_name(resolution)
-        data = {}
-        data['id'] = id
-        data[status_column_name] = True
-        self.store_metadata_row(data)
-
-    def get_next_successful_image_id(self, id):
-        where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
-        where2 = self.metadata_table.id > id
-        higher_id = retval = self.metadata_table.filter(where2).first()
-        if not higher_id:
-            return id
-        retval = int(higher_id.id)
-        print retval
-        return retval
-
-    def get_prev_successful_image_id(self, id):
-        where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
-        where2 = self.metadata_table.id < id
-        lower_id = retval = self.metadata_table.filter(where2).order_by(sqlalchemy.desc(self.metadata_table.id)).first()
-        if not lower_id:
-            return id
-        retval = int(lower_id.id)
-        print retval
-        return retval
-
-    # TODO: make sure that we're actually defaulting the downloaded status to false, as we'd hope
-
-    #TODO: we probably shouldn't ever use this, since it doesn't "uncompress" the data after pulling it from the db
-    def get_image_metadata(self, id):
-        return self.metadata_table.get(id)
 
 
-    def get_image_metadata_dict(self, id):
-        # we run this through dict() so that we're manipulating a copy, not the actual object, which it turns out is cached or something
-        row = self.get_image_metadata(id)
-        if not row:
-            return None
-        row_dict = dict(row.__dict__)
-        objectified_dict = self.imglib.data_schema.re_objectify_data(row_dict)
-        del objectified_dict['_sa_instance_state'] # sqlalchemy throws this sucker in. dont want it.
-        return objectified_dict
 
-    def get_is_marked_as_too_big(self, id, resolution):
-        dict = self.get_image_metadata_dict(id)
-        too_big_column_name = self.get_resolution_too_big_column_name(resolution)
-        if dict[too_big_column_name]:
-            return True
-        return False
-        
 
-    #TODO: the below can be rewritten to use the above
-    def get_set_images_to_dl(self,resolution):
-        ## input: resolution, as a string (hires, lores, thumb)
-        ## returns: list of tuples in form: (id, url)
-        the_status_column = self.get_resolution_status_column(resolution)
-        where = sqlalchemy.or_(the_status_column == False, the_status_column == None)
-        rows_to_dl = self.metadata_table.filter(where).all()
-        ids_to_dl = map(lambda row: row.id, rows_to_dl)
-        metadata_url_column_name = self.get_resolution_url_column_name(resolution)
-        tuples = map(lambda id: (id, getattr(self.metadata_table.get(id), metadata_url_column_name)), ids_to_dl)
-        # throw away tuples that have a null value in either position
-        # TODO: maybe we should throw an exception here?
-        tuples = filter(lambda tuple: tuple[0] and tuple[1], tuples)
-        return tuples
+
+
 
     def get_images(self, resolution):
         queue = Queue.Queue()
@@ -336,7 +222,7 @@ class Scraper:
             t.start()
 
         #list of (id, url) tuples to download images from
-        dl_these_tuples = self.get_set_images_to_dl(resolution)
+        dl_these_tuples = self.db.get_set_images_to_dl(resolution)
         print dl_these_tuples
         ids = map(lambda tuple: tuple[0], dl_these_tuples)
 
@@ -374,37 +260,6 @@ class Scraper:
         fp = open(local_html_file_location, 'r')
         html = fp.read()
         return html
-
-    def store_metadata_row(self, metadata_dict):
-        if not metadata_dict.has_key('we_couldnt_parse_it'):
-            metadata_dict['we_couldnt_parse_it'] = 0
-        metadata_dict = self.imglib.data_schema.prep_data_for_insertion(metadata_dict)
-        import pprint
-        pprint.pprint(metadata_dict)
-        self.insert_or_update_table_row(self.metadata_table, metadata_dict)
-
-    #NOTE: this only works if the primary key is 'id'
-    def insert_or_update_table_row(self, table, new_data_dict):
-        if not new_data_dict:
-            print "you're trying to insert a blank dict. that's pretty lame."
-            return False
-        # merge the new and the old into a fresh dict
-        existing_row = table.get(new_data_dict['id'])
-        if existing_row:
-            existing_row_data_dict = existing_row.__dict__
-            final_row_data_dict = existing_row_data_dict
-            for key, value in new_data_dict.items():
-                final_row_data_dict[key] = value
-
-            #write over the current row contents with it
-            with self.db_lock:
-                self.db.delete(existing_row)
-                self.db.commit()
-        else: 
-            final_row_data_dict = new_data_dict
-        with self.db_lock:
-            table.insert(**final_row_data_dict)
-            self.db.commit()
 
 
         
@@ -483,7 +338,7 @@ class Scraper:
                         'id': current_id,
                         'we_couldnt_parse_it': True,
                         }
-                self.store_metadata_row(metadata)
+                self.db.store_metadata_row(metadata)
                 print "we just recorded in the DB the fact that we couldn't parse this one"
                 failed_indices.append(current_id)
                 traceback.print_exc()
@@ -494,13 +349,13 @@ class Scraper:
                         'id': current_id,
                         'we_couldnt_parse_it': True,
                         }
-                self.store_metadata_row(metadata)
+                self.db.store_metadata_row(metadata)
                 print "we just recorded in the DB the fact that we couldn't parse this one"
                 failed_indices.append(current_id)
                 traceback.print_exc()
                 continue
             try:
-                self.store_metadata_row(metadata)
+                self.db.store_metadata_row(metadata)
             except KeyboardInterrupt:
                 sys.exit(0)
             except:
@@ -531,21 +386,15 @@ class Scraper:
             local_file_location = self.get_resolution_local_image_location(resolution, id)
             we_have_it = os.access(local_file_location,os.F_OK)
             if we_have_it:
-                self.mark_img_as_downloaded(id, resolution)
+                self.db.mark_img_as_downloaded(id, resolution)
             else:
-                self.mark_img_as_not_downloaded(id, resolution)
+                self.db.mark_img_as_not_downloaded(id, resolution)
 
     def update_download_statuses_based_on_fs(self, ceiling_id=50000):
         for resolution, res_data in self.resolutions.items():
             self.update_resolution_download_status_based_on_fs(resolution, ceiling_id)
         
 
-    def get_highest_id_in_our_db(self):
-        try:
-            id = int(self.metadata_table.order_by(sqlalchemy.desc(self.metadata_table.id)).first().id)
-        except:
-            id = 0
-        return id
         
 
     def scrape_all(self, dl_images=True, from_hd=False):
@@ -578,11 +427,6 @@ class Scraper:
         html = self.imglib.data_schema.repr_as_html(**kwargs)
         return html
 
-    def get_num_images(self):
-        # yeah, the below where statement really sucks
-        # i can't just filter by != True. it returns 0 results. i don't know why.
-        mywhere = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
-        return self.metadata_table.filter(mywhere).count()
 
 
 def nightly():
