@@ -72,7 +72,7 @@ def mkscraper(image_db_key):
     data_base_dir = config.data_root_dir + img_db_config['data_subdir']
 
     kwargs = {}
-    img_libraries_metalib = __import__(config.img_libraries_metalib_name)
+    img_libraries_metalib = config.img_libraries_metalib
     kwargs['imglib'] = getattr(img_libraries_metalib, img_db_config['python_lib'])
     # we keep this around so that we can construct a different data path for the web
     kwargs['data_library_subdir'] = img_db_config['data_subdir']
