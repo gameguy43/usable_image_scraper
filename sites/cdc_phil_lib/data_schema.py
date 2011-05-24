@@ -58,30 +58,36 @@ resolutions = {
 
 their_fields = {
     'desc' : {
+        'full_name' : 'Description',
         'type' : 'string',
         },
     'categories' : {
+        'full_name' : 'Categories',
         'type' : 'string',
         },
     'credit' : {
+        'full_name' : 'Photo Credit',
         'type' : 'string',
         },
     'links' : {
+        'full_name' : 'Links',
         'type' : 'string',
         'serialize' : True,
         },
     'provider' : {
+        'full_name' : 'Content Providers(s)',
         'type' : 'string',
         },
     'source' : {
+        'full_name' : 'Source',
         'type' : 'string',
         },
-    # the following 3 /need/ to have these names
-    # or at least make sure they're consistent with the below fxn
     'copyright' : {
+        'full_name' : 'Copyright Restrictions',
         'type' : 'string',
         },
     'creation' : {
+        'full_name' : 'Creation Date',
         'type' : 'string',
         },
 }

@@ -58,31 +58,40 @@ resolutions = {
 
 their_fields = {
     'photo_date' : {
+        'full_name' : 'Photo Date',
         'type' : 'string',
         },
     'desc' : {
+        'full_name' : '',
         'type' : 'string',
         },
     'location' : {
+        'full_name' : 'Location',
         'type' : 'string',
         },
     'original_filename' : {
+        'full_name' : 'Original filename',
         'type' : 'string',
         },
     'size' : {
+        'full_name' : 'Size',
         'type' : 'string',
         },
     'photographer' : {
+        'full_name' : 'Photographer',
         'type' : 'string',
         },
     'dimensions' : {
+        'full_name' : 'Dimensions',
         'type' : 'string',
         },
     'categories' : {
+        'full_name' : 'Categories',
         'type' : 'string',
         'serialize' : True,
         },
     'disasters' : {
+        'full_name' : 'Disasters',
         'type' : 'string',
         'serialize' : True,
         },
