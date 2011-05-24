@@ -1,4 +1,3 @@
-
 ################################################################################
 ################################################################################
 #####################                                  #########################
@@ -33,14 +32,15 @@ import usable_image_scraper.scraper
 from sqlalchemy.ext.sqlsoup import SqlSoup
 import sqlalchemy
 import threading
+import copy
 
 
 class DB:
     def __init__(self, data_schema, db_url, metadata_table_name, scraper=None):
-        print "IM INSIDE THE COMPUTER"
         self.scraper = scraper
-        self.their_fields = data_schema.their_fields
+        self.their_fields = copy.deepcopy(data_schema.their_fields)
         self.resolutions = data_schema.resolutions
+
     
         self.our_fields = {
             'page_permalink' : {
@@ -58,7 +58,6 @@ class DB:
             #'is_color = Column(Boolean)
             }
 
-        ## generate some more fields (resolution-specific status-type stuff)
         resolutions_columns = []
         for resolution, data in self.resolutions.items():
             resolutions_columns.append((data['status_column_name'], {'column' : Column(Boolean, default=False)}))
@@ -66,10 +65,14 @@ class DB:
             resolutions_columns.append((data['too_big_column_name'], {'column' : Column(Boolean, default=False)}))
         self.our_fields.update(dict(resolutions_columns))
 
-        '''
+        def column_type_to_column_obj(type):
+            if type == 'string':
+                return Column(String)
+            else:
+                print "what the heck kind of type is that?!?!?!?"
+
         for index in self.their_fields.keys():
-            self.their_fields[index]['column'] = Column(self.their_fields[index]['column'])
-        '''
+            self.their_fields[index]['column'] = column_type_to_column_obj(self.their_fields[index]['type'])
             
         ## glue all of the fields together
         self.all_fields = dict(self.their_fields.items() + self.our_fields.items())
@@ -80,10 +83,7 @@ class DB:
             __tablename__ = data_schema.table_name
             id = Column(Integer, primary_key=True)
         for fieldname, fieldinfo in self.all_fields.items():
-            print fieldname
             setattr(OurMetadata, fieldname, fieldinfo['column'])
-            print "k"
-        print "done"
         
         ## create the db
         self.db = SqlSoup(db_url)
@@ -101,14 +101,16 @@ class DB:
             
 
         #TODO: i think that maybe i can remove this. but not sure. probs need for sqlite.
-        self.db_lock = threading.RLock()
+        self.db_lock = threading.Lock()
 
 
-    def repr_as_html(image_as_dict, image_resolution_to_local_file_location_fxn):
+    def repr_as_html(self, image_as_dict, image_resolution_to_local_file_location_fxn):
+        if not image_as_dict:
+            return ""
         floorified = usable_image_scraper.scraper.floorify(image_as_dict['id'])
         id_zfilled = str(image_as_dict['id']).zfill(5)
         image_urls = {}
-        for resolution in resolutions:
+        for resolution in self.resolutions:
             image_urls[resolution] = image_resolution_to_local_file_location_fxn(resolution)
 
         # add link rel=license
@@ -135,11 +137,13 @@ class DB:
             image_as_dict['their_data'] = ''.join([image_as_dict['their_data'], html_block])
             
 
+        '''
         template_str = get_template_str()
         template = Template(template_str)
         context = Context({'image': image_as_dict, 'image_urls': image_urls})
         html = template.render(context)
-        return html
+        '''
+        return html_block
 
     def prep_data_for_insertion(self, data_dict):
         if not data_dict:
@@ -158,6 +162,7 @@ class DB:
                     data_dict[key] = json.loads(data_dict[key])
         return data_dict
 
+    '''
     def get_template_str():
         path = os.path.dirname(__file__)
         relpath = os.path.relpath(path)
@@ -165,6 +170,7 @@ class DB:
         fp = open(template_relpath, 'r')
         template_as_str = fp.read()
         return template_as_str
+    '''
 
 
     def get_field_key_by_full_name(self, full_name):

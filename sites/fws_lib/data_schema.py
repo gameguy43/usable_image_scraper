@@ -67,89 +67,89 @@ resolutions = {
 their_fields = {
     'title' : {
         'full_name' : 'Title',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'contact' : {
         'full_name' : 'Contact',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'creator' : {
         'full_name' : 'Creator',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'desc' : {
         'full_name' : 'Description',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'subject' : {
         'full_name' : 'Subject',
-        'column' : Column(String),
+        'type' : 'string',
         'repr_as_html' : subject_to_html,
         'serialize' : True,
         },
     'location' : {
         'full_name' : 'Location',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'publisher' : {
         'full_name' : 'Publisher',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'date_of_original' : {
         'full_name' : 'Date of Original',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'type' : {
         'full_name' : 'Type',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'format' : {
         'full_name' : 'Format',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'item_id' : {
         'full_name' : 'Item ID',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'source' : {
         'full_name' : 'Source',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'language' : {
         'full_name' : 'Language',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'rights' : {
         'full_name' : 'Rights',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'file_size' : {
         'full_name' : 'File Size',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'height' : {
         'full_name' : 'Height',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'width' : {
         'full_name' : 'Width',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'color_space' : {
         'full_name' : 'Color Space',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'audience' : {
         'full_name' : 'Audience',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'date_created' : {
         'full_name' : 'Date created',
-        'column' : Column(String),
+        'type' : 'string',
         },
     'date_modified' : {
         'full_name' : 'Date modified',
-        'column' : Column(String),
+        'type' : 'string',
         },
     }
 

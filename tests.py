@@ -6,10 +6,10 @@ import os
 
 class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
-        print "SETTING UP"
         self.maxDiff = None
         # instantiate a scraper 
-        self.imglib_name = 'fws'
+        self.imglib_name = 'cdc_phil'
+        print "SETTING UP"
         self.myscraper = scraper.mkscraper(self.imglib_name)
         self.imglib = self.myscraper.imglib
 
@@ -20,6 +20,7 @@ class TestScraperFunctions(unittest.TestCase):
         # has the right tables
         # insert something and then grab it out
     '''
+
         
 
     #TODO: test the scraping from hd functionality
@@ -106,14 +107,14 @@ class TestScraperFunctions(unittest.TestCase):
 
         # TODO: check that the function update_resolution_download_status_based_on_fs(self, resolution, ceiling_id=50000) works
         
-    '''
+    #TODO: this test should be uncommented. However, right now it generates:
+    #ArgumentError: this Column already has a table!
     def test_next_id(self):
         known_good_indeces = self.imglib.tests.known_good_indeces
         for id in known_good_indeces:
             print id
             self.assertTrue(isinstance(self.myscraper.db.get_next_successful_image_id(id), int))
             self.assertTrue(isinstance(self.myscraper.db.get_prev_successful_image_id(id), int))
-    '''
 
 
 #TODO: case: * grab the highest index in the database

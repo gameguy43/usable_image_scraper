@@ -26,9 +26,7 @@ import Queue
 import sys
 import threading
 import traceback
-print "importing..."
 import db
-print "imported"
 
 #import libs.cdc_phil_lib as imglib
 # .scraper
@@ -119,9 +117,7 @@ class Scraper:
             'scraper' : self,
         }
 
-        print "initializing....."
         self.db = db.DB(**db_kwargs)
-        print "done initializing"
 
     #TODO: can we delete this?
     def bootstrap_filestructure(self):
@@ -177,7 +173,7 @@ class Scraper:
 
                         # signal to db that we're done downloading
                         self.scraper.db.mark_img_as_too_big(id, self.resolution)
-                        print "finished marking as downloaded" + url
+                        print "finished marking as too big" + url
                     # if the file isn't too big
                     else:
                         #download it!
@@ -420,11 +416,11 @@ class Scraper:
 
     def get_image_html_repr(self, id):
         kwargs = {
-            'image_as_dict' : self.get_image_metadata_dict(id),
+            'image_as_dict' : self.db.get_image_metadata_dict(id),
             'image_resolution_to_local_file_location_fxn' : 
                 lambda resolution: self.get_web_resolution_local_image_location(resolution, id),
             }
-        html = self.imglib.data_schema.repr_as_html(**kwargs)
+        html = self.db.repr_as_html(**kwargs)
         return html
 
 

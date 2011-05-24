@@ -58,34 +58,37 @@ resolutions = {
 
 their_fields = {
     'photo_date' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'desc' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'location' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'original_filename' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'size' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'photographer' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'dimensions' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'categories' : {
-        'column' : Column(String),
+        'type' : 'string',
+        'serialize' : True,
         },
     'disasters' : {
-        'column' : Column(String),
+        'type' : 'string',
+        'serialize' : True,
         },
     }
 
+'''
 our_fields = {
     'page_permalink' : {
         'column': Column(String),
@@ -192,3 +195,4 @@ all_fields = dict(their_fields.items() + our_fields.items())
 
 for fieldname, fieldinfo in all_fields.items():
     setattr(OurMetadata, fieldname, fieldinfo['column'])
+'''

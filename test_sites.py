@@ -68,7 +68,7 @@ def test_these_sites(sites):
 
 if __name__ == '__main__':
     # either we want to test one site:
-    sites = ['fws']
+    sites = ['fema']
     # or we want to test all of them
     #sites = config.image_databases.keys()
 

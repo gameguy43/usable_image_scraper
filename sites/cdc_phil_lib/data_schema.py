@@ -30,6 +30,7 @@ import os.path
 from django.template import Template, Context
 
 
+table_name = 'cdc_phil_metadata'
 
 resolutions = {
     'hires' : {
@@ -57,34 +58,36 @@ resolutions = {
 
 their_fields = {
     'desc' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'categories' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'credit' : {
-        'column' : Column(String),
+        'type' : 'string',
         },
     'links' : {
-        'column' : Column(String),
+        'type' : 'string',
+        'serialize' : True,
         },
     'provider' : {
-        'column': Column(String),
+        'type' : 'string',
         },
     'source' : {
-        'column': Column(String),
+        'type' : 'string',
         },
     # the following 3 /need/ to have these names
     # or at least make sure they're consistent with the below fxn
     'copyright' : {
-        'column': Column(String),
+        'type' : 'string',
         },
     'creation' : {
-        'column': Column(String),
+        'type' : 'string',
         },
 }
 
 
+'''
 def prep_data_for_insertion(data_dict):
     if 'links' in data_dict:
         data_dict['links'] = json.dumps(data_dict['links'])
@@ -122,7 +125,6 @@ for resolution, data in resolutions.items():
     resolutions_columns.append((data['too_big_column_name'], {'column' : Column(Boolean, default=False)}))
 our_fields.update(dict(resolutions_columns))
 
-'''
 
     def floorify(id):
         ## mod 100 the image id numbers to make smarter folders
@@ -141,7 +143,6 @@ our_fields.update(dict(resolutions_columns))
 
     # add link rel=license
     image['copyright'] = image['copyright'].strip("'").replace('None', '<a href="http://creativecommons.org/licenses/publicdomain/" rel="license">None</a>')
-'''
 
 
 def links_to_html(json_str):
@@ -216,3 +217,4 @@ all_fields = dict(their_fields.items() + our_fields.items())
 
 for fieldname, fieldinfo in all_fields.items():
     setattr(CDCPhilMetadata, fieldname, fieldinfo['column'])
+'''
