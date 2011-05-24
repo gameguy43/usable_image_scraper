@@ -313,7 +313,7 @@ class DB:
                 continue
             html_block = '<p class="datapoint">'
             # if there's a pre-perscribed way to represent this field:
-            html_block += '<strong class="label">' + self.their_fields[key]['full_name'] + ':</strong>'
+            html_block += '<strong class="label">' + self.their_fields[key]['full_name'] + ': </strong>'
             rdfa_clause = ''
             if 'dc_mapping' in data:
                 rdfa_clause = ' property="' + data['dc_mapping'] + '"'

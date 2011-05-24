@@ -202,12 +202,6 @@ class Scraper:
         return self.data_dir + self.resolutions[resolution]['subdir']
 
 
-
-
-
-
-
-
     def get_images(self, resolution):
         queue = Queue.Queue()
         # MAKE OUR THREADZZZ
@@ -256,7 +250,6 @@ class Scraper:
         fp = open(local_html_file_location, 'r')
         html = fp.read()
         return html
-
 
         
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
