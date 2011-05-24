@@ -73,14 +73,17 @@ their_fields = {
     'photo_date' : {
         'full_name' : 'Photo Date',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:date',
         },
     'desc' : {
         'full_name' : '',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:description',
         },
     'location' : {
         'full_name' : 'Location',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:coverage',
         },
     'original_filename' : {
         'full_name' : 'Original filename',
@@ -88,14 +91,17 @@ their_fields = {
         },
     'size' : {
         'full_name' : 'Size',
+        'dc_mapping' : 'dcterms:format',
         'type' : 'string',
         },
     'photographer' : {
         'full_name' : 'Photographer',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:creator',
         },
     'dimensions' : {
         'full_name' : 'Dimensions',
+        'dc_mapping' : 'dcterms:format',
         'type' : 'string',
         },
     'categories' : {

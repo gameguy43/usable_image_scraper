@@ -68,6 +68,7 @@ their_fields = {
     'title' : {
         'full_name' : 'Title',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:title',
         },
     'contact' : {
         'full_name' : 'Contact',
@@ -76,10 +77,12 @@ their_fields = {
     'creator' : {
         'full_name' : 'Creator',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:creator',
         },
     'desc' : {
         'full_name' : 'Description',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:description',
         },
     'subject' : {
         'full_name' : 'Subject',
@@ -90,26 +93,53 @@ their_fields = {
     'location' : {
         'full_name' : 'Location',
         'type' : 'string',
+        #'dc_mapping' : 'dcterms:coverage',
+        # actually, i don't think this qualifies as the "The spatial or temporal topic of the resource"
         },
     'publisher' : {
         'full_name' : 'Publisher',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:publisher',
         },
     'date_of_original' : {
         'full_name' : 'Date of Original',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:date',
         },
     'type' : {
         'full_name' : 'Type',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:format',
         },
     'format' : {
         'full_name' : 'Format',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:format',
+        },
+    'file_size' : {
+        'full_name' : 'File Size',
+        'type' : 'string',
+        'dc_mapping' : 'dcterms:format',
+        },
+    'height' : {
+        'full_name' : 'Height',
+        'type' : 'string',
+        'dc_mapping' : 'dcterms:format',
+        },
+    'width' : {
+        'full_name' : 'Width',
+        'type' : 'string',
+        'dc_mapping' : 'dcterms:format',
+        },
+    'color_space' : {
+        'full_name' : 'Color Space',
+        'type' : 'string',
+        'dc_mapping' : 'dcterms:format',
         },
     'item_id' : {
         'full_name' : 'Item ID',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:identifier',
         },
     'source' : {
         'full_name' : 'Source',
@@ -118,26 +148,12 @@ their_fields = {
     'language' : {
         'full_name' : 'Language',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:language',
         },
     'rights' : {
         'full_name' : 'Rights',
         'type' : 'string',
-        },
-    'file_size' : {
-        'full_name' : 'File Size',
-        'type' : 'string',
-        },
-    'height' : {
-        'full_name' : 'Height',
-        'type' : 'string',
-        },
-    'width' : {
-        'full_name' : 'Width',
-        'type' : 'string',
-        },
-    'color_space' : {
-        'full_name' : 'Color Space',
-        'type' : 'string',
+        'dc_mapping' : 'dcterms:rights',
         },
     'audience' : {
         'full_name' : 'Audience',
@@ -146,10 +162,12 @@ their_fields = {
     'date_created' : {
         'full_name' : 'Date created',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:date',
         },
     'date_modified' : {
         'full_name' : 'Date modified',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:date',
         },
     }
 
