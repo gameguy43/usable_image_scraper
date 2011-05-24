@@ -80,6 +80,7 @@ their_fields = {
     'desc' : {
         'full_name' : 'Description',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:description',
         },
     'categories' : {
         'full_name' : 'Categories',
@@ -87,15 +88,15 @@ their_fields = {
         'serialize' : True,
         'repr_as_html' : categories_to_html,
         },
-    'credit' : {
-        'full_name' : 'Photo Credit',
-        'type' : 'string',
-        },
     'links' : {
         'full_name' : 'Links',
         'type' : 'string',
         'serialize' : True,
         'repr_as_html' : links_to_html,
+        },
+    'credit' : {
+        'full_name' : 'Photo Credit',
+        'type' : 'string',
         },
     'provider' : {
         'full_name' : 'Content Providers(s)',
@@ -108,9 +109,11 @@ their_fields = {
     'copyright' : {
         'full_name' : 'Copyright Restrictions',
         'type' : 'string',
+        'dc_mapping' : 'dcterms:rights',
         },
     'creation' : {
         'full_name' : 'Creation Date',
+        'dc_mapping' : 'dcterms:description',
         'type' : 'string',
         },
 }

@@ -126,11 +126,14 @@ class DB:
             html_block = '<p class="datapoint">'
             # if there's a pre-perscribed way to represent this field:
             html_block += '<strong class="label">' + self.their_fields[key]['full_name'] + ':</strong>'
+            rdfa_clause = ''
+            if 'dc_mapping' in data:
+                rdfa_clause = ' property="' + data['dc_mapping'] + '"'
             if 'repr_as_html' in data:
                 html_block += data['repr_as_html'](image_as_dict[key])
             # if not:
             else:
-                html_block += '<span class="' + key + '">' + str(image_as_dict[key]) + '</span>'
+                html_block += '<span class="' + key + '"' + rdfa_clause + '>' + str(image_as_dict[key]) + '</span>'
             html_block += '</p>'
             image_as_dict['their_data'] += html_block
             
