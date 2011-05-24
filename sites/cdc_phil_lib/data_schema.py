@@ -32,6 +32,26 @@ from django.template import Template, Context
 
 table_name = 'cdc_phil_metadata'
 
+def links_to_html(links_tuples):
+    retval = "<ul>"
+    for string, url in links_tuples:
+        retval += '<li><a href="' + url + '">' + string + "</a></li>\n";
+    retval += "</ul>"
+    return retval
+
+def categories_to_html(cat_dict):
+    retval = "<ul>"
+    def print_with_spaces(dictionary, spaces):
+        retval = ''
+        if dictionary:
+            for key in dictionary.keys():
+                retval += "<li>" + "&nbsp;&nbsp;&nbsp;"*spaces + key + "</li>\n"
+                retval += print_with_spaces(dictionary[key], spaces+1)
+        return retval
+    retval += print_with_spaces(cat_dict, 0)
+    retval += "</ul>"
+    return retval
+
 resolutions = {
     'hires' : {
         'status_column_name' : 'hires_status',
@@ -64,6 +84,8 @@ their_fields = {
     'categories' : {
         'full_name' : 'Categories',
         'type' : 'string',
+        'serialize' : True,
+        'repr_as_html' : categories_to_html,
         },
     'credit' : {
         'full_name' : 'Photo Credit',
@@ -73,6 +95,7 @@ their_fields = {
         'full_name' : 'Links',
         'type' : 'string',
         'serialize' : True,
+        'repr_as_html' : links_to_html,
         },
     'provider' : {
         'full_name' : 'Content Providers(s)',

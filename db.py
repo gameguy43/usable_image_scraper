@@ -116,10 +116,8 @@ class DB:
         # add link rel=license
         #image_as_dict['copyright'] = image_as_dict['copyright'].strip("'").replace('None', '<a href="http://creativecommons.org/licenses/publicdomain/" rel="license">None</a>')
 
-        
         image_as_dict['next_id'] = int(image_as_dict['id']) + 1
         image_as_dict['prev_id'] = int(image_as_dict['id']) - 1
-
         
         image_as_dict['their_data'] = ''
         for key, data in self.their_fields.items():
@@ -127,23 +125,22 @@ class DB:
                 continue
             html_block = '<p class="datapoint">'
             # if there's a pre-perscribed way to represent this field:
-            html_block = html_block + '<strong class="label">' + self.their_fields[key]['full_name'] + ':</strong>'
+            html_block += '<strong class="label">' + self.their_fields[key]['full_name'] + ':</strong>'
             if 'repr_as_html' in data:
-                html_block = html_block + data['repr_as_html'](image_as_dict[key])
+                html_block += data['repr_as_html'](image_as_dict[key])
             # if not:
             else:
-                html_block = html_block + '<span class="' + key + '">' + str(image_as_dict[key]) + '</span>'
-            html_block = ''.join([html_block, '</p>'])
-            image_as_dict['their_data'] = ''.join([image_as_dict['their_data'], html_block])
+                html_block += '<span class="' + key + '">' + str(image_as_dict[key]) + '</span>'
+            html_block += '</p>'
+            image_as_dict['their_data'] += html_block
             
 
-        '''
-        template_str = get_template_str()
+        print image_as_dict['their_data']
+        template_str = self.get_template_str()
         template = Template(template_str)
         context = Context({'image': image_as_dict, 'image_urls': image_urls})
         html = template.render(context)
-        '''
-        return html_block
+        return html
 
     def prep_data_for_insertion(self, data_dict):
         if not data_dict:
@@ -162,15 +159,14 @@ class DB:
                     data_dict[key] = json.loads(data_dict[key])
         return data_dict
 
-    '''
-    def get_template_str():
+    def get_template_str(self):
+        template_file = 'django_template.html'
         path = os.path.dirname(__file__)
         relpath = os.path.relpath(path)
         template_relpath = relpath + '/' + template_file
         fp = open(template_relpath, 'r')
         template_as_str = fp.read()
         return template_as_str
-    '''
 
 
     def get_field_key_by_full_name(self, full_name):

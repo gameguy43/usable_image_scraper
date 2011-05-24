@@ -31,6 +31,19 @@ from django.template import Template, Context
 
 table_name = 'fema_metadata'
 
+def disasters_to_html(list):
+    retval = "<ul>"
+    for string, url in list:
+        retval += '<li><a href="' + url + '">' + string + "</a></li>\n";
+    retval += "</ul>"
+    return retval
+
+def categories_to_html(list):
+    retval = "<ul>"
+    for category in list:
+        retval += '<li>' + category + '</li>\n'
+    retval += "</ul>"
+    return retval
 
 resolutions = {
     'hires' : {
@@ -89,11 +102,13 @@ their_fields = {
         'full_name' : 'Categories',
         'type' : 'string',
         'serialize' : True,
+        'repr_as_html' : categories_to_html,
         },
     'disasters' : {
         'full_name' : 'Disasters',
         'type' : 'string',
         'serialize' : True,
+        'repr_as_html' : disasters_to_html,
         },
     }
 

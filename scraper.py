@@ -391,8 +391,6 @@ class Scraper:
             self.update_resolution_download_status_based_on_fs(resolution, ceiling_id)
         
 
-        
-
     def scrape_all(self, dl_images=True, from_hd=False):
         floor = self.get_highest_id_in_our_db()
         ceiling = self.imglib.scraper.get_highest_id()
@@ -435,7 +433,10 @@ def scrape_all_sites():
         myscraper.scrape_all(dl_images=True, from_hd=False)
 
 if __name__ == '__main__':
-    nightly()
-    #name = 'fema_lib'
-    #myscraper = mkscraper(name)
-    #myscraper.get_num_images()
+    do_nightly = False
+    if do_nightly:
+        nightly()
+    else:
+        name = 'cdc_phil'
+        myscraper = mkscraper(name)
+        myscraper.get_num_images()

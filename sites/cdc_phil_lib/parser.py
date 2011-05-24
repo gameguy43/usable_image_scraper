@@ -154,7 +154,7 @@ def parse_img_html_page(html):
                                 tagname = cells[len(cells)-1].find('a').contents[0]
                                 tag_str = tag_str + "\n" +  " "*indentation + tagname + ":"
                         yamlized = yaml.safe_load(tag_str) # gets us a dict
-                        metadict['categories'] = encode_all_nice(json.dumps(yamlized))
+                        metadict['categories'] = yamlized
 
                 elif fieldName == 'Copyright Restrictions:':
                     if fieldValue.contents:

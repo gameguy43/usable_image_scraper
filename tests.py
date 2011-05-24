@@ -39,8 +39,8 @@ class TestScraperFunctions(unittest.TestCase):
         #self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
 
         # do a scrape on them
-        #self.myscraper.scrape_indeces(known_good_indeces, dl_images=False, from_hd=True) #DEBUG TODO
-        self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
+        self.myscraper.scrape_indeces(known_good_indeces, dl_images=False, from_hd=True) #DEBUG TODO
+        #self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
 
         # check that we have the right number of rows in the database
         rows = self.myscraper.db.metadata_table.all()
