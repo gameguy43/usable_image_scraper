@@ -1,6 +1,7 @@
 import unittest2 as unittest
 
-known_good_indeces = [1,2,3,4,5,6,7]
+known_good_indeces = [1,2,3,4,5,6,7, 73]
+# 73 has a unicode char that broke things once
 
 known_metadata_mappings = {
     1 : {
