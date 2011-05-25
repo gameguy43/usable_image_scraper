@@ -220,7 +220,7 @@ class DB:
         try:
             id = int(self.metadata_table.order_by(sqlalchemy.desc(self.metadata_table.id)).first().id)
         except:
-            id = 0
+            id = 1
         return id
 
     def get_num_images(self):

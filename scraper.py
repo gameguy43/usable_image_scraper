@@ -389,10 +389,10 @@ class Scraper:
         
 
     def scrape_all(self, dl_images=True, from_hd=False):
-        floor = self.get_highest_id_in_our_db()
+        floor = self.db.get_highest_id_in_our_db()
         ceiling = self.imglib.scraper.get_highest_id()
         indeces = range(floor, ceiling+1)
-        self.scrape_indeces(indeces, dl_images, from_hd)
+        self.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
 
 
     #### WEB STUFF
@@ -420,19 +420,21 @@ class Scraper:
 
 
 
-def nightly():
-    scrape_all_sites()
+def nightly(dl_images=True, from_hd=False):
+    scrape_all_sites(dl_images=dl_images, from_hd=from_hd)
 
-def scrape_all_sites():
+def scrape_all_sites(dl_images=True, from_hd=False):
     image_databases = config.image_databases
     for name, data in image_databases.items():
         myscraper = mkscraper(name)
-        myscraper.scrape_all(dl_images=True, from_hd=False)
+        myscraper.scrape_all(dl_images=dl_images, from_hd=from_hd)
 
 if __name__ == '__main__':
-    do_nightly = False
+    do_nightly = True
     if do_nightly:
-        nightly()
+        dl_images = False
+        from_hd = True
+        nightly(dl_images, from_hd)
     else:
         name = 'cdc_phil'
         myscraper = mkscraper(name)
