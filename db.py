@@ -87,7 +87,8 @@ class DB:
             setattr(OurMetadata, fieldname, fieldinfo['column'])
         
         ## create the db
-        self.db = SqlSoup(db_url)
+        self.db = SqlSoup(db_url + '?charset=utf8&use_unicode=0')
+        self.db.engine.raw_connection().connection.text_factory = unicode
         #from sqlalchemy.orm import scoped_session, sessionmaker
         #db = SqlSoup(sql_url, session=scoped_session(sessionmaker(autoflush=False, expire_on_commit=False, autocommit=True)))
 

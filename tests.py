@@ -8,7 +8,7 @@ class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         # instantiate a scraper 
-        self.imglib_name = 'fws'
+        self.imglib_name = 'cdc_phil'
         print "SETTING UP"
         self.myscraper = scraper.mkscraper(self.imglib_name, test=True)
         self.imglib = self.myscraper.imglib
@@ -26,7 +26,6 @@ class TestScraperFunctions(unittest.TestCase):
     #TODO: test the scraping from hd functionality
 
     def test_scrape(self):
-        print "here"
         # grab known good indeces
         known_good_indeces = self.imglib.tests.known_good_indeces
         known_good_indeces.sort()
