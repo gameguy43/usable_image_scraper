@@ -8,9 +8,9 @@ class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         # instantiate a scraper 
-        self.imglib_name = 'fema'
+        self.imglib_name = 'fws'
         print "SETTING UP"
-        self.myscraper = scraper.mkscraper(self.imglib_name)
+        self.myscraper = scraper.mkscraper(self.imglib_name, test=True)
         self.imglib = self.myscraper.imglib
 
     '''

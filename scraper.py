@@ -67,7 +67,7 @@ def get_extension_from_path(path):
     return extension
 
 # make a scraper based on the config
-def mkscraper(image_db_key):
+def mkscraper(image_db_key, test=False):
     img_db_config = config.image_databases[image_db_key]
     data_base_dir = config.data_root_dir + img_db_config['data_subdir']
 
@@ -79,7 +79,11 @@ def mkscraper(image_db_key):
     kwargs['data_dir'] = data_base_dir
     kwargs['html_subdir'] = config.html_subdir
 
-    kwargs['db_url'] = config.db_url
+    if test:
+        kwargs['db_url'] = config.test_db_url
+    else:
+        kwargs['db_url'] = config.db_url
+
     kwargs['data_table_prefix'] = img_db_config['data_table_prefix']
     kwargs['max_daemons'] = config.max_daemons
     kwargs['max_filesize'] = config.max_filesize

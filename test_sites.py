@@ -9,7 +9,7 @@ def generate_TestSiteClass_for_site(site):
         def setUp(self):
             self.maxDiff = None
             # instantiate a scraper 
-            self.myscraper = scraper.mkscraper(site)
+            self.myscraper = scraper.mkscraper(site, test=True)
             self.imglib = self.myscraper.imglib
 
             self.use_live_page = False
