@@ -45,7 +45,7 @@ class DB:
     
         self.our_fields = {
             'page_permalink' : {
-                'column': Column(String),
+                'column': Column(String(1000)),
                 },
             'access_time' : {
                 'column': Column(Integer),
@@ -62,13 +62,13 @@ class DB:
         resolutions_columns = []
         for resolution, data in self.resolutions.items():
             resolutions_columns.append((data['status_column_name'], {'column' : Column(Boolean, default=False)}))
-            resolutions_columns.append((data['url_column_name'], {'column' : Column(String)}))
+            resolutions_columns.append((data['url_column_name'], {'column' : Column(String(1000))}))
             resolutions_columns.append((data['too_big_column_name'], {'column' : Column(Boolean, default=False)}))
         self.our_fields.update(dict(resolutions_columns))
 
         def column_type_to_column_obj(type):
             if type == 'string':
-                return Column(String)
+                return Column(Text(9000))
             else:
                 print "what the heck kind of type is that?!?!?!?"
 
@@ -119,6 +119,7 @@ class DB:
     def re_objectify_data(self, data_dict):
         if not data_dict:
             return data_dict
+        data_dict['id'] = int(data_dict['id'])
         for key, data in data_dict.items():
             if key in self.all_fields and 'serialize' in self.all_fields[key] and self.all_fields[key]['serialize']:
                 if data_dict[key]:
@@ -313,7 +314,7 @@ class DB:
                 continue
             html_block = '<p class="datapoint">'
             # if there's a pre-perscribed way to represent this field:
-            html_block += '<strong class="label">' + self.their_fields[key]['full_name'] + ': </strong>'
+            html_block += '<label for="' + key + '">' + self.their_fields[key]['full_name'] + ': </label>'
             rdfa_clause = ''
             if 'dc_mapping' in data:
                 rdfa_clause = ' property="' + data['dc_mapping'] + '"'
@@ -321,7 +322,7 @@ class DB:
                 html_block += data['repr_as_html'](image_as_dict[key])
             # if not:
             else:
-                html_block += '<span class="' + key + '"' + rdfa_clause + '>' + str(image_as_dict[key]) + '</span>'
+                html_block += '<span id="' + key + '"' + rdfa_clause + '>' + str(image_as_dict[key]) + '</span>'
             html_block += '</p>'
             image_as_dict['their_data'] += html_block
             

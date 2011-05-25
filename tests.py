@@ -8,7 +8,7 @@ class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         # instantiate a scraper 
-        self.imglib_name = 'cdc_phil'
+        self.imglib_name = 'fema'
         print "SETTING UP"
         self.myscraper = scraper.mkscraper(self.imglib_name)
         self.imglib = self.myscraper.imglib
@@ -39,8 +39,8 @@ class TestScraperFunctions(unittest.TestCase):
         #self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
 
         # do a scrape on them
-        self.myscraper.scrape_indeces(known_good_indeces, dl_images=False, from_hd=True) #DEBUG TODO
-        #self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
+        #self.myscraper.scrape_indeces(known_good_indeces, dl_images=False, from_hd=True) #DEBUG TODO
+        self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
 
         # check that we have the right number of rows in the database
         rows = self.myscraper.db.metadata_table.all()
@@ -50,8 +50,8 @@ class TestScraperFunctions(unittest.TestCase):
 
         # check that the ids in the rows are right
         all_rows = self.myscraper.db.metadata_table.all()
-        ids = map(lambda row: row.id, all_rows)
-        self.assertEqual(ids, known_good_indeces)
+        ids = map(lambda row: int(row.id), all_rows)
+        self.assertEqual(set(ids), set(known_good_indeces))
 
         # check that at least one of the rows actually has the right data
         known_metadata_mappings = self.imglib.tests.known_metadata_mappings

@@ -36,12 +36,22 @@ max_filesize = 100000 # in bytes
 import sites
 img_libraries_metalib = sites
 
+'''
+data_db_engine = ''
 data_db_host = ''
 data_db_db = data_root_dir + 'metadata.sqlite'
 data_db_user = ''
 data_db_pass = ''
+'''
 
-db_url = 'sqlite:///' + data_db_db
+data_db_engine = 'mysql+mysqldb'
+data_db_host = 'localhost'
+data_db_db = 'usable_images'
+data_db_user = 'usable_images'
+data_db_pass = 'usable_images'
+
+db_url = '%s://%s:%s@%s/%s' % (data_db_engine, data_db_user, data_db_pass, data_db_host, data_db_db)
+print db_url
 
 # web things
 # NOTE: currently, the below is overridden by the django app calling myscraper.set_web_vars
