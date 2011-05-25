@@ -51,7 +51,22 @@ data_db_user = 'usable_images'
 data_db_pass = 'usable_images'
 
 db_url = '%s://%s:%s@%s/%s' % (data_db_engine, data_db_user, data_db_pass, data_db_host, data_db_db)
-print db_url
+'''
+create database usable_images;
+grant all privileges on usable_images.* to usable_images@localhost   identified by 'usable_images';
+'''
+
+test_data_db_engine = 'mysql+mysqldb'
+test_data_db_host = 'localhost'
+test_data_db_db = 'usableimagestest'
+test_data_db_user = 'usableimagestest'
+test_data_db_pass = 'usableimagestest'
+
+test_db_url = '%s://%s:%s@%s/%s' % (test_data_db_engine, test_data_db_user, test_data_db_pass, test_data_db_host, test_data_db_db)
+'''
+create database usableimagestest;
+grant all privileges on usableimagestest.* to usableimagestest@localhost identified by 'usableimagestest';
+'''
 
 # web things
 # NOTE: currently, the below is overridden by the django app calling myscraper.set_web_vars
