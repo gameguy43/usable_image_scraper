@@ -34,6 +34,12 @@ import sqlalchemy
 import threading
 import copy
 
+# thanks, http://farmdev.com/talks/unicode/
+def to_unicode_or_bust(obj, encoding='utf-8'):
+    if isinstance(obj, basestring):
+        if not isinstance(obj, unicode):
+            obj = unicode(obj, encoding)
+    return obj
 
 class DB:
     ##### INSTANTIATION
@@ -45,7 +51,7 @@ class DB:
     
         self.our_fields = {
             'page_permalink' : {
-                'column': Column(String(1000)),
+                'column': Column(String(1000, convert_unicode=True)),
                 },
             'access_time' : {
                 'column': Column(Integer),
@@ -62,13 +68,13 @@ class DB:
         resolutions_columns = []
         for resolution, data in self.resolutions.items():
             resolutions_columns.append((data['status_column_name'], {'column' : Column(Boolean, default=False)}))
-            resolutions_columns.append((data['url_column_name'], {'column' : Column(String(1000))}))
+            resolutions_columns.append((data['url_column_name'], {'column' : Column(String(1000, convert_unicode=True))}))
             resolutions_columns.append((data['too_big_column_name'], {'column' : Column(Boolean, default=False)}))
         self.our_fields.update(dict(resolutions_columns))
 
         def column_type_to_column_obj(type):
             if type == 'string':
-                return Column(Text(9000))
+                return Column(Text(9000, convert_unicode=True))
             else:
                 print "what the heck kind of type is that?!?!?!?"
 
@@ -116,7 +122,8 @@ class DB:
             if key in self.all_fields and 'serialize' in self.all_fields[key] and self.all_fields[key]['serialize']:
                 data_dict[key] = json.dumps(data_dict[key])
         return data_dict
-    # de-serialize data after pulling it from the database
+
+    # de-serialize and decode to unicode the data after pulling it from the database
     def re_objectify_data(self, data_dict):
         if not data_dict:
             return data_dict
@@ -125,6 +132,8 @@ class DB:
             if key in self.all_fields and 'serialize' in self.all_fields[key] and self.all_fields[key]['serialize']:
                 if data_dict[key]:
                     data_dict[key] = json.loads(data_dict[key])
+            else:
+                data_dict[key] = to_unicode_or_bust(data_dict[key])
         return data_dict
 
 
@@ -296,7 +305,7 @@ class DB:
     ##### OTHER
     def repr_as_html(self, image_as_dict, image_resolution_to_local_file_location_fxn):
         if not image_as_dict:
-            return ""
+            return u""
         floorified = usable_image_scraper.scraper.floorify(image_as_dict['id'])
         id_zfilled = str(image_as_dict['id']).zfill(5)
         image_urls = {}
@@ -309,7 +318,7 @@ class DB:
         image_as_dict['next_id'] = int(image_as_dict['id']) + 1
         image_as_dict['prev_id'] = int(image_as_dict['id']) - 1
         
-        image_as_dict['their_data'] = ''
+        image_as_dict['their_data'] = u''
         for key, data in self.their_fields.items():
             if not key in image_as_dict or not image_as_dict[key]:
                 continue
@@ -323,7 +332,7 @@ class DB:
                 html_block += data['repr_as_html'](image_as_dict[key])
             # if not:
             else:
-                html_block += '<span id="' + key + '"' + rdfa_clause + '>' + str(image_as_dict[key]) + '</span>'
+                html_block += '<span id="' + key + '"' + rdfa_clause + '>' + unicode(image_as_dict[key]) + '</span>'
             html_block += '</p>'
             image_as_dict['their_data'] += html_block
             
