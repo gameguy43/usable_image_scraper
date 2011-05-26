@@ -295,8 +295,10 @@ class DB:
         print "================================"
         print "LIKE SERIOUSLY I AM ABOUT TO DELETE ALL THE TABLES RIGHT NOW OH BOY"
         print "================================"
-        self.base.metadata.drop_all(self.db.engine)
-        self.db.commit()
+        for table in reversed(self.base.metadata.sorted_tables):
+            print table
+            table.delete()
+            self.db.commit()
         self.base.metadata.create_all(self.db.engine)
         self.db.commit()
 

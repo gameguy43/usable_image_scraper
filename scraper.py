@@ -456,4 +456,5 @@ if __name__ == '__main__':
         '''
         name = 'fws'
         myscraper = mkscraper(name)
+        myscraper.db.truncate_all_tables()
         myscraper.scrape_indeces([1])
