@@ -85,8 +85,8 @@ class DB:
         self.all_fields = dict(self.their_fields.items() + self.our_fields.items())
 
         ## generate the metadata class
-        Base = declarative_base()
-        class OurMetadata(Base):
+        self.base = declarative_base()
+        class OurMetadata(self.base):
             __tablename__ = data_schema.table_name
             id = Column(Integer, primary_key=True)
         for fieldname, fieldinfo in self.all_fields.items():
@@ -99,7 +99,7 @@ class DB:
         #db = SqlSoup(sql_url, session=scoped_session(sessionmaker(autoflush=False, expire_on_commit=False, autocommit=True)))
 
         # make the tables if they don't already exist
-        Base.metadata.create_all(self.db.engine)
+        self.base.metadata.create_all(self.db.engine)
         self.db.commit()
 
         # make it easier to grab metadata table object
@@ -289,6 +289,13 @@ class DB:
         data['id'] = id
         data[status_column_name] = True
         self.store_metadata_row(data)
+
+    # DELETE EVERYTHING. CAREFUL!
+    def truncate_all_tables(self):
+        self.base.metadata.drop_all(self.db.engine)
+        self.db.commit()
+        self.base.metadata.create_all(self.db.engine)
+        self.db.commit()
 
 
     ### HELPERS

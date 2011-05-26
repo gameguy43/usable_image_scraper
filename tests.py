@@ -12,6 +12,9 @@ class TestScraperFunctions(unittest.TestCase):
         print "SETTING UP"
         self.myscraper = scraper.mkscraper(self.imglib_name, test=True)
         self.imglib = self.myscraper.imglib
+        # DELETE EVERYTHING THATS ALREADY IN THE TEST DB.
+        # LIKE, OMFG
+        self.myscraper.db.truncate_all_tables()
 
     '''
     def test_db_creation(self):

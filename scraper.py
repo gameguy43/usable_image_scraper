@@ -427,6 +427,7 @@ def generate_test_dataset(dl_images=True, from_hd=False):
     image_databases = config.image_databases
     for name, data in image_databases.items():
         myscraper = mkscraper(name)
+        myscraper.db.truncate_all_tables()
         indeces = myscraper.imglib.tests.known_good_indeces
         myscraper.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
     
@@ -439,7 +440,7 @@ def scrape_all_sites(dl_images=True, from_hd=False):
 
 if __name__ == '__main__':
     do_nightly = False 
-    testing = True
+    testing = False
     if do_nightly:
         dl_images = False
         from_hd = True
@@ -448,6 +449,11 @@ if __name__ == '__main__':
         generate_test_dataset(dl_images=True, from_hd=False)
         #generate_test_dataset(dl_images=False, from_hd=True)
     else:
+        '''
         name = 'cdc_phil'
         myscraper = mkscraper(name)
         myscraper.get_num_images()
+        '''
+        name = 'fws'
+        myscraper = mkscraper(name)
+        myscraper.scrape_indeces([1])
