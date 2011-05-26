@@ -423,6 +423,14 @@ class Scraper:
 def nightly(dl_images=True, from_hd=False):
     scrape_all_sites(dl_images=dl_images, from_hd=from_hd)
 
+def generate_test_dataset(dl_images=True, from_hd=False):
+    image_databases = config.image_databases
+    for name, data in image_databases.items():
+        myscraper = mkscraper(name)
+        indeces = myscraper.imglib.tests.known_good_indeces
+        myscraper.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
+    
+
 def scrape_all_sites(dl_images=True, from_hd=False):
     image_databases = config.image_databases
     for name, data in image_databases.items():
@@ -430,11 +438,15 @@ def scrape_all_sites(dl_images=True, from_hd=False):
         myscraper.scrape_all(dl_images=dl_images, from_hd=from_hd)
 
 if __name__ == '__main__':
-    do_nightly = True
+    do_nightly = False 
+    testing = True
     if do_nightly:
         dl_images = False
         from_hd = True
         nightly(dl_images, from_hd)
+    elif testing:
+        generate_test_dataset(dl_images=True, from_hd=False)
+        #generate_test_dataset(dl_images=False, from_hd=True)
     else:
         name = 'cdc_phil'
         myscraper = mkscraper(name)

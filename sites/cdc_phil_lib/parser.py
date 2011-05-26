@@ -138,7 +138,7 @@ def parse_img_html_page(html):
                             url = link_row_html('td')[1].find('a')['href']
                             links_tuple_list.append((desc,url))
                         #jsonify it
-                        metadict['links'] = encode_all_nice(json.dumps(links_tuple_list))
+                        metadict['links'] = links_tuple_list
                 elif fieldName == 'Categories:':
                     if fieldValue.contents:
                         tag_str = ''

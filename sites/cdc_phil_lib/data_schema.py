@@ -33,7 +33,10 @@ from django.template import Template, Context
 table_name = 'cdc_phil_metadata'
 
 def links_to_html(links_tuples):
+    if not links_tuples or len(links_tuples) == 0:
+        return ''
     retval = "<ul>"
+    print links_tuples
     for string, url in links_tuples:
         retval += '<li><a href="' + url + '">' + string + "</a></li>\n";
     retval += "</ul>"
