@@ -292,6 +292,9 @@ class DB:
 
     # DELETE EVERYTHING. CAREFUL!
     def truncate_all_tables(self):
+        print "================================"
+        print "LIKE SERIOUSLY I AM ABOUT TO DELETE ALL THE TABLES RIGHT NOW OH BOY"
+        print "================================"
         self.base.metadata.drop_all(self.db.engine)
         self.db.commit()
         self.base.metadata.create_all(self.db.engine)
