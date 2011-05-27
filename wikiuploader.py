@@ -29,7 +29,13 @@ import pywikibot.upload
 import pywikibot.config
 '''
 import pywikibot
+import StringIO
+import hashlib
+import base64
+import pywikibotutils
 
+
+resolution_to_use = 'lores'
 
 
 
@@ -37,22 +43,24 @@ class WikiUploader:
     def __init__(self, myscraper):
         self.myscraper = myscraper
 
-    def find_duplicate_images_on_mwc(photo = None, site = pywikibot.getSite(u'commons', u'commons')):
+    def find_duplicate_images_on_wmc(self, photo = None, site = pywikibot.getSite(u'commons', u'commons')):
         '''
         Takes the photo, calculates the SHA1 hash and asks the mediawiki api for a list of duplicates.
 
-        TODO: Add exception handling, fix site thing
         '''
         hashObject = hashlib.sha1()
         hashObject.update(photo.getvalue())
-        return site.getFilesFromAnHash(base64.b16encode(hashObject.digest()))
+        return site.getImagesFromAnHash(base64.b16encode(hashObject.digest()))
 
     def build_description(self, metadata):
         '''
         Create the description of the image based on the metadata
         '''
         description = u''
+        description += 'testing'
 
+        # TODO: be sure to include a link back to the original source!!!
+        '''
         description = description + u'== {{int:filedesc}} ==\n'
         description = description + u'{{Information\n'
         description = description + u'|description={{en|1=' + metadata.get('description') + u'}}\n'
@@ -75,6 +83,7 @@ class WikiUploader:
         #else:
         #	description = description + u'{{Uncategorized-navy}}\n'
         #description = description + u''
+        '''
 
         return description
 
@@ -88,7 +97,6 @@ class WikiUploader:
         if len(description)>120:
             description = description[0 : 120]
         '''
-        resolution_to_use = 'lores'
         prefix = self.myscraper.abbrev.upper()
         extension = self.myscraper.get_resolution_extension(resolution_to_use, metadata['id'])
 
@@ -119,4 +127,20 @@ class WikiUploader:
         return title
 
     def upload_to_wikicommons_if_unique(self, metadata):
-        pass
+        local_file_location = self.myscraper.get_resolution_local_image_location(resolution_to_use, metadata['id'])
+
+        image_raw = open(local_file_location, 'r').read()
+        image_stringio = StringIO.StringIO(image_raw)
+
+        duplicates = self.find_duplicate_images_on_wmc(image_stringio)
+        if duplicates:
+            pywikibot.output(u'Found duplicate image at %s' % duplicates.pop())
+            return
+
+        image_url = self.myscraper.db.get_resolution_url(resolution_to_use, metadata['id'])
+
+        title = self.build_title(metadata)
+        description = self.build_description(metadata)
+
+        bot = pywikibotutils.upload.UploadRobot(image_url, description=description, useFilename=title, keepFilename=True, verifyDescription=False, targetSite = pywikibot.getSite('commons', 'commons'))
+        bot.upload_image(debug=False)

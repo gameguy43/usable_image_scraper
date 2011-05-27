@@ -410,7 +410,8 @@ class Scraper:
     def upload_to_wikicommons_if_unique(self, id):
         import wikiuploader
         myuploader = wikiuploader.WikiUploader(self)
-        myuploader.upload_to_wikicommons_if_unique(id)
+        metadata = self.db.get_image_metadata_dict(id)
+        myuploader.upload_to_wikicommons_if_unique(metadata)
 
     #### WEB STUFF
 
