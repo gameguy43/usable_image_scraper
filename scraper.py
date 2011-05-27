@@ -290,7 +290,9 @@ class Scraper:
             if not from_hd:
                 try:
                     # 1: fetching html of id, for store and parse
+                    print "downloading html for " + str(current_id) + " ..."
                     html = self.imglib.scraper.scrape_out_img_page(current_id, cookiejar)
+                    print "downloaded"
                 except KeyboardInterrupt:
                     sys.exit(0)
                 except:
@@ -330,7 +332,11 @@ class Scraper:
                         continue
             # if we wanted to get the html from disk
             else:
-                html = self.get_local_raw_html(current_id)
+                try:
+                    html = self.get_local_raw_html(current_id)
+                except:
+                    traceback.print_exc()
+                    continue
             try:
                 # 3: parse the metadata out of their html
                 metadata = self.imglib.parser.parse_img_html_page(html)
@@ -459,14 +465,29 @@ def drop_all_tables():
         break
 
 if __name__ == '__main__':
-    do_nightly = False 
+    do_nightly = True
     testing = False
+    update_download_statuses = False
     if do_nightly:
-        dl_images = False
+        dl_images = True
         from_hd = True
         nightly(dl_images, from_hd)
     elif testing:
         generate_test_dataset(dl_images=True, from_hd=False)
         #generate_test_dataset(dl_images=False, from_hd=True)
+    elif update_download_statuses:
+        for name, data in config.image_databases.items():
+            myscraper = mkscraper(name)
+            ceiling_id = myscraper.db.get_highest_id_in_our_db()
+            myscraper.update_download_statuses_based_on_fs(ceiling_id)
     else:
-        drop_all_tables()
+        pass
+        '''
+        name = 'fema'
+        myscraper = mkscraper(name)
+        floor = 1
+        ceiling = myscraper.imglib.scraper.get_highest_id()
+        indeces = range(floor, ceiling+1)
+        myscraper.scrape_indeces(indeces, dl_images=False, from_hd=False)
+        #drop_all_tables()
+        '''

@@ -93,10 +93,10 @@ class DB:
             setattr(OurMetadata, fieldname, fieldinfo['column'])
         
         ## create the db
-        self.db = SqlSoup(db_url + '?charset=utf8&use_unicode=0')
+        #self.db = SqlSoup(db_url + '?charset=utf8&use_unicode=0', expire_on_commit=True)
+        from sqlalchemy.orm import scoped_session, sessionmaker
+        self.db = SqlSoup(db_url + '?charset=utf8&use_unicode=0', session=scoped_session(sessionmaker(expire_on_commit=True)))
         self.db.engine.raw_connection().connection.text_factory = unicode
-        #from sqlalchemy.orm import scoped_session, sessionmaker
-        #db = SqlSoup(sql_url, session=scoped_session(sessionmaker(autoflush=False, expire_on_commit=False, autocommit=True)))
 
         # make the tables if they don't already exist
         self.base.metadata.create_all(self.db.engine)
@@ -145,6 +145,7 @@ class DB:
     ### many of the below functions use these
     # NOTE: careful about using this directly. it doesn't "uncompress" the data after pulling it from the db
     def get_image_metadata(self, id):
+        #with self.db_lock:
         return self.metadata_table.get(id)
 
     def get_image_metadata_dict(self, id):
@@ -262,14 +263,14 @@ class DB:
             for key, value in new_data_dict.items():
                 final_row_data_dict[key] = value
             #write over the current row contents with it
-            with self.db_lock:
-                self.db.delete(existing_row)
-                self.db.commit()
+            #with self.db_lock:
+            self.db.delete(existing_row)
+            self.db.commit()
         else: 
             final_row_data_dict = new_data_dict
-        with self.db_lock:
-            table.insert(**final_row_data_dict)
-            self.db.commit()
+        #with self.db_lock:
+        table.insert(**final_row_data_dict)
+        self.db.commit()
     def store_metadata_row(self, metadata_dict):
         if not metadata_dict.has_key('we_couldnt_parse_it'):
             metadata_dict['we_couldnt_parse_it'] = 0
