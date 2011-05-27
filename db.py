@@ -181,7 +181,7 @@ class DB:
         return the_status_column
     def get_resolution_status(self, id, resolution):
         dict = self.get_image_metadata_dict(id)
-        column_name = self.get_resolution_status_column_name()
+        column_name = self.get_resolution_status_column_name(resolution)
         return dict.get(column_name)
 
 
@@ -371,16 +371,17 @@ class DB:
             return template_as_str
 
         # the table of image downloads
-        image_as_dict['download_links'] = u'<table>'
+        image_as_dict['download_links'] = u'<table id="download_links">'
         for resolution, data in self.scraper.resolutions.items():
             image_as_dict['download_links'] += u'<tr>'
             image_as_dict['download_links'] += u'<td>' + resolution + ':</td>'
             orig_url = self.get_resolution_url(resolution, image_as_dict['id'])
-            image_as_dict['download_links'] += u'<td><a href="' + orig_url + '">' + self.scraper.abbrev.upper() + '</a>:</td>'
+            #image_as_dict['download_links'] += u'<td><a href="' + orig_url + '">' + self.scraper.abbrev.upper() + '</a></td>'
+            image_as_dict['download_links'] += u'<td><a href="' + orig_url + '">Original</a></td>'
             # if we've downloaded the image
             if self.get_resolution_status(image_as_dict['id'], resolution):
                 our_url = self.scraper.get_web_resolution_local_image_location(resolution, image_as_dict['id'], remote_url=orig_url)
-                image_as_dict['download_links'] += u'<td><a href="' + our_url + '">' + self.scraper.abbrev.upper() + '</a>:</td>'
+                image_as_dict['download_links'] += u'<td><a href="' + our_url + '">Usable Image Mirror</a></td>'
             else:
                 image_as_dict['download_links'] += u'<td></td>'
         image_as_dict['download_links'] += u'</table>'

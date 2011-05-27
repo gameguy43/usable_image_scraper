@@ -447,7 +447,6 @@ def generate_test_dataset(dl_images=True, from_hd=False):
     image_databases = config.image_databases
     for name, data in image_databases.items():
         myscraper = mkscraper(name)
-        myscraper.db.truncate_all_tables()
         indeces = myscraper.imglib.tests.known_good_indeces
         myscraper.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
     
@@ -465,8 +464,8 @@ def drop_all_tables():
         break
 
 if __name__ == '__main__':
-    do_nightly = True
-    testing = False
+    do_nightly = False
+    testing = True
     update_download_statuses = False
     if do_nightly:
         dl_images = True
