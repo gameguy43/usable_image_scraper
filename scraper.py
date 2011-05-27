@@ -88,6 +88,10 @@ def mkscraper(image_db_key, test=False):
     kwargs['max_daemons'] = config.max_daemons
     kwargs['max_filesize'] = config.max_filesize
     kwargs['web_data_base_dir'] = config.web_data_base_dir
+    kwargs['long_name'] = img_db_config['long_name']
+    kwargs['homepage'] = img_db_config['homepage']
+    kwargs['code_url'] = img_db_config['code_url']
+    kwargs['abbrev'] = image_db_key
 
     return Scraper(**kwargs)
 
@@ -96,11 +100,15 @@ def mkscraper(image_db_key, test=False):
 
 class Scraper:
     # imglib is the string name of the 
-    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10, max_filesize=None, web_data_base_dir=None):
+    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10, max_filesize=None, web_data_base_dir=None, long_name='', homepage='', code_url='', abbrev=''):
         self.imglib = imglib 
         self.resolutions = imglib.data_schema.resolutions
         self.max_daemons = max_daemons
         self.max_filesize = max_filesize
+        self.long_name = long_name
+        self.homepage = homepage
+        self.code_url = code_url
+        self.abbrev = abbrev
 
         self.data_dir = data_dir
         self.html_dir = data_dir + html_subdir 
@@ -143,12 +151,16 @@ class Scraper:
         # also, make the effing directories
         map((lambda dirname: mkdir(root_dir + dirname)), subdirs)
 
-    def get_resolution_local_image_location(self, resolution, id, remote_url=None):
+    def get_resolution_extension(self, resolution, id):
         try:
-            remote_url = self.get_resolution_url(resolution, id)
+            remote_url = self.db.get_resolution_url(resolution, id)
             extension = get_extension_from_path(remote_url)
         except:
             extension = self.resolutions[resolution]['extension']
+        return extension
+
+    def get_resolution_local_image_location(self, resolution, id, remote_url=None):
+        extension = self.get_resolution_extension(resolution, id)
         return self.get_resolution_download_dir(resolution) + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
 
     # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
@@ -394,6 +406,11 @@ class Scraper:
         indeces = range(floor, ceiling+1)
         self.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
 
+    ### CROSS-POSTING STUFF
+    def upload_to_wikicommons_if_unique(self, id):
+        import wikiuploader
+        myuploader = wikiuploader.WikiUploader(self)
+        myuploader.upload_to_wikicommons_if_unique(id)
 
     #### WEB STUFF
 
@@ -401,11 +418,7 @@ class Scraper:
         self.web_data_base_dir = web_data_base_dir + self.data_library_subdir
 
     def get_web_resolution_local_image_location(self, resolution, id, remote_url=None):
-        try:
-            remote_url = self.get_resolution_url(resolution, id)
-            extension = get_extension_from_path(remote_url)
-        except:
-            extension = self.resolutions[resolution]['extension']
+        extension = self.get_resolution_extension(resolution, id)
         return self.web_data_base_dir + self.resolutions[resolution]['subdir'] + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
 
 
