@@ -178,6 +178,11 @@ class DB:
         the_status_column_name = self.get_resolution_status_column_name(resolution)
         the_status_column = getattr(self.metadata_table, the_status_column_name)
         return the_status_column
+    def get_resolution_status(self, id, resolution):
+        dict = self.get_image_metadata_dict(id)
+        column_name = self.get_resolution_status_column_name()
+        return dict.get(column_name)
+
 
     def get_resolution_too_big_column_name(self, resolution):
         return self.resolutions[resolution]['too_big_column_name']
@@ -363,6 +368,22 @@ class DB:
             fp = open(template_relpath, 'r')
             template_as_str = fp.read()
             return template_as_str
+
+        # the table of image downloads
+        image_as_dict['download_links'] = u'<table>'
+        for resolution, data in self.scraper.resolutions.items():
+            image_as_dict['download_links'] += u'<tr>'
+            image_as_dict['download_links'] += u'<td>' + resolution + ':</td>'
+            orig_url = self.get_resolution_url(resolution, image_as_dict['id'])
+            image_as_dict['download_links'] += u'<td><a href="' + orig_url + '">' + self.scraper.abbrev.upper() + '</a>:</td>'
+            # if we've downloaded the image
+            if self.get_resolution_status(image_as_dict['id'], resolution):
+                our_url = self.scraper.get_web_resolution_local_image_location(resolution, image_as_dict['id'], remote_url=orig_url)
+                image_as_dict['download_links'] += u'<td><a href="' + our_url + '">' + self.scraper.abbrev.upper() + '</a>:</td>'
+            else:
+                image_as_dict['download_links'] += u'<td></td>'
+        image_as_dict['download_links'] += u'</table>'
+                
 
         template_str = get_template_str()
         template = Template(template_str)
