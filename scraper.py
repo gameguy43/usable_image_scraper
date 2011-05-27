@@ -451,16 +451,24 @@ def drop_all_tables():
         break
 
 if __name__ == '__main__':
-    do_nightly = False
+    do_nightly = True
     testing = False
+    update_download_statuses = False
     if do_nightly:
-        dl_images = False
+        dl_images = True
         from_hd = True
         nightly(dl_images, from_hd)
     elif testing:
         generate_test_dataset(dl_images=True, from_hd=False)
         #generate_test_dataset(dl_images=False, from_hd=True)
+    elif update_download_statuses:
+        for name, data in config.image_databases.items():
+            myscraper = mkscraper(name)
+            ceiling_id = myscraper.db.get_highest_id_in_our_db()
+            myscraper.update_download_statuses_based_on_fs(ceiling_id)
     else:
+        pass
+        '''
         name = 'fema'
         myscraper = mkscraper(name)
         floor = 1
@@ -468,3 +476,4 @@ if __name__ == '__main__':
         indeces = range(floor, ceiling+1)
         myscraper.scrape_indeces(indeces, dl_images=False, from_hd=False)
         #drop_all_tables()
+        '''
