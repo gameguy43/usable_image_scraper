@@ -118,6 +118,23 @@ class TestScraperFunctions(unittest.TestCase):
             self.assertTrue(isinstance(self.myscraper.db.get_next_successful_image_id(id), int))
             self.assertTrue(isinstance(self.myscraper.db.get_prev_successful_image_id(id), int))
 
+        # order good indeces 
+        known_good_indeces.sort()
+        # we'll download good1 and good3, but not good2
+        good1 = known_good_indeces[0]
+        good2 = known_good_indeces[1]
+        good3 = known_good_indeces[2]
+        self.myscraper.scrape_indeces([good1], dl_images=True, from_hd=False)
+        self.myscraper.scrape_indeces([good3], dl_images=True, from_hd=False)
+        local_file_we_dont_dl = self.myscraper.get_resolution_local_image_location(self.myscraper.resolutions.keys()[0], good2)
+        # touch the file we won't dl, to trick our scraper in to thinking we've downloaded it
+        #open(local_file_we_dont_dl, 'a')
+        self.myscraper.update_download_statuses_based_on_fs(ceiling_id=good3)
+        self.assertEqual(self.myscraper.db.get_next_successful_image_id(good1), good3)
+        self.assertEqual(self.myscraper.db.get_prev_successful_image_id(good3), good1)
+        
+
+
 
 #TODO: case: * grab the highest index in the database
 # maybe. or just make this a test that lives in the individual image libraries
