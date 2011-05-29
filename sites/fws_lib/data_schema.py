@@ -65,13 +65,37 @@ resolutions = {
     }
 
 their_fields = {
+    'video_clip' : {
+        'full_name' : 'Video Clip',
+        'type' : 'string',
+        },
+    'video_audio_transcript' : {
+        'full_name' : 'Video Audio Transcript',
+        'type' : 'string',
+        },
+    'audio_clip' : {
+        'full_name' : 'Audio Clip',
+        'type' : 'string',
+        },
+    'alternative_title' : {
+        'full_name' : 'Alternative Title',
+        'type' : 'string',
+        },
     'title' : {
         'full_name' : 'Title',
         'type' : 'string',
         'dc_mapping' : 'dcterms:title',
         },
+    'project_type' : {
+        'full_name' : 'Project Type',
+        'type' : 'string',
+        },
     'contact' : {
         'full_name' : 'Contact',
+        'type' : 'string',
+        },
+    'metadata_creator' : {
+        'full_name' : 'Metadata Creator',
         'type' : 'string',
         },
     'creator' : {
@@ -81,6 +105,11 @@ their_fields = {
         },
     'desc' : {
         'full_name' : 'Description',
+        'type' : 'string',
+        'dc_mapping' : 'dcterms:description',
+        },
+    'descriptive_note' : {
+        'full_name' : 'Descriptive Note',
         'type' : 'string',
         'dc_mapping' : 'dcterms:description',
         },
@@ -105,6 +134,61 @@ their_fields = {
         'full_name' : 'Date of Original',
         'type' : 'string',
         'dc_mapping' : 'dcterms:date',
+        },
+    'length' : {
+        'full_name' : 'Length',
+        'type' : 'string',
+        },
+    'record_created' : {
+        'full_name' : 'Record Created',
+        'type' : 'string',
+        },
+    'records' : {
+        'full_name' : 'Records',
+        'type' : 'string',
+        },
+    'full_resolution_file_size' : {
+        'full_name' : 'Full Resolution File Size',
+        'type' : 'string',
+        },
+    'transcript' : {
+        'full_name' : 'Transcript',
+        'type' : 'string',
+        },
+    'tag' : {
+        'full_name' : 'Tag',
+        'type' : 'string',
+        },
+    'grant_program' : {
+        'full_name' : 'Grant Program',
+        'type' : 'string',
+        },
+    'grantee_agency' : {
+        'full_name' : 'Grantee agency',
+        'type' : 'string',
+        },
+    '''
+    # I think this isn'y actually a field. not sure.
+    'save_image' : {
+        'full_name' : 'SAVE IMAGE',
+        'type' : 'string',
+        },
+    '''
+    'collection' : {
+        'full_name' : 'Collection',
+        'type' : 'string',
+        },
+    'original_filename' : {
+        'full_name' : 'Original Filename',
+        'type' : 'string',
+        },
+    'original_data_id' : {
+        'full_name' : 'Original Data ID',
+        'type' : 'string',
+        },
+    'original_format' : {
+        'full_name' : 'Original Format',
+        'type' : 'string',
         },
     'type' : {
         'full_name' : 'Type',
@@ -168,6 +252,18 @@ their_fields = {
         'full_name' : 'Date modified',
         'type' : 'string',
         'dc_mapping' : 'dcterms:date',
+        },
+    'fws_resource_links' : {
+        'full_name' : 'FWS Resource Links',
+        'type' : 'string',
+        },
+    'fws_site' : {
+        'full_name' : 'FWS Site',
+        'type' : 'string',
+        },
+    'contributors' : {
+        'full_name' : 'Contributors',
+        'type' : 'string',
         },
     }
 
