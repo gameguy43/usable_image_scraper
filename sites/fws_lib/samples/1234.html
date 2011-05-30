@@ -1,9 +1,9 @@
 <!--   
-CONTENTdm Version 5
-(c) OCLC 2008. All Rights Reserved.
+CONTENTdm Version 5.2
+(c) OCLC 2009. All Rights Reserved.
 //-->
 
-﻿﻿
+﻿﻿﻿
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -11,17 +11,12 @@ CONTENTdm Version 5
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 
-<meta content="U.S. Fish and Wildlife Service - National Digital Library" name="Description" />
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<meta content="natural resources, animals, habitat, conservation, images, law enforcement, fire management, wilderness, natural resource management, conservation science, wildlife conservation, fisheries, Fish and Wildlife Service, FWS" name="Keywords" /> 
-
-
 	
 <title>National Digital Library : Item Viewer</title>
 
 <style type="text/css">
 <!--
-
 /* Start FWS Customization */
 .introtext
 	{
@@ -86,21 +81,21 @@ CONTENTdm Version 5
 
 hr
 	{
-	color:#627d7c;
+	color:#9CA08A;
 	}	
 	
 .copyright
 	{
 	font-family:verdana;
 	font-size:65%;
-	color:#99a99a;
+	color:#131506;
 	}
 	
 a.copyright
 	{
 	font-family:verdana;
 	font-size:100%;
-	color:#99a99a;
+	color:#131506;
 	text-decoration:none;
 	}
 	
@@ -143,7 +138,7 @@ a:hover
 	font-family:verdana;
 	font-size:100%;
 	color:#990000;
-	text-decoration:none;
+	text-decoration:underline;
 	}
 /* Start FWS Customization */
 .quicksearch
@@ -154,7 +149,7 @@ a:hover
 	font-weight:normal;
 	letter-spacing:1.3pt;
 	text-decoration:none;
-	background-color: #870000;
+	background-color: #788053; /* Changed from 870000 */
 	}
 /* End FWS Customization */
 
@@ -162,7 +157,7 @@ a:hover
 	{
 	font-family:geneva,verdana;
 	font-size:80%;
-	color:#404040;
+	color:#131506;
 	font-weight:normal;
 	letter-spacing:1.3pt; <!-- FWS Customization default 1.1pt -->
 	text-decoration:none;
@@ -172,7 +167,7 @@ a.genmenu
 	{
 	font-family:geneva,verdana;
 	font-size:100%;
-	color:#404040;
+	color:#131506;
 	font-weight:normal;
 	letter-spacing:1.1pt;
 	text-decoration:none;
@@ -279,8 +274,8 @@ a.nonlink:hover
 	
 .tdimage
 	{
-	border:1px dashed #F1D9B5;
-	background-color:#F1D9B5;
+	border:1px dashed #ffffff;
+	background-color:#ffffff;
 	padding:5px; /* FWS Customization default padding:5px; */
 	}
 
@@ -296,7 +291,7 @@ input
 	font-family:verdana;
 	font-size:65%;
 	color:#000000;
-	background-color:#DEBC8E;
+	background-color:#eeeeee;
 	}
 		
 input.buttons
@@ -318,7 +313,7 @@ input.searchbutton
 	font-family:verdana;
 	font-size:65%;
 	font-weight:normal;
-	background-color:#448ccb;
+	background-color:#788053;
 	color:#ffffff;
 	border-top-style:none;
 	border-right-style:none;
@@ -358,7 +353,7 @@ select
 	font-family:verdana;
 	font-size:65%;
 	color:#000000;
-	background-color:#DEBC8E;
+	background-color:#eeeeee;
 	}
 	
 a.item
@@ -381,12 +376,12 @@ a.item:hover
 	
 .iframescroll
 	{
-	scrollbar-face-color:#627d7c;
-	scrollbar-highlight-color:#99a99a;
-	scrollbar-shadow-color:#99a99a;
-	scrollbar-arrow-color:#F1D9B5;
+	scrollbar-face-color:#9CA08A;
+	scrollbar-highlight-color:#9CA08A;
+	scrollbar-shadow-color:#9CA08A;
+	scrollbar-arrow-color:#ffffff;
 	scrollbar-arrow-size:20px;
-	scrollbar-track-color:#F1D9B5;
+	scrollbar-track-color:#ffffff;
 	scrollbar-darkshadow-color:#AAAAAA;
 	scrollbar-3Dlight-color:#EEEEEE;
 	}
@@ -412,7 +407,7 @@ input.searchboxes
 	font-family:verdana;
 	font-size:65%;
 	color:#000000;
-	background-color:#DEBC8E;
+	background-color:#eeeeee;
 	width:200px;
 	}
 
@@ -469,6 +464,7 @@ a.addfavoffstatus:hover
 	color:#cccccc;
 	cursor:text;
 	}
+
 
 /*
 	Start FWS Customization
@@ -580,7 +576,7 @@ a.addfavoffstatus:hover
 	padding-top: 2px;
 	padding-bottom: 2px;
 	visibility: visible;
-	background-color: #3e647e; /*you can change this*/
+	background-color: #788053; /*you can change this*/
 	vertical-align: middle;
 	z-index: 3;
 	overflow: hidden
@@ -616,7 +612,7 @@ a.addfavoffstatus:hover
 	padding-top: 0px;
 	padding-bottom: 0px;
 	visibility: visible;
-	background-color: #99a99a; /*you can change this*/
+	background-color: #9CA08A; /*you can change this*/
 	vertical-align: middle;
 	z-index: 6;
 	overflow: hidden;
@@ -638,7 +634,7 @@ a.addfavoffstatus:hover
 	top: 75px;
 	height: 22px;
 	z-index: 1;
-	background: #99a99a; /*you can change this */
+	background: #9CA08A; /*you can change this */
 	margin-bottom: 12px;
 	overflow: hidden;
 	width: 100%;
@@ -674,7 +670,7 @@ a.addfavoffstatus:hover
 	clear: both;
 	visibility: visible;
 	padding-bottom: 0px;
-	background-color: #F1D9B5;
+	background-color: #ffffff;
 	/* border:1px solid red;*/
 }
 
@@ -693,7 +689,7 @@ a.addfavoffstatus:hover
 #service_footer {
 	text-align:center;
 	padding-left:10px;
-	background-color: #3e647e;
+	background-color: #788053;
 	}
 	
 
@@ -777,9 +773,292 @@ div#buttonA li a:hover {
 	border-width: 3px;
 	line-height:15px;	
 }
+
+<!-- V2 CSS Start -->
+		.wrapper {
+			width: 100%;
+			max-width: 1260px;/* a max-width may be desirable to keep this layout from getting too wide on a large monitor. 
+				This keeps line length more readable. IE6 does not respect this declaration. */
+			min-width: 780px;/* a min-width may be desirable to keep this layout from getting too narrow. 
+				This keeps line length more readable in the side columns. IE6 does not respect this declaration. */
+			margin: 0 auto; /* the auto value on the sides, coupled with the width, centers the layout. It is not needed if you set the .wrapper's width to 100%. */
+		}
+
+
+		/* ~~ the branding is not given a width. It will extend the full width of your layout. 
+			It contains an image placeholder that should be replaced with your own linked logo ~~ */
+
+		#branding {
+			clear: both; 
+			width: 100%;
+			height: 100px;
+			position: relative;	
+			z-index:0;			
+		}
+		#branding-logo {
+			position:absolute;
+			z-index:2;
+			top: 5px;
+			left: 35px;
+		}
+		#branding-logo {
+			width: 79px;
+			height: 95px;
+			border: 0px;
+		}
+		#branding-logo img {
+			border:none;
+		}
+		#branding-fws-bar {
+			height: 31px;
+			width: 100%;
+			position: absolute;	
+			top: 9px;	
+			font-weight: bold;	
+			z-index:0;			
+		}
+		#branding-fws-bar a {
+			text-decoration: none;
+			z-index:0;			
+		}
+		#branding-fws-bar-text {
+			font-size: 18px;
+			position: absolute;
+			vertical-align: bottom;
+			white-space: nowrap;
+			left: 149px;		
+			top: 4px;		
+			z-index:0;			
+		}
+		
+		#branding-site-name {
+		/* If you change the siteName color, you may also need to change "siteName a" color*/
+			height: 35px;
+			top: 35px;
+			font-size: 35px;
+			line-height: 40px;
+			font-weight: bolder;
+			white-space: nowrap;
+			position: absolute;			
+			left: 149px;
+			vertical-align: middle;
+			font-family: "Arial Narrow", Helvetica, sans-serif;		
+			z-index:1;				
+		}
+		#branding-site-name a{		
+		/* This fixes a css coding error in the original template.*/
+			text-decoration:none;
+			z-index:0;			
+		}
+		
+		#branding-organization-name {
+			font-size: 16px;
+			font-weight: bold;
+			text-align: right;
+			position: absolute;
+			height: 20px;
+			top: 75px;		
+			overflow: hidden;
+			width: 100%;
+			border-bottom-width: 2px;
+			border-bottom-style: solid;
+			z-index:0;					
+		}
+		#branding-organization-name-text, #branding-organization-name a {
+			text-decoration: none;
+			padding-right: 10px;
+			z-index:0;			
+		}
+
+
+		#branding {
+			background-color: #ffffff; 
+		}
+		#branding-fws-bar {	
+			background-color: #252B0D;			
+		}
+		#branding-fws-bar-text {
+			color: #ffffff;	
+		}
+		#branding-site-name {
+			color: #000000;		
+		}
+		#branding-site-name a{		
+			color: #000000;		
+		}
+		#branding-organization-name {
+			background-color: #9CA08A;			
+			border-bottom-color: #252B0D;					
+		}
+		#branding-organization-name-text, #branding-organization-name a {
+			color: #ffffff; 		
+		}
+
+
+		/* ~~ masthead */
+		#masthead {
+			padding: 0;
+			margin: 0;
+			text-align:center;
+			overflow:hidden;
+		}
+		#masthead {
+			height: 190px; /* 200px */
+			width: 100%; 
+		}
+
+		#masthead {
+			/*background-image: url('/cdm4/images/banner-bridge-wide.jpg');*/
+			background-repeat: no-repeat;
+			background-position: center;
+			background-color: #12212D;
+		}		
+		
+		/* ~~ navigation-container-upper */
+		#navigation-container-upper {
+			clear: both; 
+			width: 100%;
+			padding: 0.1em 0; /* 1px 0 */
+		}
+		#navigation-container-upper {
+			vertical-align: middle;
+			padding: 5px 10px;			
+			
+		}
+		#navigation-container-upper-translation {
+			float: right;
+			vertical-align: middle;
+		}
+		#navigation-container-upper form {
+			padding: 2px 5px;
+			height: 2.4em;
+			overflow: hidden
+		}
+		#navigation-container-upper input, #navigation-container-upper textarea {
+			font-size: 14px;
+		}		
+				
+		/* ~~ navigation-container-lower */					
+		#navigation-container-lower, #navigation-container-upper {
+			clear: both; 
+			width: 100%;
+			padding: 0.1em 0; /* 1px 0 */
+		}		
+
+ 		/* -- navigation-container-alternate -- */
+		#navigation-container-alternate
+		{
+			margin:25px; 
+			padding:0 5%;			
+			width: 90%;
+			height:100%;
+			text-align: center;	
+		}
+		
+		 /* -- navigation-container-accordion -- */
+		#navigation-container-accordion
+		{
+			position:relative;
+			margin: 0;
+			padding:0;
+		}		
+
+
+
+		#navigation-container-upper, #navigation-container-lower {
+			background-color: #788053;
+		}		
+		
+		#navigation-container-alternate
+		{		
+			color: #252B0D;
+			background-color: #ffffff;
+		}
+
+		#navigation-container-alternate a, #navigation-container-alternate a:link, #navigation-container-alternate a:hover, #navigation-container-alternate a:visited
+		{
+			color: #252B0D;
+		}
+
+		/* ~~ content-secondary ~~ */
+		.content-secondary {
+			float: left;
+			width: 20%;
+			padding-bottom: 10px;
+		}
+
+		/* ~~ The navigation list styles (can be removed if you choose to use a premade flyout menu like Spry) ~~ */
+		ul.menu-vertical {
+			list-style: none; /* this removes the list marker */
+			border-top: 1px solid; /* this creates the top border for the links - all others are placed using a bottom border on the LI */
+			margin: 0px;
+			padding: 0px;
+			margin-bottom: 15px; /* this creates the space between the navigation on the content below */
+		}
+		ul.menu-vertical li {
+			border-bottom: 1px solid; /* this creates the button separation */
+			list-style: none;	
+			width:100%; 
+			padding: 0px; 
+			text-indent: 15px;
+		}
+		ul.menu-vertical a, ul.menu-vertical a:visited { /* grouping these selectors makes sure that your links retain their button look even after being visited */
+			padding: 5px 5px 5px 15px;
+			display: block; /* this gives the link block properties causing it to fill the whole LI containing it. This causes the entire area to react to a mouse click. */
+			text-decoration: none;
+		}
+
+		ul.menu-vertical, ul.menu-vertical li {
+			border-color: #666666;
+		}
+		ul.menu-vertical a, ul.menu-vertical a:visited { 
+			background-color: #9CA08A;
+			color: #000000;
+		}
+		ul.menu-vertical a:hover, ul.menu-vertical a:active, ul.menu-vertical a:focus { 
+			background-color: #252B0D;
+			color: #ffffff;
+		}
+
+		#siteHeaderImage {
+			border: none;
+			border-width: 0px;
+			height: 190px; 
+			text-align:center;
+			z-index:-1;
+			overflow:visible !important;
+			display:block !important;
+		}
+
+		#siteHeaderPhotoCredit {
+			position: absolute;
+			text-align: left;  
+			top: 310px; 
+			left: 10px;
+			z-index: 100;
+			overflow:visible !important;
+			display:block !important;
+			visibility:visible !important;
+		}
+
+		#siteHeaderPhotoCreditText {
+			padding-left: 5px; 
+			padding-right: 5px;
+			background-color: none; 
+			background-image: url('/graphics/ButtonBanner.jpg'); 
+			color: #4f2b08; 
+			font-size: 8pt;
+			z-index; 200;
+			overflow:visible !important;
+			display:block !important;
+			visibility:visible !important;
+		}
+					
+			
+<!-- V2 CSS End -->
+
  
-<!-- FWS Customization End -->
-	
+<!-- FWS Customization End -->	
 //-->
 </style>
 
@@ -788,7 +1067,7 @@ div#buttonA li a:hover {
 // php definitions assigned to javascript variables for global.js
 var thisdomain = "digitalmedia.fws.gov";
 var error_cookies = "Cookies must be enabled for this functionality.";
-var page_bgColor = "#F1D9B5";
+var page_bgColor = "#ffffff";
 var status_off = "#333333";
 var status_on = "#ff0000";
 var already_fav = "One or more of the items you selected has been added previously to My Favorites.";
@@ -813,17 +1092,17 @@ var doc_menu_height = 62;
 
 </head>
 
-<body marginwidth="0" topmargin="0" leftmargin="0" marginheight="0" bgcolor="#F1D9B5">
+<body marginwidth="0" topmargin="0" leftmargin="0" marginheight="0" bgcolor="#ffffff">
 
 <a name="pagetopper"></a>
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr>
-	<td rowspan="20" bgcolor="#3e647e" width="2">&nbsp;</td>
+	<td rowspan="20" bgcolor="#788053" width="2">&nbsp;</td>
 	<td>
 
 
-
+<!-- FWS Customization Start -->
 <div id="logo"><a href="http://www.fws.gov"><img src="http://www.fws.gov/home/graphics/logo2005.gif" alt="Official Web page of the U S Fish and Wildlife Service" width="79" height="95" border="0" /></a></div>
 <div id="fwsbar"><img src="http://www.fws.gov/home/usfws_bar.gif" width="215" height="30" alt="" /></div>
 <div id="sitename">National Digital Library</div>
@@ -861,29 +1140,14 @@ var doc_menu_height = 62;
 
 			<span id=menubar>
 				
-<table cellpadding="1" cellspacing="0" border="0" width="100%" bgcolor="#99a99a" title="global menu">
+<table cellpadding="1" cellspacing="0" border="0" width="100%" bgcolor="#9CA08A" title="global menu">
 
 
 <form name="bell" method="get" action="/dmscripts/admin/login.exe">
 	
 <tr>
-	<td align="left" style="border-bottom: 1px solid #99a99a;border-left: 1px solid #99a99a;border-top: 1px solid #99a99a" nowrap="nowrap"><span class="genmenu">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a class="genmenu" href="#content" title="Skip to content"><img src="images/spacer.gif" width="1" height="1" border="0" alt="Skip to content" /></a>&nbsp;<a class="genmenu" href="/index.php" title="Home">home</a> : <a class="genmenu" href="browse.php" title="Browse">browse</a> : <a class="genmenu" href="search.php" title="Advanced Search">advanced search</a> : 
-
-<!--
-FWS Customization - START Favorites and Preferences
--->
-<a class="genmenu" href="preferences.php" title="Preferences">preferences</a> : 
-<a class="genmenu" href="favorites.php" title="My Favorites">my favorites</a> :<!--
-FWS Customization - END Favorites and Preferences
--->
-
-
-
-<a class="genmenu" href="about.php" title="About">about</a> : <a class="genmenu" href="help.php#view_items" title="Help">help</a>&nbsp;</span></td>
-	<td valign="bottom" align="right" style="border-top: 1px solid #99a99a;border-bottom: 1px solid #99a99a;border-right: 1px solid #99a99a" nowrap="nowrap"><span class="genmenu">
+	<td align="left" style="border-bottom: 1px solid #9CA08A;border-left: 1px solid #9CA08A;border-top: 1px solid #9CA08A" nowrap="nowrap"><span class="genmenu"><a class="genmenu" href="#content" title="Skip to content"><img src="images/spacer.gif" width="1" height="1" border="0" alt="Skip to content" /></a>&nbsp;<a class="genmenu" href="/index.php" title="Home">home</a> : <a class="genmenu" href="browse.php" title="Browse">browse</a> : <a class="genmenu" href="search.php" title="Advanced Search">advanced search</a> : <a class="genmenu" href="preferences.php" title="Preferences">preferences</a> : <a class="genmenu" href="favorites.php" title="My Favorites">my favorites</a> : <a class="genmenu" href="about.php" title="About">about</a> : <a class="genmenu" href="help.php#view_items" title="Help">help</a>&nbsp;</span></td>
+	<td valign="bottom" align="right" style="border-top: 1px solid #9CA08A;border-bottom: 1px solid #9CA08A;border-right: 1px solid #9CA08A" nowrap="nowrap"><span class="genmenu">
 
 
 	&nbsp;</span></td>
@@ -897,20 +1161,21 @@ FWS Customization - END Favorites and Preferences
 
 
 </div></div>
+<!-- FWS Customization End -->
 
-<table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#627d7c">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#9CA08A">
 <tr>
-	<td align="left" style="border-top: 2px solid #F1D9B5;border-bottom: 2px solid #F1D9B5;border-left: 2px solid #F1D9B5"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
-	<td align="left" style="border-top: 2px solid #F1D9B5;border-bottom: 2px solid #F1D9B5" nowrap="nowrap" width="50%"><span class="submenu">
+	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff;border-left: 2px solid #ffffff"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
+	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff" nowrap="nowrap" width="50%"><span class="submenu">
 
-<a class="submenu" href="javascript:addItemFav('/natdiglib','1234')" title="Add to My Favorites">add to favorites</a>
+<a class="submenu" href="javascript:addItemFav('/natdiglib','')" title="Add to My Favorites">add to favorites</a>
 
 
- : <a class="submenu" href="javascript:pop2('citation.php?CISOROOT=/natdiglib&CISOPTR=1234','400', '150')" title="Copy and paste the URL for use within citations.">reference url</a>
+ : <a class="submenu" href="javascript:pop2('citation.php?CISOROOT=/natdiglib&CISOPTR=','400', '150')" title="Copy and paste the URL for use within citations.">reference url</a>
 
 
 </span></td>
-	<td align="right" style="border-top: 2px solid #F1D9B5;border-bottom: 2px solid #F1D9B5" nowrap="nowrap" width="50%"><span class="submenu">
+	<td align="right" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff" nowrap="nowrap" width="50%"><span class="submenu">
 
 
 <span class="offstatus">back to results</span> 
@@ -920,12 +1185,12 @@ FWS Customization - END Favorites and Preferences
 
 <span class="offstatus">previous</span> : <span class="offstatus">next</span>
 	</span></td>
-	<td align="left" style="border-top: 2px solid #F1D9B5;border-bottom: 2px solid #F1D9B5;border-right: 2px solid #F1D9B5"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
+	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff;border-right: 2px solid #ffffff"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
 </tr>
 </table>
 
 	</td>
-	<td rowspan="20" bgcolor="#3e647e" width="2">&nbsp;</td>
+	<td rowspan="20" bgcolor="#788053" width="2">&nbsp;</td>
 </tr>
 
 <tr>
@@ -936,6 +1201,7 @@ FWS Customization - END Favorites and Preferences
 <!-- FWS Customization Start -->
 	<table id="mainbody" cellpadding="0" cellspacing="0" border="0" width="100%">
 <!-- FWS Customization End -->
+
 	<tr>
 		<td align="left" valign="top">
 
@@ -943,6 +1209,18 @@ FWS Customization - END Favorites and Preferences
 <!-- +++++++ >>> start content here +++++++ //-->
 <!-- +++++++ >>> start content here +++++++ //-->
 <!-- +++++++ >>> start content here +++++++ //-->
+
+
+<script language="JavaScript" type="text/javascript">
+<!--
+function find_xy(event){
+pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("imagexy").offsetLeft;
+pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("imagexy").offsetTop;
+document.mainimage.x.value = pos_x;
+document.mainimage.y.value = pos_y;
+}
+//-->
+</script>
 
 <table cellpadding="2" cellspacing="0" border="0" width="100%">
 <tr>
@@ -954,18 +1232,18 @@ FWS Customization - END Favorites and Preferences
 		<td align="center" valign="middle"><span class="maintext">
 
 
-		<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=100&DMWIDTH=700&DMHEIGHT=700&DMX=175&DMY=4&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarin.gif" border="0" width="16" height="22" alt="Zoom in" title="Zoom in" /></a>
+		<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=100&DMWIDTH=700&DMHEIGHT=700&DMX=100&DMY=0&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarin.gif" border="0" width="16" height="22" alt="Zoom in" title="Zoom in" /></a>
 
 
 		</span></td>
 		<td align="center" valign="middle"><span class="maintext">
 
 
-		<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=50&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarout.gif" border="0" width="16" height="22" alt="Zoom out" title="Zoom out" /></a>
+		<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=50&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarout.gif" border="0" width="16" height="22" alt="Zoom out" title="Zoom out" /></a>
 
 
 		</span></td>
-		<td align="center" valign="middle" style="border-right: #aaaaaa 1px solid"><input type="text" name="pct" value="66.7%" size="7" style="width:50" readonly title="Percentage" /></td>
+		<td align="center" valign="middle" style="border-right: #aaaaaa 1px solid"><input type="text" name="pct" value="77.7%" size="7" style="width:50" readonly title="Percentage" /></td>
 		<td align="center" valign="middle" style="border-left: #aaaaaa 1px solid"><span class="maintext">
 
 
@@ -995,21 +1273,21 @@ FWS Customization - END Favorites and Preferences
 
 		</span></td>
 		<td align="center" valign="middle" style="border-left: #aaaaaa 1px solid"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=100&DMWIDTH=700&DMHEIGHT=700&DMX=175&DMY=4&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarfull.gif" border="0" width="16" height="22" alt="Maximum resolution" title="Maximum resolution" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=100&DMWIDTH=700&DMHEIGHT=700&DMX=100&DMY=0&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarfull.gif" border="0" width="16" height="22" alt="Maximum resolution" title="Maximum resolution" /></a></span></td>
 		<td align="center" valign="middle"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=50&DMWIDTH=700&DMHEIGHT=700&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarfit.gif" border="0" width="16" height="22" alt="Fit in window" title="Fit in window" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=50&DMWIDTH=700&DMHEIGHT=700&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarfit.gif" border="0" width="16" height="22" alt="Fit in window" title="Fit in window" /></a></span></td>
 		<td align="center" valign="middle" style="border-right: #aaaaaa 1px solid"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarwidth.gif" border="0" width="16" height="22" alt="Fit to width" title="Fit to width" /></a></span></td>
-		<td align="center" valign="middle" style="border-left: #aaaaaa 1px solid"><span class="maintext"><a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMROTATE=90"><img src="images/imagebararrowleft.gif" border="0" width="16" height="22" alt="Rotate left" title="Rotate left" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=77.69145&DMWIDTH=700&DMHEIGHT=700&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarwidth.gif" border="0" width="16" height="22" alt="Fit to width" title="Fit to width" /></a></span></td>
+		<td align="center" valign="middle" style="border-left: #aaaaaa 1px solid"><span class="maintext"><a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&DMROTATE=90"><img src="images/imagebararrowleft.gif" border="0" width="16" height="22" alt="Rotate left" title="Rotate left" /></a></span></td>
 		<td align="center" valign="middle"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMROTATE=270"><img src="images/imagebararrowright.gif" border="0" width="16" height="22" alt="Rotate right" title="Rotate right" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&DMROTATE=270"><img src="images/imagebararrowright.gif" border="0" width="16" height="22" alt="Rotate right" title="Rotate right" /></a></span></td>
 		<td align="center" valign="middle" style="border-left: #aaaaaa 2px solid"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234" onclick="dmSessCookie('DMITEMSTAT','&DMTHUMB=1')" ><img src="images/imagebarthumbguide.gif" border="0" width="16" height="22" alt="Hide/show thumbnail" title="Hide/show thumbnail" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib" onclick="dmSessCookie('DMITEMSTAT','&DMTHUMB=1')" ><img src="images/imagebarthumbguide.gif" border="0" width="16" height="22" alt="Hide/show thumbnail" title="Hide/show thumbnail" /></a></span></td>
 
 <script language="JavaScript" type="text/javascript">
 <!--
 if(!(isMac && isExplorer)){
-document.write("<td align=\"center\" valign=\"middle\"><span class=\"maintext\"><a href=\"javascript:clipperpop('clip.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0', '750', '600')\"><img src=\"images/imagebarclip.gif\" border=\"0\" width=\"16\" height=\"22\" alt=\"Clip\" title=\"Clip image in new window\" \/><\/a><\/span><\/td>");
+document.write("<td align=\"center\" valign=\"middle\"><span class=\"maintext\"><a href=\"javascript:clipperpop('clip.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=77.69145&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0', '750', '600')\"><img src=\"images/imagebarclip.gif\" border=\"0\" width=\"16\" height=\"22\" alt=\"Clip\" title=\"Clip image in new window\" \/><\/a><\/span><\/td>");
 }
 //-->
 </script>
@@ -1047,7 +1325,7 @@ document.write("<td align=\"center\" valign=\"middle\"><span class=\"maintext\">
 		<tr>
 			<td align="center"><span class="maintext"><b>
 
-Shoreline Vegetation
+Sage Grouse
 			</b></span></td>
 		</tr>
 		</table>
@@ -1067,73 +1345,27 @@ Shoreline Vegetation
 			<tr>
 
 
-<!-- FWS Customization Start -->
-<!-- BEGIN Share-It -->
-<!--
-$img_url = S_PROTOCOL . '://' . $_SERVER['SERVER_NAME']. $image_src;
-$short_url = S_PROTOCOL . '://' . $_SERVER['SERVER_NAME'] . '/u?' . $_GET['CISOROOT'] . ',' . $_GET['CISOPTR'];
-$img_title = htmlspecialchars($structure[$index['TITLE'][0]]['value'],ENT_QUOTES);
--->
-
-
-<script language="JavaScript">
-
-function ShareImage() {
-        new_window=window.open('','name', 'toolbar=0,scrollbars=0,location=1,statusbar=0,menubar=0,resizable=0,width=450,height=450,left=100,top=100');
-        var tmp = new_window.document;
-        tmp.write('<html><head><title>Share Image: USFWS National Digital Library // Shoreline Vegetation </title>');
-        tmp.write('<style type="text/css"> body {background: #F1D9B5; font-size: 65%; font-family: verdana}</style>');
-        tmp.write('</head><body>');
-        tmp.write('<strong>USFWS National Digital Library <br/>Shoreline Vegetation</strong><br />');
-        tmp.write('<img src="http://digitalmedia.fws.gov/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=26.21723&DMWIDTH=700&DMX=0&DMY=0" title="USFWS National Digital Library <br/>Shoreline Vegetation" alt="USFWS National Digital Library // Shoreline Vegetation" height="190">');
-		tmp.write('<br />');	
-		tmp.write('<strong>URL:</strong> <a href="http://digitalmedia.fws.gov/u?/natdiglib,1234">http://digitalmedia.fws.gov/u?/natdiglib,1234</a>');
-        tmp.write('<br />');	
-		tmp.write('<strong>Photo Credit:</strong> U.S. Fish and Wildlife Service ');		
-        tmp.write('<br /><br />');
-        tmp.write('<form action="" name="embedForm"><strong>Embed:</strong>\
-        <textarea name="embed_code" cols="50" rows="7" style="background: #e1e1e1;" \
-onclick="document.embedForm.embed_code.focus();document.embedForm.embed_code.select();" \
-readonly="readonly">\
-&lt;div align=&quot;left&quot;&gt;&lt;strong&gt;USFWS National Digital Library <br/>Shoreline Vegetation \
-&lt;/strong&gt;&lt;br /&gt;&lt;img style=&quot;border: 1px solid gray&quot; \
-src=&quot;http://digitalmedia.fws.gov/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=26.21723&DMWIDTH=700&DMX=0&DMY=0&quot; \
-title=&quot;USFWS National Digital Library <br/>Shoreline Vegetation&quot; \
-alt=&quot;USFWS National Digital Library <br/>Shoreline Vegetation&quot; \
-width=&quot;300&quot; /&gt;&lt;br /&gt; \
-&lt;strong&gt;URL:&lt;/strong&gt; &lt;a href=&quot;http://digitalmedia.fws.gov/u?/natdiglib,1234&quot;&gt;http://digitalmedia.fws.gov/u?/natdiglib,1234&lt;/a&gt;&lt;br/&gt;\
-&lt;strong&gt;Photo Credit:&lt;/strong&gt; U.S. Fish and Wildlife Service&lt;/div&gt; \
-</textarea></form>');
-        tmp.write('</body></html>');
-        tmp.close();
-}
-</script>
-<div id="buttonA" align="right">
-<ul>
-<li><a href="javascript:ShareImage()">Share or Link Image</a></li>
-</ul>
-</div>
-<!-- END Share-It -->
-<!-- FWS Customization End -->
-            
-            <form name="mainimage" action="">
+			<form name="mainimage" action="">
 
 				<td>
 
-				<input type="hidden" name="CISOROOT" value="/natdiglib">
-				<input type="hidden" name="CISOPTR" value="1234">
-				<input type="hidden" name="DMSCALE" value="100">
-				<input type="hidden" name="DMWIDTH" value="700">
-				<input type="hidden" name="DMHEIGHT" value="700">
-				<input type="hidden" name="DMMODE" value="viewer">
-				<input type="hidden" name="DMFULL" value="0">
-				<input type="hidden" name="DMX" value="175">
-				<input type="hidden" name="DMY" value="4">
-				<input type="hidden" name="DMTEXT" value="">
-				<input type="hidden" name="DMTHUMB" value="0">
-				<input type="hidden" name="REC" value="1">
-				<input type="hidden" name="DMROTATE" value="0">
-				<input type="image" src="/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0" border="0" alt="Shoreline Vegetation" title="Shoreline Vegetation">
+				<input type="hidden" name="CISOROOT" value="/natdiglib" />
+				<input type="hidden" name="CISOPTR" value="0" />
+				<input type="hidden" name="DMSCALE" value="100" />
+				<input type="hidden" name="DMWIDTH" value="700" />
+				<input type="hidden" name="DMHEIGHT" value="700" />
+				<input type="hidden" name="DMMODE" value="viewer" />
+				<input type="hidden" name="DMFULL" value="0" />
+				<input type="hidden" name="DMX" value="100" />
+				<input type="hidden" name="DMY" value="0" />
+				<input type="hidden" name="DMTEXT" value="" />
+				<input type="hidden" name="DMTHUMB" value="0" />
+				<input type="hidden" name="REC" value="1" />
+				<input type="hidden" name="DMROTATE" value="0" />
+				<input type="hidden" name="x" value="" />
+				<input type="hidden" name="y" value="" />
+				
+				<img id="imagexy" src="/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=77.69145&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0" border="0" alt="Sage Grouse" title="Sage Grouse" onclick="find_xy(event);document.mainimage.submit()" />
 
 				</td>
 
@@ -1141,36 +1373,63 @@ width=&quot;300&quot; /&gt;&lt;br /&gt; \
 
 
 
-			</tr>          
-            
+			</tr>
+
+
                     <!-- FWS Customization Start -->
 		<tr><td>
         <table align="center">
 		<tr>
 						<td class="tdtext"><span class="maintext">
 						<strong>
-						<a href="http://digitalmedia.fws.gov/FullRes/natdiglib/EBFC0C8E-E413-4F02-B1E5A1F1E1E039C6.jpg">Shoreline Vegetation</a>
+						<a href="http://digitalmedia.fws.gov/FullRes/natdiglib/000E463C-9DA2-43F8-AF76DA7F4D89C897.jpg">Sage Grouse</a>
 						</strong> (Full Resolution Image Link)
 						</span></td></tr>
 <tr><td class="tdtext">
-						<span class="maintext">Volume1\EBFC0C8E-E413-4F02-B1E5A1F1E1E039C6.jpg&nbsp;(Full Resolution Volume and Filename)</span></td></tr>
-<tr><td class="maintext"><hr />To SAVE the display image shown, position your cursor over the image and 'right click'.<br />To VIEW/SAVE the full resolution image, click the image title.</td></tr>        </table>
+						<span class="maintext">Volume1\000E463C-9DA2-43F8-AF76DA7F4D89C897.jpg&nbsp;(Full Resolution Volume and Filename)</span></td></tr>
+<tr><td class="maintext"><hr />To SAVE the display image shown, position your cursor over the image and 'right click'.<br />To VIEW/SAVE the full resolution image, click the image title.</td></tr>
+
+<!-- FWS Customization Start -->
+<!-- BEGIN Share-It -->
+<!-- AddThis Button BEGIN -->
+<tr><td>
+
+
+<meta name="title" content="USFWS National Digital Library - Sage Grouse" />
+
+<div class="addthis_toolbox addthis_default_style" style="margin-top:10px; margin-bottom:0px; padding:0px;">
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"
+		addthis:title="USFWS National Digital Library - Sage Grouse" >
+	</a>
+	<a class="addthis_button_tweet"
+		addthis:title="USFWS National Digital Library - Sage Grouse">
+	</a>
+	<a class="addthis_counter addthis_pill_style" 
+		addthis:title="USFWS National Digital Library - Sage Grouse" >
+	</a>
+</div>
+<script type="text/javascript">var addthis_config = {"data_track_clickback":true, ui_508_compliant: true};</script>
+<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4ddd2cc51cdc1049"></script>
+</td>
+</tr>
+<!-- AddThis Button END -->
+<!-- END Share-It -->
+<!-- FWS Customization End -->
+
+        </table>
         </td>
         </tr>
         <!-- FWS Customization End -->
-            
-            
-            
+
+
+
 			</table>
 
 			</td>
 		</tr>
-        
 
-        
 
 		<tr>
-               
 			<td>
 		
 			<table border="0" cellpadding="1" cellspacing="0" width="100%" style="border-top: 1px solid #cccccc">
@@ -1178,13 +1437,13 @@ width=&quot;300&quot; /&gt;&lt;br /&gt; \
 				<td></td>
 			</tr>
 
-<tr><td class="tdtext" width="150"><span class="maintext"><b>Title</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Shoreline" target="_top">Shoreline</a> <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Vegetation" target="_top">Vegetation</a>  </span></td></tr>
-<tr><td class="tdtext" width="150"><span class="maintext"><b>Creator</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=U.S." target="_top">U.S.</a> <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Fish" target="_top">Fish</a> and <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Wildlife" target="_top">Wildlife</a> <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Service" target="_top">Service</a>  </span></td></tr>
-<tr><td class="tdtext" width="150"><span class="maintext"><b>Subject</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Scenics" target="_top">Scenics</a><br /><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Landscapes" target="_top">Landscapes</a><br /><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Vegetation" target="_top">Vegetation</a><br /><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Wildlife+refuges" target="_top">Wildlife refuges</a><br /><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Koyukuk+National+Wildlife+Refuge" target="_top">Koyukuk National Wildlife Refuge</a><br /></span></td></tr>
+<tr><td class="tdtext" width="150"><span class="maintext"><b>Title</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Sage" target="_top">Sage</a> <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Grouse" target="_top">Grouse</a>  </span></td></tr>
+<tr><td class="tdtext" width="150"><span class="maintext"><b>Creator</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Unknown" target="_top">Unknown</a>  </span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Publisher</b></span></td><td class="tdtext"><span class="maintext">U.S. Fish and Wildlife Service </span></td></tr>
+<tr><td class="tdtext" width="150"><span class="maintext"><b>Date of Original</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=9999-12-31" target="_top">9999-12-31</a>  </span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Type</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Still+image" target="_top">Still image</a><br /></span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Format</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=JPG" target="_top">JPG</a><br /></span></td></tr>
-<tr><td class="tdtext" width="150"><span class="maintext"><b>Source</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=AK%2FRO%2F02641" target="_top">AK/RO/02641</a><br /></span></td></tr>
+<tr><td class="tdtext" width="150"><span class="maintext"><b>Source</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=AK%2FRO%2F00902" target="_top">AK/RO/00902</a><br /></span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Language</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=English" target="_top">English</a>  </span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Rights</b></span></td><td class="tdtext"><span class="maintext">Public domain </span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Audience</b></span></td><td class="tdtext"><span class="maintext">General </span></td></tr>
@@ -1195,9 +1454,7 @@ width=&quot;300&quot; /&gt;&lt;br /&gt; \
 			</table>
 
 			</td>
-            
 		</tr>
-        
 		</table>
 	
 		</td>
@@ -1206,7 +1463,8 @@ width=&quot;300&quot; /&gt;&lt;br /&gt; \
 
 	</td>
 </tr>
-</table><!-- +++++++ <<< end content here +++++++ //-->
+</table>
+<!-- +++++++ <<< end content here +++++++ //-->
 <!-- +++++++ <<< end content here +++++++ //-->
 <!-- +++++++ <<< end content here +++++++ //-->
 
@@ -1223,19 +1481,19 @@ width=&quot;300&quot; /&gt;&lt;br /&gt; \
 	<td>
 
 
-<table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#627d7c">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#9CA08A">
 <tr>
-	<td align="left" style="border-top: 2px solid #F1D9B5;border-bottom: 2px solid #F1D9B5;border-left: 2px solid #F1D9B5"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
-	<td align="left" style="border-top: 2px solid #F1D9B5;border-bottom: 2px solid #F1D9B5" nowrap="nowrap" width="50%"><span class="submenu">
+	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff;border-left: 2px solid #ffffff"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
+	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff" nowrap="nowrap" width="50%"><span class="submenu">
 
-<a class="submenu" href="javascript:addItemFav('/natdiglib','1234')" title="Add to My Favorites">add to favorites</a>
+<a class="submenu" href="javascript:addItemFav('/natdiglib','')" title="Add to My Favorites">add to favorites</a>
 
 
- : <a class="submenu" href="javascript:pop2('citation.php?CISOROOT=/natdiglib&CISOPTR=1234','400', '150')" title="Copy and paste the URL for use within citations.">reference url</a>
+ : <a class="submenu" href="javascript:pop2('citation.php?CISOROOT=/natdiglib&CISOPTR=','400', '150')" title="Copy and paste the URL for use within citations.">reference url</a>
 
 
 </span></td>
-	<td align="right" style="border-top: 2px solid #F1D9B5;border-bottom: 2px solid #F1D9B5" nowrap="nowrap" width="50%"><span class="submenu">
+	<td align="right" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff" nowrap="nowrap" width="50%"><span class="submenu">
 
 
 <span class="offstatus">back to results</span> 
@@ -1245,22 +1503,23 @@ width=&quot;300&quot; /&gt;&lt;br /&gt; \
 
 <span class="offstatus">previous</span> : <span class="offstatus">next</span>
 	</span></td>
-	<td align="left" style="border-top: 2px solid #F1D9B5;border-bottom: 2px solid #F1D9B5;border-right: 2px solid #F1D9B5"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
+	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff;border-right: 2px solid #ffffff"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
 </tr>
 </table>
 
-	<table cellpadding="0" cellspacing="0" border="0" bgcolor="#3e647e" width="100%">
+	<table cellpadding="0" cellspacing="0" border="0" bgcolor="#788053" width="100%">
 	<tr>
 		<td>
 
 
+<!-- FWS Customization Start -->
 <div id="service_footer" class="copyright" style="text-align:center; width:100%;">
 
 <div style="text-align:right">
 <a class="copyright" href="#pagetopper" title="To top of page">^&nbsp;to top&nbsp;^</a>&nbsp;</div><br/>
 
 
-	Last Updated: July 15, 2008<br/>
+	Last Updated: May 24, 2011<br/>
 	<a class="copyright" href="http://www.fws.gov">U.S.&nbsp;Fish&nbsp;and&nbsp;Wildlife&nbsp;Service&nbsp;Home&nbsp;Page</a>&nbsp;| 
 	<a class="copyright" href="http://www.fws.gov/scripts/exit-to-fed.cfm?link=http://www.doi.gov/&amp;linkname=the Department of the Interior Web site">Department&nbsp;of&nbsp;the&nbsp;Interior</a> 
 			&nbsp;| 
@@ -1281,6 +1540,7 @@ width=&quot;300&quot; /&gt;&lt;br /&gt; \
 			Freedom of Information site">FOIA</a>
 	<br>&nbsp;</div> 
 </div>
+<!-- FWS Customization End -->
 
 		
 		

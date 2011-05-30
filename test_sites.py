@@ -12,7 +12,7 @@ def generate_TestSiteClass_for_site(site):
             self.myscraper = scraper.mkscraper(site, test=True)
             self.imglib = self.myscraper.imglib
 
-            self.use_live_page = False
+            self.use_live_page = True
 
         ##### INTERFACE STUFF--just make sure we have the right functions
         def test_id_to_page_permalink(self):
@@ -35,6 +35,7 @@ def generate_TestSiteClass_for_site(site):
 
         def test_parser_correctness(self):
             for id, known_metadata in self.imglib.tests.known_metadata_mappings.items():
+                print id
                 url_to_live_page = self.imglib.scraper.id_to_page_permalink(id) 
                 path_to_local_copy = 'sites/' + config.image_databases[site]['python_lib'] + "/samples/" + str(id) + ".html"
                 expected_output = known_metadata

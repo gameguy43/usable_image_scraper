@@ -103,10 +103,14 @@ def parse_img_html_page(html):
         print "wait, we couldn't make a soup. i don't know WHY..."
         return None
     
+    #metadict['id'] = 
+    #input type="hidden" name="CISOPTR"
+    '''
     favorite_link_href = soup.find("a", {"title": u"Add to My Favorites"})['href']
     the_split = favorite_link_href.split("'")
     the_split.pop()
     metadict['id'] = int(the_split.pop())
+    '''
 
     #TODO: this is kinda hackey but probably fine
     metadict['url_to_thumb_img'] = u'http://digitalmedia.fws.gov/cgi-bin/thumbnail.exe?CISOROOT=/natdiglib&CISOPTR=' + str(metadict['id'])
