@@ -31,6 +31,53 @@ known_metadata_mappings = {
             u"Koyukuk National Wildlife Refuge",
             ],
         },
+    2: {
+        'url_to_lores_img': u'http://digitalmedia.fws.gov/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=2&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0',
+        'url_to_hires_img': u'http://digitalmedia.fws.gov/FullRes/natdiglib/08F827D0-D458-CDEC-E144D8ACF26B809F.jpg',
+        'url_to_thumb_img': u'http://digitalmedia.fws.gov/cgi-bin/thumbnail.exe?CISOROOT=/natdiglib&CISOPTR=2',
+        'id' : 2,
+        'title' : u"WOE240 Electroshocking Fish",
+        'creator' : u"Organ, John",
+        'alternative_title' : u"Partnerships",
+        'desc' : u"WOE240; John Organ",
+        'subject' : [
+            u"Partnerships",
+            u"Sampling",
+            u"Monitoring",
+            u"Fisheries management",
+            ],
+        'location' : u"New Hampshire",
+        'publisher' : u"U.S. Fish and Wildlife Service",
+        'contributors' : u"DIVISION OF PUBLIC AFFAIRS",
+        'type' : u"Still image",
+        'format' : u"JPG",
+        'item_id' : u"WOE240 Electronic CD",
+        'language': u"English",
+        'rights': u"Public domain",
+        'audience': u"General",
+        'date_created': u"2008-04-18",
+        'date_modified': u"2008-07-23",
+
+
+
+
+        'publisher' : u"U.S. Fish and Wildlife Service",
+        'type' : u"Still image",
+        'format' : u"JPG",
+        'source' : u"AK/RO/02641",
+        'language' : u"English",
+        'rights' : u"Public domain",
+        'audience' : u"General",
+        'date_created' : u"2008-04-18",
+        'date_modified' : u"2008-04-18",
+        'subject' : [
+            u"Scenics",
+            u"Landscapes",
+            u"Vegetation",
+            u"Wildlife refuges",
+            u"Koyukuk National Wildlife Refuge",
+            ],
+        },
     }
 '''
 11878 : {
