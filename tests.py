@@ -14,7 +14,9 @@ class TestScraperFunctions(unittest.TestCase):
         self.imglib = self.myscraper.imglib
         # DELETE EVERYTHING THATS ALREADY IN THE TEST DB.
         # LIKE, OMFG
-        self.myscraper.db.truncate_all_tables()
+        self.myscraper.clear_all_data()
+
+        # clear out all of the data for this site (like, omfg)
 
     '''
     def test_db_creation(self):

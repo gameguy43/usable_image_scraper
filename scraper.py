@@ -27,6 +27,7 @@ import sys
 import threading
 import traceback
 import db
+import shutil
 
 #import libs.cdc_phil_lib as imglib
 # .scraper
@@ -68,10 +69,17 @@ def get_extension_from_path(path):
 
 # make a scraper based on the config
 def mkscraper(image_db_key, test=False):
-    img_db_config = config.image_databases[image_db_key]
-    data_base_dir = config.data_root_dir + img_db_config['data_subdir']
-
     kwargs = {}
+    if test:
+        data_root_dir = config.data_root_dir
+        kwargs['db_url'] = config.test_db_url
+    else:
+        data_root_dir = config.test_data_root_dir
+        kwargs['db_url'] = config.db_url
+
+    img_db_config = config.image_databases[image_db_key]
+    data_base_dir = data_root_dir + img_db_config['data_subdir']
+
     img_libraries_metalib = config.img_libraries_metalib
     kwargs['imglib'] = getattr(img_libraries_metalib, img_db_config['python_lib'])
     # we keep this around so that we can construct a different data path for the web
@@ -79,10 +87,6 @@ def mkscraper(image_db_key, test=False):
     kwargs['data_dir'] = data_base_dir
     kwargs['html_subdir'] = config.html_subdir
 
-    if test:
-        kwargs['db_url'] = config.test_db_url
-    else:
-        kwargs['db_url'] = config.db_url
 
     kwargs['data_table_prefix'] = img_db_config['data_table_prefix']
     kwargs['max_daemons'] = config.max_daemons
@@ -437,6 +441,21 @@ class Scraper:
             }
         html = self.db.repr_as_html(**kwargs)
         return html
+
+    def clear_all_data(self):
+        # clear out the mysql data
+        self.db.truncate_all_tables()
+        # create path to move the old data to (good to have a backup)
+        if self.data_dir[-1] == '/':
+            backup_data_dir = self.data_dir[0:-1] + '_old'
+        else:
+            backup_data_dir = self.data_dir + '_old'
+        # move the data dir to a backup one
+        # first, nuke the destination
+        shutil.rmtree(backup_data_dir)
+        shutil.move(self.data_dir, backup_data_dir)
+
+
 
 
 

@@ -27,6 +27,7 @@ image_databases = {
 
 ## Set these as needed locally
 data_root_dir = '/home/pyrak/workspace/usable_images/usable_image_scraper/data/'
+test_data_root_dir = '/home/pyrak/workspace/usable_images/usable_image_scraper/test_data/'
 thumb_subdir = 'thumbs/'
 lores_subdir = 'lores/'
 hires_subdir = 'hires/'

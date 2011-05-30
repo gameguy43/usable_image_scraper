@@ -199,18 +199,26 @@ class DB:
         return False
 
     def get_next_successful_image_id(self, id):
-        where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
+        criteria = []
+        for resolution in self.resolutions.keys():
+            criteria.append(self.get_resolution_status_column(resolution) == True)
+        where1 = sqlalchemy.or_(*criteria)
+        #where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
         where2 = self.metadata_table.id > id
-        higher_id = retval = self.metadata_table.filter(where2).first()
+        higher_id = retval = self.metadata_table.filter(where2).filter(where1).first()
         if not higher_id:
             return id
         retval = int(higher_id.id)
         print retval
         return retval
     def get_prev_successful_image_id(self, id):
-        where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
+        criteria = []
+        for resolution in self.resolutions.keys():
+            criteria.append(self.get_resolution_status_column(resolution) == True)
+        where1 = sqlalchemy.or_(*criteria)
+        #where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
         where2 = self.metadata_table.id < id
-        lower_id = retval = self.metadata_table.filter(where2).order_by(sqlalchemy.desc(self.metadata_table.id)).first()
+        lower_id = retval = self.metadata_table.filter(where2).filter(where1).order_by(sqlalchemy.desc(self.metadata_table.id)).first()
         if not lower_id:
             return id
         retval = int(lower_id.id)
