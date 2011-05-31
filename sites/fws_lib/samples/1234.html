@@ -1024,7 +1024,6 @@ div#buttonA li a:hover {
 			border: none;
 			border-width: 0px;
 			height: 190px; 
-			text-align:center;
 			z-index:-1;
 			overflow:visible !important;
 			display:block !important;
@@ -1053,6 +1052,18 @@ div#buttonA li a:hover {
 			display:block !important;
 			visibility:visible !important;
 		}
+
+
+		.b1h, .b2h, .b3h, .b4h, .b2bh, .b3bh, .b4bh{font-size:1px; overflow:hidden; display:block;}
+		.b1h {height:1px; background:#C7B299; margin:0 5px;}
+		.b2h, .b2bh {height:1px; background:#ECECE8; border-right:2px solid #C7B299; border-left:1px solid #ECECE8; margin:0 3px;}
+		.b3h, .b3bh {height:1px; background:#ECECE8; border-right:1px solid #C7B299; border-left:1px solid #ECECE8; margin:0 2px;}
+		.b4h, .b4bh {height:1px; background:#ECECE8; border-right:1px solid #C7B299; border-left:1px solid #ECECE8; margin:0 1px;}
+		.b2bh, .b3bh, .b4bh {background:url(/graphics/RightBox1.jpg); background-repeat:no-repeat;)}
+		.headh {background: ##ECECE8; border-right:1px solid #ECECE8; border-left:1px solid #ECECE8;}
+		.headh h3 {margin: 0px 5px 0px 5px; padding-bottom: 3px;}
+		.contenth {background-repeat:no-repeat; border-right:1px solid #ECECE8; border-left:1px solid #ECECE8;}
+		.contenth div {margin-left: 5px; padding-top: 5px;}
 					
 			
 <!-- V2 CSS End -->
@@ -1168,10 +1179,10 @@ var doc_menu_height = 62;
 	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff;border-left: 2px solid #ffffff"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
 	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff" nowrap="nowrap" width="50%"><span class="submenu">
 
-<a class="submenu" href="javascript:addItemFav('/natdiglib','')" title="Add to My Favorites">add to favorites</a>
+<a class="submenu" href="javascript:addItemFav('/natdiglib','1234')" title="Add to My Favorites">add to favorites</a>
 
 
- : <a class="submenu" href="javascript:pop2('citation.php?CISOROOT=/natdiglib&CISOPTR=','400', '150')" title="Copy and paste the URL for use within citations.">reference url</a>
+ : <a class="submenu" href="javascript:pop2('citation.php?CISOROOT=/natdiglib&CISOPTR=1234','400', '150')" title="Copy and paste the URL for use within citations.">reference url</a>
 
 
 </span></td>
@@ -1232,18 +1243,18 @@ document.mainimage.y.value = pos_y;
 		<td align="center" valign="middle"><span class="maintext">
 
 
-		<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=100&DMWIDTH=700&DMHEIGHT=700&DMX=100&DMY=0&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarin.gif" border="0" width="16" height="22" alt="Zoom in" title="Zoom in" /></a>
+		<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=100&DMWIDTH=700&DMHEIGHT=700&DMX=175&DMY=4&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarin.gif" border="0" width="16" height="22" alt="Zoom in" title="Zoom in" /></a>
 
 
 		</span></td>
 		<td align="center" valign="middle"><span class="maintext">
 
 
-		<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=50&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarout.gif" border="0" width="16" height="22" alt="Zoom out" title="Zoom out" /></a>
+		<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=50&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarout.gif" border="0" width="16" height="22" alt="Zoom out" title="Zoom out" /></a>
 
 
 		</span></td>
-		<td align="center" valign="middle" style="border-right: #aaaaaa 1px solid"><input type="text" name="pct" value="77.7%" size="7" style="width:50" readonly title="Percentage" /></td>
+		<td align="center" valign="middle" style="border-right: #aaaaaa 1px solid"><input type="text" name="pct" value="66.7%" size="7" style="width:50" readonly title="Percentage" /></td>
 		<td align="center" valign="middle" style="border-left: #aaaaaa 1px solid"><span class="maintext">
 
 
@@ -1273,21 +1284,21 @@ document.mainimage.y.value = pos_y;
 
 		</span></td>
 		<td align="center" valign="middle" style="border-left: #aaaaaa 1px solid"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=100&DMWIDTH=700&DMHEIGHT=700&DMX=100&DMY=0&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarfull.gif" border="0" width="16" height="22" alt="Maximum resolution" title="Maximum resolution" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=100&DMWIDTH=700&DMHEIGHT=700&DMX=175&DMY=4&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarfull.gif" border="0" width="16" height="22" alt="Maximum resolution" title="Maximum resolution" /></a></span></td>
 		<td align="center" valign="middle"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=50&DMWIDTH=700&DMHEIGHT=700&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarfit.gif" border="0" width="16" height="22" alt="Fit in window" title="Fit in window" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=50&DMWIDTH=700&DMHEIGHT=700&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarfit.gif" border="0" width="16" height="22" alt="Fit in window" title="Fit in window" /></a></span></td>
 		<td align="center" valign="middle" style="border-right: #aaaaaa 1px solid"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=77.69145&DMWIDTH=700&DMHEIGHT=700&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarwidth.gif" border="0" width="16" height="22" alt="Fit to width" title="Fit to width" /></a></span></td>
-		<td align="center" valign="middle" style="border-left: #aaaaaa 1px solid"><span class="maintext"><a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&DMROTATE=90"><img src="images/imagebararrowleft.gif" border="0" width="16" height="22" alt="Rotate left" title="Rotate left" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMMODE=viewer&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0"><img src="images/imagebarwidth.gif" border="0" width="16" height="22" alt="Fit to width" title="Fit to width" /></a></span></td>
+		<td align="center" valign="middle" style="border-left: #aaaaaa 1px solid"><span class="maintext"><a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&CISOBOX=1&REC=1&DMROTATE=90"><img src="images/imagebararrowleft.gif" border="0" width="16" height="22" alt="Rotate left" title="Rotate left" /></a></span></td>
 		<td align="center" valign="middle"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&DMROTATE=270"><img src="images/imagebararrowright.gif" border="0" width="16" height="22" alt="Rotate right" title="Rotate right" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&CISOBOX=1&REC=1&DMROTATE=270"><img src="images/imagebararrowright.gif" border="0" width="16" height="22" alt="Rotate right" title="Rotate right" /></a></span></td>
 		<td align="center" valign="middle" style="border-left: #aaaaaa 2px solid"><span class="maintext">
-<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib" onclick="dmSessCookie('DMITEMSTAT','&DMTHUMB=1')" ><img src="images/imagebarthumbguide.gif" border="0" width="16" height="22" alt="Hide/show thumbnail" title="Hide/show thumbnail" /></a></span></td>
+<a href="/cdm4/item_viewer.php?CISOROOT=/natdiglib&CISOPTR=1234&CISOBOX=1&REC=1" onclick="dmSessCookie('DMITEMSTAT','&DMTHUMB=1')" ><img src="images/imagebarthumbguide.gif" border="0" width="16" height="22" alt="Hide/show thumbnail" title="Hide/show thumbnail" /></a></span></td>
 
 <script language="JavaScript" type="text/javascript">
 <!--
 if(!(isMac && isExplorer)){
-document.write("<td align=\"center\" valign=\"middle\"><span class=\"maintext\"><a href=\"javascript:clipperpop('clip.php?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=77.69145&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0', '750', '600')\"><img src=\"images/imagebarclip.gif\" border=\"0\" width=\"16\" height=\"22\" alt=\"Clip\" title=\"Clip image in new window\" \/><\/a><\/span><\/td>");
+document.write("<td align=\"center\" valign=\"middle\"><span class=\"maintext\"><a href=\"javascript:clipperpop('clip.php?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0', '750', '600')\"><img src=\"images/imagebarclip.gif\" border=\"0\" width=\"16\" height=\"22\" alt=\"Clip\" title=\"Clip image in new window\" \/><\/a><\/span><\/td>");
 }
 //-->
 </script>
@@ -1325,7 +1336,7 @@ document.write("<td align=\"center\" valign=\"middle\"><span class=\"maintext\">
 		<tr>
 			<td align="center"><span class="maintext"><b>
 
-Sage Grouse
+Shoreline Vegetation
 			</b></span></td>
 		</tr>
 		</table>
@@ -1350,14 +1361,14 @@ Sage Grouse
 				<td>
 
 				<input type="hidden" name="CISOROOT" value="/natdiglib" />
-				<input type="hidden" name="CISOPTR" value="0" />
+				<input type="hidden" name="CISOPTR" value="1234" />
 				<input type="hidden" name="DMSCALE" value="100" />
 				<input type="hidden" name="DMWIDTH" value="700" />
 				<input type="hidden" name="DMHEIGHT" value="700" />
 				<input type="hidden" name="DMMODE" value="viewer" />
 				<input type="hidden" name="DMFULL" value="0" />
-				<input type="hidden" name="DMX" value="100" />
-				<input type="hidden" name="DMY" value="0" />
+				<input type="hidden" name="DMX" value="175" />
+				<input type="hidden" name="DMY" value="4" />
 				<input type="hidden" name="DMTEXT" value="" />
 				<input type="hidden" name="DMTHUMB" value="0" />
 				<input type="hidden" name="REC" value="1" />
@@ -1365,7 +1376,7 @@ Sage Grouse
 				<input type="hidden" name="x" value="" />
 				<input type="hidden" name="y" value="" />
 				
-				<img id="imagexy" src="/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=0&DMSCALE=77.69145&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0" border="0" alt="Sage Grouse" title="Sage Grouse" onclick="find_xy(event);document.mainimage.submit()" />
+				<img id="imagexy" src="/cgi-bin/getimage.exe?CISOROOT=/natdiglib&CISOPTR=1234&DMSCALE=66.66667&DMWIDTH=700&DMHEIGHT=700&DMX=0&DMY=0&DMTEXT=&REC=1&DMTHUMB=0&DMROTATE=0" border="0" alt="Shoreline Vegetation" title="Shoreline Vegetation" onclick="find_xy(event);document.mainimage.submit()" />
 
 				</td>
 
@@ -1382,11 +1393,11 @@ Sage Grouse
 		<tr>
 						<td class="tdtext"><span class="maintext">
 						<strong>
-						<a href="http://digitalmedia.fws.gov/FullRes/natdiglib/000E463C-9DA2-43F8-AF76DA7F4D89C897.jpg">Sage Grouse</a>
+						<a href="http://digitalmedia.fws.gov/FullRes/natdiglib/EBFC0C8E-E413-4F02-B1E5A1F1E1E039C6.jpg">Shoreline Vegetation</a>
 						</strong> (Full Resolution Image Link)
 						</span></td></tr>
 <tr><td class="tdtext">
-						<span class="maintext">Volume1\000E463C-9DA2-43F8-AF76DA7F4D89C897.jpg&nbsp;(Full Resolution Volume and Filename)</span></td></tr>
+						<span class="maintext">Volume1\EBFC0C8E-E413-4F02-B1E5A1F1E1E039C6.jpg&nbsp;(Full Resolution Volume and Filename)</span></td></tr>
 <tr><td class="maintext"><hr />To SAVE the display image shown, position your cursor over the image and 'right click'.<br />To VIEW/SAVE the full resolution image, click the image title.</td></tr>
 
 <!-- FWS Customization Start -->
@@ -1395,17 +1406,17 @@ Sage Grouse
 <tr><td>
 
 
-<meta name="title" content="USFWS National Digital Library - Sage Grouse" />
+<meta name="title" content="USFWS National Digital Library - Shoreline Vegetation" />
 
 <div class="addthis_toolbox addthis_default_style" style="margin-top:10px; margin-bottom:0px; padding:0px;">
 	<a class="addthis_button_facebook_like" fb:like:layout="button_count"
-		addthis:title="USFWS National Digital Library - Sage Grouse" >
+		addthis:title="USFWS National Digital Library - Shoreline Vegetation" >
 	</a>
 	<a class="addthis_button_tweet"
-		addthis:title="USFWS National Digital Library - Sage Grouse">
+		addthis:title="USFWS National Digital Library - Shoreline Vegetation">
 	</a>
 	<a class="addthis_counter addthis_pill_style" 
-		addthis:title="USFWS National Digital Library - Sage Grouse" >
+		addthis:title="USFWS National Digital Library - Shoreline Vegetation" >
 	</a>
 </div>
 <script type="text/javascript">var addthis_config = {"data_track_clickback":true, ui_508_compliant: true};</script>
@@ -1437,13 +1448,13 @@ Sage Grouse
 				<td></td>
 			</tr>
 
-<tr><td class="tdtext" width="150"><span class="maintext"><b>Title</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Sage" target="_top">Sage</a> <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Grouse" target="_top">Grouse</a>  </span></td></tr>
-<tr><td class="tdtext" width="150"><span class="maintext"><b>Creator</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Unknown" target="_top">Unknown</a>  </span></td></tr>
+<tr><td class="tdtext" width="150"><span class="maintext"><b>Title</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Shoreline" target="_top">Shoreline</a> <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Vegetation" target="_top">Vegetation</a>  </span></td></tr>
+<tr><td class="tdtext" width="150"><span class="maintext"><b>Creator</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=U.S." target="_top">U.S.</a> <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Fish" target="_top">Fish</a> and <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Wildlife" target="_top">Wildlife</a> <a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Service" target="_top">Service</a>  </span></td></tr>
+<tr><td class="tdtext" width="150"><span class="maintext"><b>Subject</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Scenics" target="_top">Scenics</a><br /><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Landscapes" target="_top">Landscapes</a><br /><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Vegetation" target="_top">Vegetation</a><br /><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Wildlife+refuges" target="_top">Wildlife refuges</a><br /><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Koyukuk+National+Wildlife+Refuge" target="_top">Koyukuk National Wildlife Refuge</a><br /></span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Publisher</b></span></td><td class="tdtext"><span class="maintext">U.S. Fish and Wildlife Service </span></td></tr>
-<tr><td class="tdtext" width="150"><span class="maintext"><b>Date of Original</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=9999-12-31" target="_top">9999-12-31</a>  </span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Type</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=Still+image" target="_top">Still image</a><br /></span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Format</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=JPG" target="_top">JPG</a><br /></span></td></tr>
-<tr><td class="tdtext" width="150"><span class="maintext"><b>Source</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=AK%2FRO%2F00902" target="_top">AK/RO/00902</a><br /></span></td></tr>
+<tr><td class="tdtext" width="150"><span class="maintext"><b>Source</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=exact&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=AK%2FRO%2F02641" target="_top">AK/RO/02641</a><br /></span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Language</b></span></td><td class="tdtext"><span class="maintext"><a href="results.php?CISOOP1=any&CISOFIELD1=CISOSEARCHALL&CISOROOT=/natdiglib&CISOBOX1=English" target="_top">English</a>  </span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Rights</b></span></td><td class="tdtext"><span class="maintext">Public domain </span></td></tr>
 <tr><td class="tdtext" width="150"><span class="maintext"><b>Audience</b></span></td><td class="tdtext"><span class="maintext">General </span></td></tr>
@@ -1486,10 +1497,10 @@ Sage Grouse
 	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff;border-left: 2px solid #ffffff"><img src="images/spacer.gif" width="5" height="18" alt="" /></td>
 	<td align="left" style="border-top: 2px solid #ffffff;border-bottom: 2px solid #ffffff" nowrap="nowrap" width="50%"><span class="submenu">
 
-<a class="submenu" href="javascript:addItemFav('/natdiglib','')" title="Add to My Favorites">add to favorites</a>
+<a class="submenu" href="javascript:addItemFav('/natdiglib','1234')" title="Add to My Favorites">add to favorites</a>
 
 
- : <a class="submenu" href="javascript:pop2('citation.php?CISOROOT=/natdiglib&CISOPTR=','400', '150')" title="Copy and paste the URL for use within citations.">reference url</a>
+ : <a class="submenu" href="javascript:pop2('citation.php?CISOROOT=/natdiglib&CISOPTR=1234','400', '150')" title="Copy and paste the URL for use within citations.">reference url</a>
 
 
 </span></td>

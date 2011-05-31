@@ -103,7 +103,6 @@ def scrape_out_img_page(id, cj=None):
     # finally, we can grab the actual image's page
     req = Request(url_to_scrape, None, txheaders)
     handle = urlopen(req)
-
     html = handle.read() #returns the page
     return html
 

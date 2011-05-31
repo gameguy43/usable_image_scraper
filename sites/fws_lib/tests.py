@@ -37,7 +37,7 @@ known_metadata_mappings = {
         'url_to_thumb_img': u'http://digitalmedia.fws.gov/cgi-bin/thumbnail.exe?CISOROOT=/natdiglib&CISOPTR=2',
         'id' : 2,
         'title' : u"WOE240 Electroshocking Fish",
-        'creator' : u"Organ, John",
+        'creator' : u"Organ,  John",
         'alternative_title' : u"Partnerships",
         'desc' : u"WOE240; John Organ",
         'subject' : [
@@ -57,26 +57,6 @@ known_metadata_mappings = {
         'audience': u"General",
         'date_created': u"2008-04-18",
         'date_modified': u"2008-07-23",
-
-
-
-
-        'publisher' : u"U.S. Fish and Wildlife Service",
-        'type' : u"Still image",
-        'format' : u"JPG",
-        'source' : u"AK/RO/02641",
-        'language' : u"English",
-        'rights' : u"Public domain",
-        'audience' : u"General",
-        'date_created' : u"2008-04-18",
-        'date_modified' : u"2008-04-18",
-        'subject' : [
-            u"Scenics",
-            u"Landscapes",
-            u"Vegetation",
-            u"Wildlife refuges",
-            u"Koyukuk National Wildlife Refuge",
-            ],
         },
     }
 '''

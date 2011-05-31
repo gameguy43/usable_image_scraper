@@ -442,6 +442,20 @@ class Scraper:
         html = self.db.repr_as_html(**kwargs)
         return html
 
+
+    def dl_html_for_indeces(self, indeces):
+        map(self.dl_html, indeces)
+
+    def dl_html(self, id):
+        html = self.imglib.scraper.scrape_out_img_page(id)
+        filename = str(id) + '.html'
+        fp = open(filename, 'w')
+        fp.write(html)
+        print  "wrote " + filename
+        return True
+
+    ### RANDOM UTILS FOR TESTING/SETUP/ETC
+
     def clear_all_data(self):
         # clear out the mysql data
         self.db.truncate_all_tables()
@@ -483,21 +497,29 @@ def drop_all_tables():
         break
 
 if __name__ == '__main__':
+    do_this = 'dl_indeces'
     do_nightly = False
     testing = True
     update_download_statuses = False
-    if do_nightly:
+    if do_this == 'nightly':
         dl_images = True
         from_hd = True
         nightly(dl_images, from_hd)
-    elif testing:
+    elif do_this == 'testing':
         generate_test_dataset(dl_images=True, from_hd=False)
         #generate_test_dataset(dl_images=False, from_hd=True)
-    elif update_download_statuses:
+    elif do_this == 'update_download_statuses':
         for name, data in config.image_databases.items():
             myscraper = mkscraper(name)
             ceiling_id = myscraper.db.get_highest_id_in_our_db()
             myscraper.update_download_statuses_based_on_fs(ceiling_id)
+    elif do_this == 'dl_indeces':
+        name = 'fws'
+        indeces = [2,1234]
+        myscraper = mkscraper(name)
+        myscraper.dl_html_for_indeces(indeces)
+
+        
     else:
         pass
         '''

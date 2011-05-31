@@ -35,17 +35,6 @@ import data_schema
 def init_dict():
     metadict = {
         'id': 0,
-        'title' : u"",
-        'creator' : u"",
-        'publisher' : u"",
-        'type' : u"",
-        'format' : u"",
-        'source' : u"",
-        'language' : u"",
-        'rights' : u"",
-        'audience' : u"",
-        'date_created' : u"",
-        'date_modified' : u"",
         'subject' : None,
     }
     return metadict
@@ -103,14 +92,13 @@ def parse_img_html_page(html):
         print "wait, we couldn't make a soup. i don't know WHY..."
         return None
     
-    #metadict['id'] = 
-    #input type="hidden" name="CISOPTR"
-    '''
-    favorite_link_href = soup.find("a", {"title": u"Add to My Favorites"})['href']
-    the_split = favorite_link_href.split("'")
-    the_split.pop()
-    metadict['id'] = int(the_split.pop())
-    '''
+    try:
+        metadict['id'] = int(soup.find('input', {'type':'hidden', 'name': 'CISOPTR'})['value'])
+    except:
+        favorite_link_href = soup.find("a", {"title": u"Add to My Favorites"})['href']
+        the_split = favorite_link_href.split("'")
+        the_split.pop()
+        metadict['id'] = int(the_split.pop())
 
     #TODO: this is kinda hackey but probably fine
     metadict['url_to_thumb_img'] = u'http://digitalmedia.fws.gov/cgi-bin/thumbnail.exe?CISOROOT=/natdiglib&CISOPTR=' + str(metadict['id'])
