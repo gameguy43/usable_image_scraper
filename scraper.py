@@ -37,35 +37,55 @@ import shutil
 
 import config
 
+### General Utilites
 def load_module(name):
     fp, pathname, description = imp.find_module(name)
     return imp.load_module(name, fp, pathname, description)
-
 def mkdir(dirname):
     if not os.path.isdir(dirname + "/"):
         os.makedirs(dirname + "/")
+def get_filename_base_for_id(id):
+    return str(id).zfill(5)
+def get_extension_from_path(path):
+    basename, extension = os.path.splitext(path)
+    return extension
 
+### Utils for filesystem stuff
 def floorify(id):
     ## mod 100 the image id numbers to make smarter folders
     floor = id - id % 100
     floored = str(floor).zfill(5)[0:3]+"XX"
     return floored
-
 def ceilingify(id):
     ## mod 100 the image id numbers to make smarter folders
     ceiling = id - id % 100 + 100
     ceilinged = str(ceiling).zfill(5)[0:3]+"XX"
     return ceilinged 
-
 def get_subdir_for_id(id):
     return floorify(id) + '-' + ceilingify(id) + '/'
 
-def get_filename_base_for_id(id):
-    return str(id).zfill(5)
-
-def get_extension_from_path(path):
-    basename, extension = os.path.splitext(path)
-    return extension
+### HIGH-LEVEL FUNCTIONS
+## For Automating
+def nightly(dl_images=True, from_hd=False):
+    scrape_all_sites(dl_images=dl_images, from_hd=from_hd)
+def scrape_all_sites(dl_images=True, from_hd=False):
+    image_databases = config.image_databases
+    for name, data in image_databases.items():
+        myscraper = mkscraper(name)
+        myscraper.scrape_all(dl_images=dl_images, from_hd=from_hd)
+## For Testing
+def generate_test_dataset(dl_images=True, from_hd=False):
+    image_databases = config.image_databases
+    for name, data in image_databases.items():
+        myscraper = mkscraper(name)
+        indeces = myscraper.imglib.tests.known_good_indeces
+        myscraper.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
+def drop_all_tables():
+    image_databases = config.image_databases
+    for name, data in image_databases.items():
+        myscraper = mkscraper(name)
+        myscraper.db.truncate_all_tables()
+        break
 
 # make a scraper based on the config
 def mkscraper(image_db_key, test=False):
@@ -86,8 +106,6 @@ def mkscraper(image_db_key, test=False):
     kwargs['data_library_subdir'] = img_db_config['data_subdir']
     kwargs['data_dir'] = data_base_dir
     kwargs['html_subdir'] = config.html_subdir
-
-
     kwargs['data_table_prefix'] = img_db_config['data_table_prefix']
     kwargs['max_daemons'] = config.max_daemons
     kwargs['max_filesize'] = config.max_filesize
@@ -96,7 +114,6 @@ def mkscraper(image_db_key, test=False):
     kwargs['homepage'] = img_db_config['homepage']
     kwargs['code_url'] = img_db_config['code_url']
     kwargs['abbrev'] = image_db_key
-
     return Scraper(**kwargs)
 
 
@@ -113,16 +130,12 @@ class Scraper:
         self.homepage = homepage
         self.code_url = code_url
         self.abbrev = abbrev
-
         self.data_dir = data_dir
         self.html_dir = data_dir + html_subdir 
         # we keep this around so that we can construct a different data path for the web
         self.data_library_subdir = data_library_subdir
         if web_data_base_dir:
             self.web_data_base_dir = web_data_base_dir + self.data_library_subdir
-
-        # make sure we have all the right directories set up for storing html and images
-        self.bootstrap_filestructure()
 
         metadata_table_name = data_table_prefix + "metadata"
 
@@ -132,21 +145,71 @@ class Scraper:
             'metadata_table_name' : metadata_table_name,
             'scraper' : self,
         }
-
         self.db = db.DB(**db_kwargs)
 
-    #TODO: can we delete this?
-    def bootstrap_filestructure(self):
-        #TODO: replace these
-        '''
-        mkdir(self.thumb_dir)    
-        mkdir(self.lores_dir)    
-        mkdir(self.hires_dir)    
-        '''
-        mkdir(self.html_dir)    
 
-    # this is data structure bootstrapping--make the right data subdirs
-    def make_directories(self, ids, root_dir):
+    ### HIGH-LEVEL
+    def scrape_all(self, dl_images=True, from_hd=False):
+        floor = self.db.get_highest_id_in_our_db()
+        ceiling = self.imglib.scraper.get_highest_id()
+        indeces = range(floor, ceiling+1)
+        self.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
+
+    # download all images that haven't already been downloaded
+    # (accoding to our db, not according to the filesystem)
+    def download_all_images(self):
+        for resolution, resolution_data in self.resolutions.items():
+            self.download_resolution_images(resolution)
+    # (helper for above)
+    def download_resolution_images(self, resolution):
+        queue = Queue.Queue()
+        # MAKE OUR THREADZZZ
+        # note: they wont do anything until we put stuff in the queue
+        for i in range(self.max_daemons):
+            t = self.ImgDownloader(queue, resolution, self)
+            t.setDaemon(True)
+            t.start()
+
+        #list of (id, url) tuples for images to download
+        dl_these_tuples = self.db.get_set_images_to_dl(resolution)
+        print dl_these_tuples
+        ids = map(lambda tuple: tuple[0], dl_these_tuples)
+
+        # bootstrap our file structure for our download
+        root_dir = self.get_resolution_download_dir(resolution) 
+        self.make_directories_if_necessary(ids, root_dir)
+        map(queue.put, dl_these_tuples)
+        # wait on the queue until everything has been processed
+        queue.join()
+
+    ### FILESYSTEM STUFF
+    # if this gets heavy, we could move it to it's own file, like db.py
+    ## READING
+    def get_resolution_download_dir(self, resolution):
+        return self.data_dir + self.resolutions[resolution]['subdir']
+    def get_resolution_local_image_location(self, resolution, id, remote_url=None):
+        extension = self.get_resolution_extension(resolution, id)
+        return self.get_resolution_download_dir(resolution) + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
+    def get_local_html_file_location(self, id):
+        filename_base = get_filename_base_for_id(id)
+        subdir = get_subdir_for_id(id)
+        #TODO: let's not do this any more
+        mkdir(self.html_dir + subdir)
+        return self.html_dir + subdir + filename_base + '.html'
+    def get_local_raw_html(self, id):
+        local_html_file_location = self.get_local_html_file_location(id)
+        fp = open(local_html_file_location, 'r')
+        html = fp.read()
+        return html
+
+    ## WRITING
+    def store_raw_html(self, id, html):
+        local_html_file_location = self.get_local_html_file_location(id)
+        fp = open(local_html_file_location, 'w')
+        fp.write(html)
+        fp.close()
+    # bootstrapping: make the right data subdirs
+    def make_directories_if_necessary(self, ids, root_dir):
         ## directories for image downloads
         subdirs = map(get_subdir_for_id, ids)
         # this removes duplicates
@@ -155,6 +218,7 @@ class Scraper:
         # also, make the effing directories
         map((lambda dirname: mkdir(root_dir + dirname)), subdirs)
 
+    ### MISC
     def get_resolution_extension(self, resolution, id):
         try:
             remote_url = self.db.get_resolution_url(resolution, id)
@@ -163,9 +227,6 @@ class Scraper:
             extension = self.resolutions[resolution]['extension']
         return extension
 
-    def get_resolution_local_image_location(self, resolution, id, remote_url=None):
-        extension = self.get_resolution_extension(resolution, id)
-        return self.get_resolution_download_dir(resolution) + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
 
     # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
     # this threading code is mostly from there
@@ -193,7 +254,7 @@ class Scraper:
 
                         # signal to db that we're done downloading
                         self.scraper.db.mark_img_as_too_big(id, self.resolution)
-                        print "finished marking as too big" + url
+                        print "finished marking as too big " + url
                     # if the file isn't too big
                     else:
                         #download it!
@@ -204,7 +265,7 @@ class Scraper:
                             
                         # signal to db that we're done downloading
                         self.scraper.db.mark_img_as_downloaded(id, self.resolution)
-                        print "finished marking as downloaded" + url
+                        print "finished marking as downloaded " + url
 
                     # signals to queue job is done
                     self.queue.task_done()
@@ -216,60 +277,6 @@ class Scraper:
                     traceback.print_exc()
                     self.queue.task_done()
                     continue
-
-
-    def get_resolution_download_dir(self, resolution):
-        return self.data_dir + self.resolutions[resolution]['subdir']
-
-
-    def get_images(self, resolution):
-        queue = Queue.Queue()
-        # MAKE OUR THREADZZZ
-        # note: they wont do anything until we put stuff in the queue
-        for i in range(self.max_daemons):
-            t = self.ImgDownloader(queue, resolution, self)
-            t.setDaemon(True)
-            t.start()
-
-        #list of (id, url) tuples to download images from
-        dl_these_tuples = self.db.get_set_images_to_dl(resolution)
-        print dl_these_tuples
-        ids = map(lambda tuple: tuple[0], dl_these_tuples)
-
-        # bootstrap our file structure for our download
-        root_dir = self.get_resolution_download_dir(resolution) 
-        self.make_directories(ids, root_dir)
-        map(queue.put, dl_these_tuples)
-
-        # wait on the queue until everything has been processed
-        queue.join()
-
-
-    def get_all_images(self):
-        for resolution, resolution_data in self.resolutions.items():
-            self.get_images(resolution)
-
-
-    def get_local_html_file_location(self, id):
-        filename_base = get_filename_base_for_id(id)
-        subdir = get_subdir_for_id(id)
-        #TODO: let's not do this any more
-        mkdir(self.html_dir + subdir)
-        return self.html_dir + subdir + filename_base + '.html'
-        
-
-    def store_raw_html(self,id, html):
-        local_html_file_location = self.get_local_html_file_location(id)
-        ## stores an html dump from the scraping process, just in case
-        fp = open(local_html_file_location, 'w')
-        fp.write(html)
-        fp.close()
-
-    def get_local_raw_html(self, id):
-        local_html_file_location = self.get_local_html_file_location(id)
-        fp = open(local_html_file_location, 'r')
-        html = fp.read()
-        return html
 
         
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
@@ -389,9 +396,41 @@ class Scraper:
             print failed_indices
         if dl_images:
             print "k, trying to get the images now"
-            self.get_all_images()
+            self.download_all_images()
 
+
+
+    ### CROSS-POSTING STUFF
+    def upload_to_wikicommons_if_unique(self, id):
+        import wikiuploader
+        myuploader = wikiuploader.WikiUploader(self)
+        metadata = self.db.get_image_metadata_dict(id)
+        myuploader.upload_to_wikicommons_if_unique(metadata)
+
+    #### WEB STUFF
+    def set_web_vars(self, web_data_base_dir):
+        self.web_data_base_dir = web_data_base_dir + self.data_library_subdir
+    def get_web_resolution_local_image_location(self, resolution, id, remote_url=None):
+        extension = self.get_resolution_extension(resolution, id)
+        return self.web_data_base_dir + self.resolutions[resolution]['subdir'] + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
+    def get_image_html_repr(self, id):
+        kwargs = {
+            'image_as_dict' : self.db.get_image_metadata_dict(id),
+            'image_resolution_to_local_file_location_fxn' : 
+                lambda resolution: self.get_web_resolution_local_image_location(resolution, id),
+            }
+        html = self.db.repr_as_html(**kwargs)
+        return html
+
+
+    ### TESTING/SETUP/ETC UTILS
+    # update the download statuses in our DB based on the FS
+    # useful if you accidentally kill your database
     # NOTE: this will add rows even for ids that we don't have rows for yet
+    def update_download_statuses_based_on_fs(self, ceiling_id=50000):
+        for resolution, res_data in self.resolutions.items():
+            self.update_resolution_download_status_based_on_fs(resolution, ceiling_id)
+    # helper for above
     def update_resolution_download_status_based_on_fs(self, resolution, ceiling_id=50000):
         ## go through ids and check if we have them
         # TODO: this doesn't work currently because we don't know the extension of 
@@ -405,47 +444,11 @@ class Scraper:
             else:
                 self.db.mark_img_as_not_downloaded(id, resolution)
 
-    def update_download_statuses_based_on_fs(self, ceiling_id=50000):
-        for resolution, res_data in self.resolutions.items():
-            self.update_resolution_download_status_based_on_fs(resolution, ceiling_id)
-        
-
-    def scrape_all(self, dl_images=True, from_hd=False):
-        floor = self.db.get_highest_id_in_our_db()
-        ceiling = self.imglib.scraper.get_highest_id()
-        indeces = range(floor, ceiling+1)
-        self.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
-
-    ### CROSS-POSTING STUFF
-    def upload_to_wikicommons_if_unique(self, id):
-        import wikiuploader
-        myuploader = wikiuploader.WikiUploader(self)
-        metadata = self.db.get_image_metadata_dict(id)
-        myuploader.upload_to_wikicommons_if_unique(metadata)
-
-    #### WEB STUFF
-
-    def set_web_vars(self, web_data_base_dir):
-        self.web_data_base_dir = web_data_base_dir + self.data_library_subdir
-
-    def get_web_resolution_local_image_location(self, resolution, id, remote_url=None):
-        extension = self.get_resolution_extension(resolution, id)
-        return self.web_data_base_dir + self.resolutions[resolution]['subdir'] + get_subdir_for_id(id) + get_filename_base_for_id(id) + extension
-
-
-    def get_image_html_repr(self, id):
-        kwargs = {
-            'image_as_dict' : self.db.get_image_metadata_dict(id),
-            'image_resolution_to_local_file_location_fxn' : 
-                lambda resolution: self.get_web_resolution_local_image_location(resolution, id),
-            }
-        html = self.db.repr_as_html(**kwargs)
-        return html
-
-
+    # download to disk the html files for these indeces
+    # useful for grabbing html files to toss in to a sites's /samples
     def dl_html_for_indeces(self, indeces):
         map(self.dl_html, indeces)
-
+    # helper for above
     def dl_html(self, id):
         html = self.imglib.scraper.scrape_out_img_page(id)
         filename = str(id) + '.html'
@@ -453,8 +456,6 @@ class Scraper:
         fp.write(html)
         print  "wrote " + filename
         return True
-
-    ### RANDOM UTILS FOR TESTING/SETUP/ETC
 
     def clear_all_data(self):
         # clear out the mysql data
@@ -466,41 +467,15 @@ class Scraper:
             backup_data_dir = self.data_dir + '_old'
         # move the data dir to a backup one
         # first, nuke the destination
-        shutil.rmtree(backup_data_dir)
-        shutil.move(self.data_dir, backup_data_dir)
+        if os.path.isdir(backup_data_dir):
+            shutil.rmtree(backup_data_dir)
+        if os.path.isdir(self.data_dir):
+            shutil.move(self.data_dir, backup_data_dir)
 
 
-
-
-
-def nightly(dl_images=True, from_hd=False):
-    scrape_all_sites(dl_images=dl_images, from_hd=from_hd)
-
-def generate_test_dataset(dl_images=True, from_hd=False):
-    image_databases = config.image_databases
-    for name, data in image_databases.items():
-        myscraper = mkscraper(name)
-        indeces = myscraper.imglib.tests.known_good_indeces
-        myscraper.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
-    
-def scrape_all_sites(dl_images=True, from_hd=False):
-    image_databases = config.image_databases
-    for name, data in image_databases.items():
-        myscraper = mkscraper(name)
-        myscraper.scrape_all(dl_images=dl_images, from_hd=from_hd)
-
-def drop_all_tables():
-    image_databases = config.image_databases
-    for name, data in image_databases.items():
-        myscraper = mkscraper(name)
-        myscraper.db.truncate_all_tables()
-        break
 
 if __name__ == '__main__':
     do_this = 'dl_indeces'
-    do_nightly = False
-    testing = True
-    update_download_statuses = False
     if do_this == 'nightly':
         dl_images = True
         from_hd = True
@@ -518,16 +493,6 @@ if __name__ == '__main__':
         indeces = [2,1234]
         myscraper = mkscraper(name)
         myscraper.dl_html_for_indeces(indeces)
-
-        
     else:
         pass
-        '''
-        name = 'fema'
-        myscraper = mkscraper(name)
-        floor = 1
-        ceiling = myscraper.imglib.scraper.get_highest_id()
-        indeces = range(floor, ceiling+1)
-        myscraper.scrape_indeces(indeces, dl_images=False, from_hd=False)
-        #drop_all_tables()
-        '''
+
