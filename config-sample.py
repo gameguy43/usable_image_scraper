@@ -64,3 +64,5 @@ grant all privileges on usableimagestest.* to usableimagestest@localhost identif
 # web things
 # NOTE: currently, the below is overridden by the django app calling myscraper.set_web_vars
 web_data_base_dir = '/static/data/'
+web_code_base_dir = '/home/pyrak/workspace/usable_images/webs/mysite/'
+#web_code_base_dir = '/home/usableimages/www/images.freeculture.org/mysite/'
