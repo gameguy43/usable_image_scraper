@@ -1,0 +1,114 @@
+{% extends "main.html" %}
+
+{% block main %}
+
+    <div class="homepage" id="content-onecol"> 
+
+
+<!--
+<h2>A Project to Consolidate, Mirror, and provide a machine interface for the Images and Metadata in Federal Government Image Libraries.</h2> 
+-->
+
+
+<h2>
+Several federal government agencies have photo repository websites which are isolated silos. This is a project to consolidate them in the interest of making these public domain images easier to find and use.
+</h2>
+
+
+<h3>
+Papers
+</h3>
+
+<p class="big_homepage_links"> 
+<!--
+<span> 
+    <a href="/about">About &raquo;</a> 
+</span> 
+-->
+<span> 
+    <a href="http://wiki.releaseourdata.com/index.php?title=Usable_Data_Criteria_1.0">Usable Data Criteria 1.0 </a> 
+</span> 
+<span> 
+    <a href="http://madebyparker.com/blog/2011/03/usable-more-than-just-open/">How Do We Make Public Domain Image Search Actually Work?</a> 
+</span> 
+</p>
+
+<h3>
+The Usable Image Scraper Library
+</h3>
+<p>
+A python library for maintaining a machine-readable mirror of several image repository websites. Adding a new image repository website takes as little work as possible--simply articulate the data schema and and write a parser for the image pages, and Usable Image Scraper Library will take care of the rest. Easy-to-use tests tell you which pieces are missing.
+</p>
+<p class="big_homepage_links"> 
+<span> 
+    <a href="https://github.com/gameguy43/usable_image_scraper">Usable Image Scraper Library &raquo;</a> 
+</span> 
+</p>
+
+<br />
+<h2>
+Completed Image Repositories:
+</h2>
+ 
+{% for image_database, db in image_databases.items %}
+<h3>{{db.long_name}} <span class="num_images">({{db.num_images}} images)</span></h3>
+<p class="big_homepage_links"> 
+
+<!--
+this kinda works but it's pretty hacky
+<span> 
+    <a href="/{{image_database}}/view_random">View a random image &raquo;</a> 
+</span> 
+-->
+ 
+<span> 
+    <a href="/{{image_database}}/view/1">Browse the database from the beginning &raquo;</a> 
+</span> 
+
+<span> 
+    <a href="{{db.code_url}}">Scraper code library &raquo;</a> 
+</span> 
+ 
+</p> 
+{% endfor %}
+
+
+
+<h3>
+All
+</h3>
+<p class="big_homepage_links"> 
+<span> 
+    <a href="static/data/">Browse the raw data &raquo;</a> 
+</span> 
+<span> 
+    <a href="https://github.com/gameguy43/usable_image_website">Code for this website &raquo;</a> 
+</span> 
+</p>
+
+<h3>
+Contact/Get Involved!
+</h3>
+<p> 
+<a href="mailto:parker.phinney+UI@gmail.com">Email Parker Phinney</a> with comments/questions/suggestions.
+</p>
+<p> 
+<em>Want to help out?</em> That rules. An easy way to get involved is to add a scraper for a new site, and the extensive set of tests should greatly help. All other contributions welcome, of course. <a href="mailto:parker.phinney+UI@gmail.com">Email Parker Phinney</a>. All code is licensed uder the GPLv3 or later.
+</p>
+
+<h3>
+Credit/Support
+</h3>
+<p> 
+Funding generously provided by <a href="http://www.dartmouth.edu/~digitalstudies/">Dartmouth Digital Studies</a>, in the form of a Digital Studies Fellowship for Parker Phinney's work in Spring 2011.
+</p>
+<p> 
+Hosting provided by <a href="http://cyber.law.harvard.edu/">the Berkman Center at Harvard Law School</a>.
+</p>
+<p> 
+Usable Images is a derivative of the Release Our Data Project, started by <a href="http://sethish.com/">Seth Woodworth</a> and <a href="http://madebyparker.com">Parker Phinney</a> in Winter 2010. 
+</p>
+
+
+</div>
+{% endblock %}

@@ -40,8 +40,12 @@ resolution_to_use = 'lores'
 
 
 class WikiUploader:
-    def __init__(self, myscraper):
+    def __init__(self, myscraper, testing=False):
         self.myscraper = myscraper
+        if testing:
+            self.destination_site = pywikibot.getSite('commons', 'commons')
+        else:
+            self.destination_site = pywikibot.getSite('commons', 'commons')
 
     def find_duplicate_images_on_wmc(self, photo = None, site = pywikibot.getSite(u'commons', u'commons')):
         '''
@@ -142,5 +146,5 @@ class WikiUploader:
         title = self.build_title(metadata)
         description = self.build_description(metadata)
 
-        bot = pywikibotutils.upload.UploadRobot(image_url, description=description, useFilename=title, keepFilename=True, verifyDescription=False, targetSite = pywikibot.getSite('commons', 'commons'))
+        bot = pywikibotutils.upload.UploadRobot(image_url, description=description, useFilename=title, keepFilename=True, verifyDescription=False, targetSite=self.destination_site)
         bot.upload_image(debug=False)
