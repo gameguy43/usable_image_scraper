@@ -7,7 +7,7 @@ import urllib
 class TestWikiUploader(unittest.TestCase):
     # TODO: write a test to assert that we've found all of the metadata fields
     def setUp(self):
-        site = "fema"
+        site = "fws"
         self.maxDiff = None
         # instantiate a scraper 
         self.myscraper = scraper.mkscraper(site, test=True)
@@ -19,14 +19,18 @@ class TestWikiUploader(unittest.TestCase):
             self.assertTrue(isinstance(title, unicode))
 
     def test_wiki_upload(self):
+        # first, put some data in our db
+        scraper.generate_test_dataset(dl_images=False, from_hd=True, to_test_db=True)
+        #scraper.generate_test_dataset(dl_images=True, from_hd=False, to_test_db=True)
         # for each known good image in our site
         for id in self.myscraper.imglib.tests.known_good_indeces:
             # upload it to wikimedia commons
             self.myscraper.upload_to_wikicommons_if_unique(id)
-            # grap the url that it should have been uploaded to
+            # grab the url that it should have been uploaded to
             metadata = self.myscraper.db.get_image_metadata_dict(id)
             title = self.mywikiuploader.build_title(metadata)
-            url = 'http://commons.wikimedia.org/wiki/File:' + title
+            #url = 'http://commons.wikimedia.org/wiki/File:' + title
+            url = 'http://test.wikipedia.org/wiki/File:' + title
             print url
             # grab that page
             fp = urllib.urlopen(url)
@@ -34,6 +38,8 @@ class TestWikiUploader(unittest.TestCase):
             # make sure our tags and stuff are there
             for field, data in metadata.items():
                 if field in self.myscraper.imglib.data_schema.their_fields:
+                    print field
+                    print metadata[field]
                     self.assertTrue(metadata[field] in html)
             # TODO
 

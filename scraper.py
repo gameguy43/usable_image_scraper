@@ -74,10 +74,10 @@ def scrape_all_sites(dl_images=True, from_hd=False):
         myscraper = mkscraper(name)
         myscraper.scrape_all(dl_images=dl_images, from_hd=from_hd)
 ## For Testing
-def generate_test_dataset(dl_images=True, from_hd=False):
+def generate_test_dataset(dl_images=True, from_hd=False, to_test_db=False):
     image_databases = config.image_databases
     for name, data in image_databases.items():
-        myscraper = mkscraper(name)
+        myscraper = mkscraper(name, test=to_test_db)
         indeces = myscraper.imglib.tests.known_good_indeces
         myscraper.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
 def drop_all_tables():
@@ -114,6 +114,7 @@ def mkscraper(image_db_key, test=False):
     kwargs['homepage'] = img_db_config['homepage']
     kwargs['code_url'] = img_db_config['code_url']
     kwargs['abbrev'] = image_db_key
+    kwargs['test'] = test
     return Scraper(**kwargs)
 
 
@@ -121,7 +122,7 @@ def mkscraper(image_db_key, test=False):
 
 class Scraper:
     # imglib is the string name of the 
-    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10, max_filesize=None, web_data_base_dir=None, long_name='', homepage='', code_url='', abbrev=''):
+    def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10, max_filesize=None, web_data_base_dir=None, long_name='', homepage='', code_url='', abbrev='', test=False):
         self.imglib = imglib 
         self.resolutions = imglib.data_schema.resolutions
         self.max_daemons = max_daemons
@@ -132,6 +133,7 @@ class Scraper:
         self.abbrev = abbrev
         self.data_dir = data_dir
         self.html_dir = data_dir + html_subdir 
+        self.testing = test
         # we keep this around so that we can construct a different data path for the web
         self.data_library_subdir = data_library_subdir
         if web_data_base_dir:
@@ -403,7 +405,7 @@ class Scraper:
     ### CROSS-POSTING STUFF
     def upload_to_wikicommons_if_unique(self, id):
         import wikiuploader
-        myuploader = wikiuploader.WikiUploader(self)
+        myuploader = wikiuploader.WikiUploader(self, testing=self.testing)
         metadata = self.db.get_image_metadata_dict(id)
         myuploader.upload_to_wikicommons_if_unique(metadata)
 

@@ -64,6 +64,17 @@ resolutions = {
         },
     }
 
+wmc_stuff = {
+    'license_template' : 'PD-USGov-FWS',
+    'source_template' : 'FWS Image',
+    'field_mappings' : {
+        'title' : 'title',
+        'desc' : 'desc',
+        'date' : 'date_created',
+        'author' : 'creator',
+    },
+}
+
 their_fields = {
     'video_clip' : {
         'full_name' : 'Video Clip',
@@ -77,14 +88,14 @@ their_fields = {
         'full_name' : 'Audio Clip',
         'type' : 'string',
         },
-    'alternative_title' : {
-        'full_name' : 'Alternative Title',
-        'type' : 'string',
-        },
     'title' : {
         'full_name' : 'Title',
         'type' : 'string',
         'dc_mapping' : 'dcterms:title',
+        },
+    'alternative_title' : {
+        'full_name' : 'Alternative Title',
+        'type' : 'string',
         },
     'project_type' : {
         'full_name' : 'Project Type',
@@ -168,7 +179,7 @@ their_fields = {
         'type' : 'string',
         },
     '''
-    # I think this isn'y actually a field. not sure.
+    # I think this isn't actually a field. not sure.
     'save_image' : {
         'full_name' : 'SAVE IMAGE',
         'type' : 'string',
