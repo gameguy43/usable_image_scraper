@@ -33,6 +33,7 @@ from sqlalchemy.ext.sqlsoup import SqlSoup
 import sqlalchemy
 import threading
 import copy
+import random
 
 # thanks, http://farmdev.com/talks/unicode/
 def to_unicode_or_bust(obj, encoding='utf-8'):
@@ -198,31 +199,26 @@ class DB:
             return True
         return False
 
-    def get_next_successful_image_id(self, id):
+    def get_valid_images(self):
         criteria = []
         for resolution in self.resolutions.keys():
             criteria.append(self.get_resolution_status_column(resolution) == True)
-        where1 = sqlalchemy.or_(*criteria)
-        #where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
-        where2 = self.metadata_table.id > id
-        higher_id = retval = self.metadata_table.filter(where2).filter(where1).first()
+        where = sqlalchemy.or_(*criteria)
+        return self.metadata_table.filter(where)
+        
+    def get_next_successful_image_id(self, id):
+        where = self.metadata_table.id > id
+        higher_id = self.get_valid_images().filter(where).first()
         if not higher_id:
             return id
         retval = int(higher_id.id)
-        print retval
         return retval
     def get_prev_successful_image_id(self, id):
-        criteria = []
-        for resolution in self.resolutions.keys():
-            criteria.append(self.get_resolution_status_column(resolution) == True)
-        where1 = sqlalchemy.or_(*criteria)
-        #where1 = sqlalchemy.or_(self.metadata_table.we_couldnt_parse_it == False, self.metadata_table.we_couldnt_parse_it == None)
-        where2 = self.metadata_table.id < id
-        lower_id = retval = self.metadata_table.filter(where2).filter(where1).order_by(sqlalchemy.desc(self.metadata_table.id)).first()
+        where = self.metadata_table.id < id
+        lower_id = self.get_valid_images().filter(where).order_by(sqlalchemy.desc(self.metadata_table.id)).first()
         if not lower_id:
             return id
         retval = int(lower_id.id)
-        print retval
         return retval
 
     ## input: resolution, as a string (hires, lores, thumb)
@@ -245,6 +241,12 @@ class DB:
         except:
             id = 1
         return id
+
+    def get_random_valid_image_id(self):
+        possibilities = self.get_valid_images()
+        num_possibilities = possibilities.count()
+        choice = random.randrange(num_possibilities)
+        return possibilities[choice].id
 
     def get_num_images(self):
         # yeah, the below where statement really sucks

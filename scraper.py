@@ -475,7 +475,7 @@ class Scraper:
 
 
 if __name__ == '__main__':
-    do_this = 'dl_indeces'
+    do_this = 'testing'
     if do_this == 'nightly':
         dl_images = True
         from_hd = True
