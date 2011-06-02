@@ -22,12 +22,16 @@
 
 import urllib2
 import os.path
-import Queue
+#import Queue
 import sys
-import threading
+#import threading
+import gevent
+from gevent.queue import Queue
 import traceback
 import db
 import shutil
+from gevent import monkey
+monkey.patch_all()
 
 #import libs.cdc_phil_lib as imglib
 # .scraper
@@ -121,7 +125,6 @@ def mkscraper(image_db_key, test=False):
 
 
 class Scraper:
-    # imglib is the string name of the 
     def __init__(self, imglib, db_url, data_dir, html_subdir, data_table_prefix, data_library_subdir, max_daemons=10, max_filesize=None, web_data_base_dir=None, long_name='', homepage='', code_url='', abbrev='', test=False):
         self.imglib = imglib 
         self.resolutions = imglib.data_schema.resolutions
@@ -164,7 +167,22 @@ class Scraper:
             self.download_resolution_images(resolution)
     # (helper for above)
     def download_resolution_images(self, resolution):
-        queue = Queue.Queue()
+        # get the list of (id, url) tuples corresponding to the images we need to download
+        dl_these_tuples = self.db.get_set_images_to_dl(resolution)
+
+        # bootstrap file structure for download
+        ids = map(lambda tuple: tuple[0], dl_these_tuples)
+        root_dir = self.get_resolution_download_dir(resolution) 
+        self.make_directories_if_necessary(ids, root_dir)
+
+        # populate the queue
+        q = Queue()
+        map(q.put, dl_these_tuples)
+
+        # make the downloaders and get to it!
+        dlers = [gevent.spawn(self.image_downloader, q, resolution) for i in range(self.max_daemons)]
+        gevent.joinall(dlers)
+        '''
         # MAKE OUR THREADZZZ
         # note: they wont do anything until we put stuff in the queue
         for i in range(self.max_daemons):
@@ -183,6 +201,7 @@ class Scraper:
         map(queue.put, dl_these_tuples)
         # wait on the queue until everything has been processed
         queue.join()
+        '''
 
     ### FILESYSTEM STUFF
     # if this gets heavy, we could move it to it's own file, like db.py
@@ -230,6 +249,49 @@ class Scraper:
         return extension
 
 
+    def image_downloader(self, q, resolution):
+        while True:
+            # if the queue is empty, we're done!
+            if q.empty():
+                break
+            # grab url/id tuple from queue
+            id_url_tuple = q.get()
+            try:
+                print id_url_tuple #TODO: make this output more useful
+                id = id_url_tuple[0]
+                url = id_url_tuple[1]
+                local_filename = self.get_resolution_local_image_location(resolution, id, url)
+                remote = urllib2.urlopen(url)
+                filesize = int(remote.info().getheaders("Content-Length")[0])
+                # if the file is too big
+                if (self.db.get_is_marked_as_too_big(id, resolution)) or (self.max_filesize and filesize > self.max_filesize):
+                    print "this file is too big so i won't download it: " + local_filename
+
+
+                    # signal to db that we're done downloading
+                    self.db.mark_img_as_too_big(id, resolution)
+                    print "finished marking as too big " + url
+                # if the file isn't too big
+                else:
+                    #download it!
+                    local = open(local_filename, 'w')
+                    local.write(remote.read())
+                    local.close()
+                    print "finished downloading " + url
+                        
+                    # signal to db that we're done downloading
+                    self.db.mark_img_as_downloaded(id, resolution)
+                    print "finished marking as downloaded " + url
+            except KeyboardInterrupt:
+                sys.exit(0)
+            except:
+                print "ERROR: trouble dling image apparently... " + str(id)
+                traceback.print_exc()
+                continue
+        
+        
+
+    '''
     # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
     # this threading code is mostly from there
     class ImgDownloader(threading.Thread):
@@ -279,6 +341,7 @@ class Scraper:
                     traceback.print_exc()
                     self.queue.task_done()
                     continue
+    '''
 
         
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
