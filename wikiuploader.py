@@ -26,6 +26,7 @@ class WikiUploader:
             self.destination_site = pywikibot.getSite('test', 'test')
         else:
             self.destination_site = pywikibot.getSite('commons', 'commons')
+        print self.destination_site
 
     def find_duplicate_images_on_wmc(self, photo=None):
         '''

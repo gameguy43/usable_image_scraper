@@ -10,8 +10,10 @@ class TestWikiUploader(unittest.TestCase):
         site = "fws"
         self.maxDiff = None
         # instantiate a scraper 
-        self.myscraper = scraper.mkscraper(site, test=True)
+        self.myscraper = scraper.mkscraper(site, test=False)
         self.mywikiuploader = wikiuploader.WikiUploader(self.myscraper, testing=True)
+        #TODO:DEBUG
+        #self.mywikiuploader = wikiuploader.WikiUploader(self.myscraper, testing=False)
     
     def test_wiki_title_builder(self):
         for id in self.myscraper.imglib.tests.known_good_indeces:
