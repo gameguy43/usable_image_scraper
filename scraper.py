@@ -160,48 +160,6 @@ class Scraper:
         indeces = range(floor, ceiling+1)
         self.scrape_indeces(indeces, dl_images=dl_images, from_hd=from_hd)
 
-    # download all images that haven't already been downloaded
-    # (accoding to our db, not according to the filesystem)
-    def download_all_images(self):
-        for resolution, resolution_data in self.resolutions.items():
-            self.download_resolution_images(resolution)
-    # (helper for above)
-    def download_resolution_images(self, resolution):
-        # get the list of (id, url) tuples corresponding to the images we need to download
-        dl_these_tuples = self.db.get_set_images_to_dl(resolution)
-
-        # bootstrap file structure for download
-        ids = map(lambda tuple: tuple[0], dl_these_tuples)
-        root_dir = self.get_resolution_download_dir(resolution) 
-        self.make_directories_if_necessary(ids, root_dir)
-
-        # populate the queue
-        q = Queue()
-        map(q.put, dl_these_tuples)
-
-        # make the downloaders and get to it!
-        dlers = [gevent.spawn(self.image_downloader, q, resolution) for i in range(self.max_daemons)]
-        gevent.joinall(dlers)
-        '''
-        # MAKE OUR THREADZZZ
-        # note: they wont do anything until we put stuff in the queue
-        for i in range(self.max_daemons):
-            t = self.ImgDownloader(queue, resolution, self)
-            t.setDaemon(True)
-            t.start()
-
-        #list of (id, url) tuples for images to download
-        dl_these_tuples = self.db.get_set_images_to_dl(resolution)
-        print dl_these_tuples
-        ids = map(lambda tuple: tuple[0], dl_these_tuples)
-
-        # bootstrap our file structure for our download
-        root_dir = self.get_resolution_download_dir(resolution) 
-        self.make_directories_if_necessary(ids, root_dir)
-        map(queue.put, dl_these_tuples)
-        # wait on the queue until everything has been processed
-        queue.join()
-        '''
 
     ### FILESYSTEM STUFF
     # if this gets heavy, we could move it to it's own file, like db.py
@@ -239,16 +197,32 @@ class Scraper:
         # also, make the effing directories
         map((lambda dirname: mkdir(root_dir + dirname)), subdirs)
 
-    ### MISC
-    def get_resolution_extension(self, resolution, id):
-        try:
-            remote_url = self.db.get_resolution_url(resolution, id)
-            extension = get_extension_from_path(remote_url)
-        except:
-            extension = self.resolutions[resolution]['extension']
-        return extension
 
+    ### DOWNLOADING
 
+    # download all images that haven't already been downloaded
+    # (accoding to our db, not according to the filesystem)
+    def download_all_images(self):
+        for resolution, resolution_data in self.resolutions.items():
+            self.download_resolution_images(resolution)
+    # (helper for above)
+    def download_resolution_images(self, resolution):
+        # get the list of (id, url) tuples corresponding to the images we need to download
+        dl_these_tuples = self.db.get_set_images_to_dl(resolution)
+
+        # bootstrap file structure for download
+        ids = map(lambda tuple: tuple[0], dl_these_tuples)
+        root_dir = self.get_resolution_download_dir(resolution) 
+        self.make_directories_if_necessary(ids, root_dir)
+
+        # populate the queue
+        q = Queue()
+        map(q.put, dl_these_tuples)
+
+        # make the downloaders and get to it!
+        dlers = [gevent.spawn(self.image_downloader, q, resolution) for i in range(self.max_daemons)]
+        gevent.joinall(dlers)
+    # this is run as a gevent "green thread"
     def image_downloader(self, q, resolution):
         while True:
             # if the queue is empty, we're done!
@@ -257,97 +231,143 @@ class Scraper:
             # grab url/id tuple from queue
             id_url_tuple = q.get()
             try:
-                print id_url_tuple #TODO: make this output more useful
-                id = id_url_tuple[0]
-                url = id_url_tuple[1]
-                local_filename = self.get_resolution_local_image_location(resolution, id, url)
-                remote = urllib2.urlopen(url)
-                filesize = int(remote.info().getheaders("Content-Length")[0])
-                # if the file is too big
-                if (self.db.get_is_marked_as_too_big(id, resolution)) or (self.max_filesize and filesize > self.max_filesize):
-                    print "this file is too big so i won't download it: " + local_filename
-
-
-                    # signal to db that we're done downloading
-                    self.db.mark_img_as_too_big(id, resolution)
-                    print "finished marking as too big " + url
-                # if the file isn't too big
-                else:
-                    #download it!
-                    local = open(local_filename, 'w')
-                    local.write(remote.read())
-                    local.close()
-                    print "finished downloading " + url
-                        
-                    # signal to db that we're done downloading
-                    self.db.mark_img_as_downloaded(id, resolution)
-                    print "finished marking as downloaded " + url
+                print id_url_tuple
+                self.dl_image(resolution, id_url_tuple[0], id_url_tuple[1])
             except KeyboardInterrupt:
                 sys.exit(0)
             except:
                 print "ERROR: trouble dling image apparently... " + str(id)
                 traceback.print_exc()
                 continue
+    def dl_image(self, resolution, id, url):
+        # if we already know the file is too big
+        if (self.db.get_is_marked_as_too_big(id, resolution)):
+            print "this file is marked as too big (won't dl): " + local_filename
+            return False
+        local_filename = self.get_resolution_local_image_location(resolution, id, url)
+        remote = urllib2.urlopen(url)
+        filesize = int(remote.info().getheaders("Content-Length")[0])
+        # if we're just noticing that the file is too big
+        if (self.max_filesize and filesize > self.max_filesize):
+            print "looks like this file is too big (won't dl): " + local_filename
+            # signal to db that we're done downloading
+            self.db.mark_img_as_too_big(id, resolution)
+            print "finished marking as too big " + url
+            return False
+        # if the file isn't too big
+        else:
+            # download it!
+            local = open(local_filename, 'w')
+            local.write(remote.read())
+            local.close()
+            print "finished downloading " + url
+                
+            # signal to db that we're done downloading
+            self.db.mark_img_as_downloaded(id, resolution)
+            print "finished marking as downloaded " + url
+            return True
+
         
+    # download to disk the html files for these indeces
+    # useful for grabbing html files to toss in to a sites's /samples
+    def dl_html_for_indeces(self, indeces):
+        # populate the queue
+        q = Queue()
+        map(q.put, indeces)
+
+        # make the downloaders and get to it!
+        dlers = [gevent.spawn(self.html_downloader, q) for i in range(self.max_daemons)]
+        gevent.joinall(dlers)
+    # this is run as a gevent "green thread"
+    def html_downloader(self, q):
+        while True:
+            # if the queue is empty, we're done!
+            if q.empty():
+                break
+            # grab the id from the queue
+            id = q.get()
+            try:
+                print id
+                self.dl_html(id)
+            except KeyboardInterrupt:
+                sys.exit(0)
+            except:
+                print "ERROR: trouble dling html apparently... " + str(id)
+                traceback.print_exc()
+                continue
+    def dl_html(self, id):
+        html = self.imglib.scraper.scrape_out_img_page(id)
+        filename = str(id) + '.html'
+        fp = open(filename, 'w')
+        fp.write(html)
+        print  "wrote " + filename
+        return True
         
+
+
+    ### PARSING
+    def parse_indeces(self, indeces):
+        for id in indeces:
+            try:
+                self.parse_id(id)
+            except:
+                continue
+    def parse_id(self, id):
+        # get the html
+        try:
+            html = self.get_local_raw_html(id)
+        except:
+            print "ERROR: couldn't grab local raw HTML for id " + str(id)
+            traceback.print_exc()
+            return False
+        try:
+            metadata = self.imglib.parser.parse_img_html_page(html)
+            metadata = self.imglib.parser.post_processing(metadata)
+        except:
+            print "ERROR: couldn't parse raw html for id " + str(id)
+            metadata = {
+                    'id': id,
+                    'we_couldnt_parse_it': True,
+                    }
+            self.db.store_metadata_row(metadata)
+            print "we just recorded in the DB the fact that we couldn't parse this one"
+            failed_indices.append(id)
+            traceback.print_exc()
+            return False
+        if not metadata or metadata == {}:
+            print "ERROR: we thought we parsed raw html for id " + str(id) + ", but we got a blank dict back"
+            metadata = {
+                    'id': id,
+                    'we_couldnt_parse_it': True,
+                    }
+            self.db.store_metadata_row(metadata)
+            print "we just recorded in the DB the fact that we couldn't parse this one"
+            failed_indices.append(id)
+            traceback.print_exc()
+            return False
+        try:
+            self.db.store_metadata_row(metadata)
+        except:
+            print "ERROR: couldn't store metadata for id " + str(id)
+            failed_indices.append(id)
+            traceback.print_exc()
+            return False
+        return True
+        
+
+    def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
+        ## download the html
+        if not from_hd:
+            self.dl_html_for_indeces(indeces)
+        ## parse the html
+        self.parse_indeces(indeces)
+        ## download the images
+        if dl_images:
+            self.download_all_images
 
     '''
-    # huge thanks to http://www.ibm.com/developerworks/aix/library/au-threadingpython/
-    # this threading code is mostly from there
-    class ImgDownloader(threading.Thread):
-        def __init__(self, queue, resolution, scraper):
-            threading.Thread.__init__(self)
-            self.queue = queue
-            self.resolution = resolution
-            self.scraper = scraper
-        def run(self):
-            while True:
-                ## grab url/id tuple from queue
-                id_url_tuple = self.queue.get()
-                try:
-                    print id_url_tuple #TODO: make this output more useful
-                    id = id_url_tuple[0]
-                    url = id_url_tuple[1]
-                    local_filename = self.scraper.get_resolution_local_image_location(self.resolution, id, url)
-                    remote = urllib2.urlopen(url)
-                    filesize = int(remote.info().getheaders("Content-Length")[0])
-                    # if the file is too big
-                    if (self.scraper.db.get_is_marked_as_too_big(id, self.resolution)) or (self.scraper.max_filesize and filesize > self.scraper.max_filesize):
-                        print "this file is too big so i won't download it: " + local_filename
-
-
-                        # signal to db that we're done downloading
-                        self.scraper.db.mark_img_as_too_big(id, self.resolution)
-                        print "finished marking as too big " + url
-                    # if the file isn't too big
-                    else:
-                        #download it!
-                        local = open(local_filename, 'w')
-                        local.write(remote.read())
-                        local.close()
-                        print "finished downloading " + url
-                            
-                        # signal to db that we're done downloading
-                        self.scraper.db.mark_img_as_downloaded(id, self.resolution)
-                        print "finished marking as downloaded " + url
-
-                    # signals to queue job is done
-                    self.queue.task_done()
-                except KeyboardInterrupt:
-                    sys.exit(0)
-                    self.queue.task_done()
-                except:
-                    print "ERROR: trouble dling image apparently... " + str(id)
-                    traceback.print_exc()
-                    self.queue.task_done()
-                    continue
-    '''
-
-        
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):
         ## main glue function
-        #from_hd = True #TODO:DEBUG
-        
         failed_indices = []
         if not from_hd:
             try:
@@ -462,7 +482,16 @@ class Scraper:
         if dl_images:
             print "k, trying to get the images now"
             self.download_all_images()
+    '''
 
+    ### MISC
+    def get_resolution_extension(self, resolution, id):
+        try:
+            remote_url = self.db.get_resolution_url(resolution, id)
+            extension = get_extension_from_path(remote_url)
+        except:
+            extension = self.resolutions[resolution]['extension']
+        return extension
 
 
     ### CROSS-POSTING STUFF
@@ -502,25 +531,17 @@ class Scraper:
         root_dir = self.get_resolution_download_dir(resolution)
         ids = range(1, ceiling_id+1)
         for id in ids:
+            print "checking " + str(id)
             local_file_location = self.get_resolution_local_image_location(resolution, id)
             we_have_it = os.access(local_file_location,os.F_OK)
+            print str(we_have_it)
             if we_have_it:
                 self.db.mark_img_as_downloaded(id, resolution)
+                print "marked as downloaded"
             else:
                 self.db.mark_img_as_not_downloaded(id, resolution)
+                print "marked as not downloaded"
 
-    # download to disk the html files for these indeces
-    # useful for grabbing html files to toss in to a sites's /samples
-    def dl_html_for_indeces(self, indeces):
-        map(self.dl_html, indeces)
-    # helper for above
-    def dl_html(self, id):
-        html = self.imglib.scraper.scrape_out_img_page(id)
-        filename = str(id) + '.html'
-        fp = open(filename, 'w')
-        fp.write(html)
-        print  "wrote " + filename
-        return True
 
     def clear_all_data(self):
         # clear out the mysql data
@@ -540,10 +561,10 @@ class Scraper:
 
 
 if __name__ == '__main__':
-    do_this = 'testing'
+    do_this = 'nightly'
     if do_this == 'nightly':
         dl_images = True
-        from_hd = True
+        from_hd = False
         nightly(dl_images, from_hd)
     elif do_this == 'testing':
         generate_test_dataset(dl_images=True, from_hd=False)

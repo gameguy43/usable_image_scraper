@@ -48,6 +48,7 @@ class DB:
         self.scraper = scraper
         self.their_fields = copy.deepcopy(data_schema.their_fields)
         self.resolutions = data_schema.resolutions
+        self.db_url = db_url
 
     
         self.our_fields = {
@@ -226,6 +227,7 @@ class DB:
     def get_set_images_to_dl(self,resolution):
         the_status_column = self.get_resolution_status_column(resolution)
         where = sqlalchemy.or_(the_status_column == False, the_status_column == None)
+        #rows_to_dl = self.metadata_table.filter(where).filter(sqlalchemy.not_(self.get_resolution_too_big_column(resolution) == True)).all()
         rows_to_dl = self.metadata_table.filter(where).all()
         ids_to_dl = map(lambda row: row.id, rows_to_dl)
         metadata_url_column_name = self.get_resolution_url_column_name(resolution)
@@ -310,6 +312,7 @@ class DB:
     def truncate_all_tables(self):
         print "================================"
         print "LIKE SERIOUSLY I AM ABOUT TO DELETE ALL THE TABLES RIGHT NOW OH BOY"
+        print self.db_url
         print "================================"
         meta = MetaData(self.db.engine)
         meta.reflect()

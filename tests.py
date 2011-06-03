@@ -26,6 +26,17 @@ class TestScraperFunctions(unittest.TestCase):
         # insert something and then grab it out
     '''
 
+    def scrape_known_good_indeces(self):
+        # grab known good indeces
+        known_good_indeces = self.imglib.tests.known_good_indeces
+        known_good_indeces.sort()
+        max_known_good_index = known_good_indeces.pop()
+        # woops--now we're missing the last one. better put that back.
+        known_good_indeces.append(max_known_good_index)
+
+        # do a scrape on them
+        #self.myscraper.scrape_indeces(known_good_indeces, dl_images=False, from_hd=True) #DEBUG TODO
+        self.myscraper.scrape_indeces(known_good_indeces, dl_images=True, from_hd=False)
         
 
     #TODO: test the scraping from hd functionality
@@ -37,10 +48,6 @@ class TestScraperFunctions(unittest.TestCase):
         max_known_good_index = known_good_indeces.pop()
         # woops--now we're missing the last one. better put that back.
         known_good_indeces.append(max_known_good_index)
-
-        #TODO: this is kind of just a patch for now. but maybe it's cool to leave
-        # really we shouldhave separate test coverage for this
-        #self.myscraper.update_download_statuses_based_on_fs(ceiling_id=max_known_good_index)
 
         # do a scrape on them
         #self.myscraper.scrape_indeces(known_good_indeces, dl_images=False, from_hd=True) #DEBUG TODO
@@ -136,7 +143,39 @@ class TestScraperFunctions(unittest.TestCase):
         self.assertEqual(self.myscraper.db.get_prev_successful_image_id(good3), good1)
         
 
+    def test_update_download_statuses(self):
+        #TODO
+        pass
 
+    def test_get_set_images_to_dl(self):
+        self.scrape_known_good_indeces()
+        resolution = self.myscraper.resolutions.keys()[0]
+        known_good_indeces = self.imglib.tests.known_good_indeces
+        a = known_good_indeces[0]
+        b = known_good_indeces[1]
+        c = known_good_indeces[2]
+        self.assertNotEqual(a, b)
+        self.assertNotEqual(b, c)
+
+        a_url = self.myscraper.db.get_resolution_url(resolution, a)
+        b_url = self.myscraper.db.get_resolution_url(resolution, b)
+        c_url = self.myscraper.db.get_resolution_url(resolution, c)
+
+        # mark a as downloaded, b as not downloaded, c as too big, 
+        self.myscraper.db.mark_img_as_downloaded(a, resolution)
+        self.myscraper.db.mark_img_as_not_downloaded(b, resolution)
+        self.myscraper.db.mark_img_as_too_big(c, resolution)
+
+        reported_images_to_dl = self.myscraper.db.get_set_images_to_dl(resolution)
+        reported_images_to_dl.sort()
+        # we should only want to download b
+        expected_images_to_dl = [(b, b_url)]
+        expected_images_to_dl.sort()
+        self.assertEqual(reported_images_to_dl, expected_images_to_dl)
+
+        not_expected_images_to_dl = [(a, a_url)]
+        not_expected_images_to_dl.sort()
+        self.assertNotEqual(reported_images_to_dl, not_expected_images_to_dl)
 
 #TODO: case: * grab the highest index in the database
 # maybe. or just make this a test that lives in the individual image libraries
