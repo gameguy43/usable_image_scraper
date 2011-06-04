@@ -95,10 +95,11 @@ def drop_all_tables():
 def mkscraper(image_db_key, test=False):
     kwargs = {}
     if test:
-        data_root_dir = config.data_root_dir
-        kwargs['db_url'] = config.test_db_url
-    else:
         data_root_dir = config.test_data_root_dir
+        kwargs['db_url'] = config.test_db_url
+        print data_root_dir
+    else:
+        data_root_dir = config.data_root_dir
         kwargs['db_url'] = config.db_url
 
     img_db_config = config.image_databases[image_db_key]
@@ -297,10 +298,7 @@ class Scraper:
                 continue
     def dl_html(self, id):
         html = self.imglib.scraper.scrape_out_img_page(id)
-        filename = str(id) + '.html'
-        fp = open(filename, 'w')
-        fp.write(html)
-        print  "wrote " + filename
+        self.store_raw_html(id, html)
         return True
         
 
@@ -363,7 +361,7 @@ class Scraper:
         self.parse_indeces(indeces)
         ## download the images
         if dl_images:
-            self.download_all_images
+            self.download_all_images()
 
     '''
     def scrape_indeces(self, indeces, dl_images=True, from_hd=False):

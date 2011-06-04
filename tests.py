@@ -8,7 +8,7 @@ class TestScraperFunctions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         # instantiate a scraper 
-        self.imglib_name = 'cdc_phil'
+        self.imglib_name = 'fema'
         print "SETTING UP"
         self.myscraper = scraper.mkscraper(self.imglib_name, test=True)
         self.imglib = self.myscraper.imglib
@@ -148,9 +148,9 @@ class TestScraperFunctions(unittest.TestCase):
         pass
 
     def test_get_set_images_to_dl(self):
-        self.scrape_known_good_indeces()
         resolution = self.myscraper.resolutions.keys()[0]
         known_good_indeces = self.imglib.tests.known_good_indeces
+        self.myscraper.scrape_indeces(known_good_indeces[0:2+1], dl_images=True, from_hd=False)
         a = known_good_indeces[0]
         b = known_good_indeces[1]
         c = known_good_indeces[2]
